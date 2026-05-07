@@ -1,0 +1,113 @@
+// selectタグ / datalistタグ / inputタグのtype="date"が変更された場合
+$(document).on('change', '.filter-row th select, .filter-row th input[list], .filter-row th input[type="date"], .filter-row th input[type="month"]', function () {
+    // 検索を実施
+    submitSearch();
+});
+
+// inputタグでキーが押された場合
+$(document).on('keydown', '.filter-row th input', function (e) {
+    // エンターが押された場合
+    if(e.key === 'Enter'){
+        // 検索を実施
+        submitSearch();
+    }
+});
+
+// 検索を実施
+function submitSearch() {
+    // フィルター条件をURLパラメータに組み立てる
+    const params = new URLSearchParams();
+    // 対象テーブルを取得
+    const table = $('#filter_table');
+    // URLをdata属性から取得
+    const url = table.data('search-url');
+    // 追加パラメータをdata属性から取得
+    const extraParams = table.data('extra-params') || {};
+    // スクロール対象を取得
+    const scrollTarget = table.data('scroll-target');
+    // 各要素をループ処理
+    $('.filter-row th input, .filter-row th select, .filter-row th input[list]').each(function () {
+        // 要素のname属性と値を取得
+        const name = $(this).attr('name');
+        const value = $(this).val();
+        // name属性と値がある場合
+        if(name && value !== ''){
+            // パラメータを追加
+            params.set(name, value);
+        }
+    });
+    // 固定パラメータを設定
+    params.set('process_type', 'filter');
+    // filter_shipping_group_idが存在する場合のみ追加
+    if($('#filter_shipping_group_id').length){
+        const shippingGroupId = $('#filter_shipping_group_id').val();
+        if(shippingGroupId !== ''){
+            params.set('filter_shipping_group_id', shippingGroupId);
+        }
+    }
+    // 追加パラメータを設定
+    Object.entries(extraParams).forEach(([key, value]) => {
+        // valueが空の場合はDOMから取得
+        params.set(key, value || $('#' + key).val());
+    });
+    // 横スクロール位置を保存
+    params.set('scroll_x', $(scrollTarget).scrollLeft());
+    // クエリストリングを生成してページ遷移
+    const qs = params.toString();
+    window.location.href = url + (qs ? '?' + qs : '');
+}
+
+// ページロード時
+$(document).ready(function () {
+    // 各要素をループ処理
+    $('.filter-row th input, .filter-row th select, .filter-row th input[list]').each(function () {
+        // 値がある場合(フィルター条件がある場合)
+        if($(this).val() !== ''){
+            // 親のdivを遡ってthを取得し、その中のfilter_clearを探す
+            $(this).closest('th').find('.filter_clear').removeClass('hidden');
+            const $wrap = $(this).closest('.date_range_wrap');
+            if($wrap.length){
+                $wrap.addClass('bg-theme-sub');
+            } else {
+                $(this).addClass('bg-theme-sub');
+            }
+        }
+    });
+    // 在庫数範囲のクリアボタン表示制御
+    if($('#filter_total_stock_min').val() !== ''){
+        $('[data-target="filter_total_stock_min"]').removeClass('hidden');
+        $('#filter_total_stock_min').addClass('bg-theme-sub');
+    }
+    if($('#filter_total_stock_max').val() !== ''){
+        $('[data-target="filter_total_stock_max"]').removeClass('hidden');
+        $('#filter_total_stock_max').addClass('bg-theme-sub');
+    }
+    // URLパラメータからスクロール位置(X軸)を取得
+    const scrollX = new URLSearchParams(window.location.search).get('scroll_x');
+    // X軸が取得されている場合
+    if(scrollX){
+        // 取得した値でテーブルの横スクロール位置を復元
+        const scrollTarget = $('#filter_table').data('scroll-target');
+        $(scrollTarget).scrollLeft(parseInt(scrollX));
+    }
+});
+
+// フィルタークリアが押された場合
+$(document).on('click', '.filter_clear', function () {
+    // 範囲指定の要素のdata-targetの値を取得
+    const fromId = $(this).data('target-from');
+    const toId = $(this).data('target-to');
+    // 今日の日付を取得
+    const today = new Date().toISOString().split('T')[0];
+    // 取得できていれば空にする
+    if (fromId) $('#' + fromId).val($(this).data('reset-today') ? today : '');
+    if (toId) $('#' + toId).val($(this).data('reset-today') ? today : '');
+    // 押された要素のdata-targetの値を取得
+    const id = $(this).data('target');
+    // 対象inputを空にする
+    $('#' + id).val('');
+    // 検索を実施
+    submitSearch();
+});
+
+export { submitSearch };

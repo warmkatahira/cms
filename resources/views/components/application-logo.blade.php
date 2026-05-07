@@ -1,0 +1,1 @@
+<img src="{{ asset('image/plms_logo.svg') }}" class="inline-block w-full md:w-72">

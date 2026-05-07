@@ -1,0 +1,1 @@
+import{s as t}from"./loading-CLXJ3Lsj.js";$("#base_create_enter").on("click",function(){window.confirm("営業所追加を実行しますか？")===!0&&(t(),$("#base_form").submit())});$("#base_update_enter").on("click",function(){window.confirm("営業所更新を実行しますか？")===!0&&(t(),$("#base_form").submit())});
