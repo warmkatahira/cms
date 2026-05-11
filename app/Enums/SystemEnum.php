@@ -8,7 +8,7 @@ enum SystemEnum
     const CUSTOMER_NAME_JP          = '株式会社ワーム';
     const CUSTOMER_NAME_EN          = 'warm';
     // システム名
-    const SYSTEM_NAME_JP            = '有給管理システム';
+    const SYSTEM_NAME_JP            = '顧客管理システム';
     // ページネーションの値を定義
     const PAGINATE_DEFAULT          = 50;
     const PAGINATE_OPERATION_LOG    = 200;

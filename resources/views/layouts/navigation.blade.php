@@ -10,6 +10,14 @@
     <div class="flex flex-col gap-3 pt-7 pl-5">
         <!-- ダッシュボード -->
         <x-navigation-btn route="dashboard.index" label="ダッシュボード" icon="las la-home" isRightMargin="true" />
+        <!-- 収支データ -->
+        <div class="flex flex-col gap-0.5">
+            <x-navigation-btn label="収支データ" icon="las la-users-cog" openCloseKey="system_admin" />
+            <div class="navigation-content hidden">
+                <x-navigation-btn route="financial_import.index" label="データ取込" isLeftMargin="true" isRightMargin="true" />
+                <x-navigation-btn route="financial_import_history.index" label="取込履歴" isLeftMargin="true" isRightMargin="true" />
+            </div>
+        </div>
         @can('base_admin_check')
             <!-- 管理 -->
              <div class="flex flex-col gap-0.5">

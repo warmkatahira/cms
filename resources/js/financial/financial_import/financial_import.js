@@ -1,8 +1,7 @@
 import start_loading from '../../loading';
 
-document.addEventListener('DOMContentLoaded', function () {
-    setupFileInput('employee_file', 'employee_file_label_1', 'employee_file_area_1');
-    setupFileInput('paid_leave_file', 'paid_leave_file_label_2', 'paid_leave_file_area_2');
+$(function () {
+    setupFileInput('financial_file', 'financial_file_label_1', 'financial_file_area_1');
     function setupFileInput(inputId, labelId, dropAreaId) {
         const input = document.getElementById(inputId);
         const label = document.getElementById(labelId);
@@ -60,9 +59,16 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // 取り込みボタンを押下した場合
-$('#file_import_enter').on("click",function(){
+$('#financial_import_enter').on("click",function(){
+    // ファイルを取得
+    const file = document.getElementById('financial_file').files[0];
+    // ファイルが存在しない場合
+    if(!file){
+        alert('ファイルを選択してください');
+        return;
+    }
     // 処理を実行するか確認
-    const result = window.confirm("ファイル取込を実行しますか？");
+    const result = window.confirm("収支データ取込を実行しますか？");
     // 「はい」が押下されたらsubmit、「いいえ」が押下されたら処理キャンセル
     if(result === true){
         start_loading();

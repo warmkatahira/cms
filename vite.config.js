@@ -25,9 +25,10 @@ export default defineConfig({
                 'resources/sass/common.scss',
                 // 認証
                 'resources/js/auth/register.js',
+                // 収支データ
+                'resources/js/financial/financial_import/financial_import.js',
                 // 管理
                 'resources/js/admin/employee/employee.js',
-                'resources/js/admin/file_import/file_import.js',
                 // システム管理
                 'resources/js/system_admin/base/base.js',
                 'resources/js/system_admin/user/user.js',
