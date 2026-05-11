@@ -48,7 +48,7 @@
         <div class="flex flex-col md:flex-row md:items-start md:justify-between md:mx-10">
             <!-- ロゴ -->
             <div class="text-center md:text-left">
-                <img src="{{ asset('image/plms_logo.svg') }}" class="welcome_logo mx-auto md:mx-0">
+                <img src="{{ asset('image/cms_logo.svg') }}" class="welcome_logo mx-auto md:mx-0">
             </div>
             <!-- ログインボタン -->
             <div class="flex flex-col md:mt-5">

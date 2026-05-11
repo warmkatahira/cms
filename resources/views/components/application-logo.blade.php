@@ -1,1 +1,1 @@
-<img src="{{ asset('image/plms_logo.svg') }}" class="inline-block w-full md:w-72">
+<img src="{{ asset('image/cms_logo.svg') }}" class="inline-block w-full md:w-72">
