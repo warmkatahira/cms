@@ -67,20 +67,20 @@ $(document).ready(function () {
             $(this).closest('th').find('.filter_clear').removeClass('hidden');
             const $wrap = $(this).closest('.date_range_wrap');
             if($wrap.length){
-                $wrap.addClass('bg-theme-sub');
+                $wrap.addClass('bg-table-hover');
             } else {
-                $(this).addClass('bg-theme-sub');
+                $(this).addClass('bg-table-hover');
             }
         }
     });
     // 在庫数範囲のクリアボタン表示制御
     if($('#filter_total_stock_min').val() !== ''){
         $('[data-target="filter_total_stock_min"]').removeClass('hidden');
-        $('#filter_total_stock_min').addClass('bg-theme-sub');
+        $('#filter_total_stock_min').addClass('bg-table-hover');
     }
     if($('#filter_total_stock_max').val() !== ''){
         $('[data-target="filter_total_stock_max"]').removeClass('hidden');
-        $('#filter_total_stock_max').addClass('bg-theme-sub');
+        $('#filter_total_stock_max').addClass('bg-table-hover');
     }
     // URLパラメータからスクロール位置(X軸)を取得
     const scrollX = new URLSearchParams(window.location.search).get('scroll_x');
