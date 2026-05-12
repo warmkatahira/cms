@@ -10,6 +10,7 @@ class FinancialImport extends Model
     protected $primaryKey = 'financial_import_id';
     // 操作可能なカラムを定義
     protected $fillable = [
+        'base_id',
         'base_name',
         'client_alias_name',
         'year_month',

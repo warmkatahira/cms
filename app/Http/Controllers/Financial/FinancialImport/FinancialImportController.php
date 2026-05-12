@@ -44,6 +44,8 @@ class FinancialImportController extends Controller
                 $financial_create_data = $FinancialImportService->setArrayImport($financial_file_info, $nowDate);
                 // financial_importsへデータを追加
                 $FinancialImportService->createArrayImportData($financial_create_data);
+                // base_idをbase_nameから更新
+                $FinancialImportService->updateBaseId($financial_file_info['original_file_name']);
                 // financial_import_historiesテーブルへ追加
                 $FinancialImportHistoryCreateService->createFinancialImportHistory($financial_file_info['original_file_name'], null, null);
             });

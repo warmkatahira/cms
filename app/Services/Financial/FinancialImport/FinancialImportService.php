@@ -14,6 +14,7 @@ use Carbon\CarbonImmutable;
 use Rap2hpoutre\FastExcel\FastExcel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class FinancialImportService
 {
@@ -193,6 +194,29 @@ class FinancialImportService
         // 200件ごとにデータを分けてインサート
         foreach(collect($financial_create_data)->chunk(200) as $chunk){
             FinancialImport::insert($chunk->values()->toArray());
+        }
+    }
+
+    // base_idをbase_nameから更新
+    public function updateBaseId($original_file_name)
+    {
+        // base_idをbase_nameから更新
+        DB::statement('
+            UPDATE financial_imports fi
+            INNER JOIN bases b ON b.base_name = fi.base_name
+            SET fi.base_id = b.base_id
+        ');
+        // base_idがnullのレコードを取得
+        $unresolved = FinancialImport::whereNull('base_id')->pluck('base_name')->unique();
+        // 存在する場合
+        if($unresolved->isNotEmpty()){
+            // 情報を改行で区切る
+            $names = $unresolved->implode("\n");
+            throw new FinancialImportException(
+                "営業所名が正しくないレコードが存在します\n{$names}",
+                $original_file_name,
+                null
+            );
         }
     }
 }

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('financial_imports', function (Blueprint $table) {
             $table->increments('financial_import_id');
+            $table->string('base_id', 10)->nullable();
             $table->string('base_name', 20);
             $table->string('client_alias_name', 100);
             $table->date('year_month');
@@ -36,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('file_imports');
+        Schema::dropIfExists('financial_imports');
     }
 };
