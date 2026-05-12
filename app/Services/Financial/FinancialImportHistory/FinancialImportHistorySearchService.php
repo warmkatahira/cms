@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Services\Admin\ImportHistory;
+namespace App\Services\Financial\FinancialImportHistory;
 
 // モデル
-use App\Models\ImportHistory;
+use App\Models\FinancialImportHistory;
 // その他
 use Illuminate\Support\Facades\DB;
 use Carbon\CarbonImmutable;
 
-class ImportHistorySearchService
+class FinancialImportHistorySearchService
 {
     // セッションを削除
     public function deleteSession()
@@ -37,7 +37,7 @@ class ImportHistorySearchService
     public function getSearchResult()
     {
         // クエリをセット
-        $query = ImportHistory::query();
+        $query = FinancialImportHistory::query();
         // 取込日の条件がある場合
         if(session('search_import_date') != null){
             // 条件を指定して取得

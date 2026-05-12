@@ -14,7 +14,7 @@ use App\Services\Common\ImportService;
 // リクエスト
 use App\Http\Requests\Admin\Employee\EmployeeCreateRequest;
 // 例外
-use App\Exceptions\FileImportException;
+use App\Exceptions\FinancialImportException;
 // 列挙
 use App\Enums\EmployeeCreateEnum;
 use App\Enums\ImportEnum;
@@ -88,7 +88,7 @@ class EmployeeCreateController extends Controller
                 // import_historiesテーブルへ追加
                 $ImportHistoryCreateService->createImportHistory($import_original_file_name, ImportEnum::IMPORT_PROCESS_EMPLOYEE, ImportEnum::IMPORT_TYPE_CREATE, null, null);
             });
-        } catch (FileImportException $e) {
+        } catch (FinancialImportException $e) {
             // 渡された内容を取得
             $message                    = $e->getMessage();
             $import_process             = $e->getImportProcess();

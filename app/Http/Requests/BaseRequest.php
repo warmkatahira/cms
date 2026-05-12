@@ -37,14 +37,12 @@ class BaseRequest extends FormRequest
             // 共通
             'sort_order'            => '並び順',
             // ファイル取込
-            'employee_file'         => '従業員データ',
-            'paid_leave_file'       => '有給データ',
+            'financial_file'        => '収支データ',
             // 営業所情報
             'base_id'               => '営業所ID',
             'base_name'             => '営業所名',
             // ユーザー情報
             'user_id'               => 'ユーザーID',
-            'employee_no'           => '従業員番号',
             'user_name'             => '氏名',
             'password'              => 'パスワード',
             'is_active'             => 'ステータス',

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Financial\FinancialImportHistory;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // サービス
-use App\Services\Admin\ImportHistory\ImportHistorySearchService;
+use App\Services\Financial\FinancialImportHistory\FinancialImportHistorySearchService;
 // トレイト
 use App\Traits\PaginatesResultsTrait;
 
@@ -18,17 +18,17 @@ class FinancialImportHistoryController extends Controller
         // ページヘッダーをセッションに格納
         session(['page_header' => '取込履歴']);
         // インスタンス化
-        $ImportHistorySearchService = new ImportHistorySearchService;
+        $FinancialImportHistorySearchService = new FinancialImportHistorySearchService;
         // セッションを削除
-        $ImportHistorySearchService->deleteSession();
+        $FinancialImportHistorySearchService->deleteSession();
         // セッションに検索条件を格納
-        $ImportHistorySearchService->setSearchCondition($request);
+        $FinancialImportHistorySearchService->setSearchCondition($request);
         // 検索結果を取得
-        $result = $ImportHistorySearchService->getSearchResult();
+        $result = $FinancialImportHistorySearchService->getSearchResult();
         // ページネーションを実施
-        $import_histories = $this->setPagination($result);
+        $financial_import_histories = $this->setPagination($result);
         return view('financial.financial_import_history.index')->with([
-            'import_histories' => $import_histories,
+            'financial_import_histories' => $financial_import_histories,
         ]);
     }
 }

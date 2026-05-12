@@ -19,9 +19,10 @@ export default {
             },
             colors: {
                 theme: {
-                    'main'          : "#F7931E",
-                    'sub'           : "#fadcb4",
+                    'main'          : "#b5735c",
+                    'sub'           : "#b5735c",
                     'body'          : "#ebe6e6",
+                    'nav-active'    : "#d4a898",
                 },
                 btn: {
                     'enter'         : "#3b82f6",
@@ -44,6 +45,9 @@ export default {
                 },
                 common: {
                     'disabled'      : "#d1d5db",
+                },
+                table: {
+                    'hover': '#e2c8c0',
                 },
             },
             spacing: {

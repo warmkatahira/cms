@@ -4,7 +4,7 @@
 #navigation-bar {
     height: 100%;
     width: 250px;
-    background-color:color.$sub;
+    background-color:color.$nav-bg;
     position: fixed;
     left: 0;
     z-index: 30;
@@ -58,7 +58,7 @@
 .navigation-btn-div > a:hover,
 .navigation-btn-div > p:hover {
     color: black;
-    background-color: color.$main;
+    background-color: color.$nav-hover;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35);
 }
 
@@ -68,10 +68,11 @@
     flex-direction: column;
     align-items: center;
     border-bottom: 2px solid black;
+    background-color: color.$nav-bg;
 }
 #logo {
     cursor: default;
-    width: 100px;
+    width: 170px;
 }
 
 /*  アイコン用  */

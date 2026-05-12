@@ -15,7 +15,7 @@ use App\Services\Admin\FileImport\ImportHistoryCreateService;
 // 列挙
 use App\Enums\FileImportEnum;
 // 例外
-use App\Exceptions\FileImportException;
+use App\Exceptions\FinancialImportException;
 // その他
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +66,7 @@ class FileImportController extends Controller
                 // import_historiesテーブルへ追加
                 $ImportHistoryCreateService->createImportHistory($employee_file_info['original_file_name'], $paid_leave_file_info['original_file_name'], null, $missing_message ? "以下の従業員を無効にしました。\n" . $missing_message : null);
             });
-        } catch (FileImportException $e) {
+        } catch (FinancialImportException $e) {
             // 渡された内容を取得
             $message                                = $e->getMessage();
             $import_employee_original_file_name     = $e->getImportEmployeeOriginalFileName();

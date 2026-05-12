@@ -12,7 +12,7 @@
         <a
             @class([
                 'rounded-md py-2 px-3 transition-colors duration-150',
-                session('route_prefix') === $route ? 'bg-theme-main' : '',
+                session('route_prefix') === $route ? 'bg-theme-nav-active' : '',
                 'ml-5' => $isLeftMargin,
                 'mr-3' => $isRightMargin]
             )

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Admin\FileImport;
+namespace App\Http\Requests\Financial\FinancialImport;
 
 use Illuminate\Foundation\Http\FormRequest;
 use App\Http\Requests\BaseRequest;
 
-class FileImportRequest extends BaseRequest
+class FinancialImportRequest extends BaseRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,16 +23,14 @@ class FileImportRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'employee_file'     => 'required|file|mimes:csv,txt|max:10240',
-            'paid_leave_file'   => 'required|file|mimes:csv,txt|max:10240',
+            'financial_file'   => 'required|file|mimes:csv,txt|max:10240',
         ];
     }
 
     public function messages()
     {
         return array_merge(parent::messages(), [
-            'employee_file.max'     => ":attributeは10MB以下のファイルをアップロードしてください。",
-            'paid_leave_file.max'   => ":attributeは10MB以下のファイルをアップロードしてください。",
+            'financial_file.max'   => ":attributeは10MB以下のファイルをアップロードしてください。",
         ]);
     }
 
