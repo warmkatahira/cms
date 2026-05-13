@@ -20,4 +20,9 @@ class Client extends Model
         'is_active',
         'updated_by',
     ];
+    // usersテーブルとのリレーション
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'updated_by', 'user_no');
+    }
 }

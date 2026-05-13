@@ -43,9 +43,21 @@ class FinancialImportController extends Controller
                 // 追加する受注データを配列に格納（同時にバリデーションも実施）
                 $financial_create_data = $FinancialImportService->setArrayImport($financial_file_info, $nowDate);
                 // financial_importsへデータを追加
-                $FinancialImportService->createArrayImportData($financial_create_data);
+                $FinancialImportService->createFinancialImport($financial_create_data);
                 // base_idをbase_nameから更新
                 $FinancialImportService->updateBaseId($financial_file_info['original_file_name']);
+                // 既に取り込まれている営業所×年月でないか確認
+                $FinancialImportService->checkDuplicateMonthlyFinancials($financial_file_info['original_file_name']);
+                // client_alias_nameが登録されているか確認
+                $unregistered = $FinancialImportService->checkClientAliases($financial_file_info['original_file_name']);
+                // 未登録の顧客エイリアスがある場合
+                if(!empty($unregistered)){
+                    // セッションに格納して処理を抜ける
+                    session(['unregistered_aliases' => $unregistered]);
+                    return;
+                }
+                // monthly_financialsテーブルへ追加
+                $FinancialImportService->createMonthlyFinancials();
                 // financial_import_historiesテーブルへ追加
                 $FinancialImportHistoryCreateService->createFinancialImportHistory($financial_file_info['original_file_name'], null, null);
             });
@@ -59,6 +71,13 @@ class FinancialImportController extends Controller
             return redirect()->route('financial_import_history.index')->with([
                 'alert_type'    => 'error',
                 'alert_message' => $e->getMessage(),
+            ]);
+        }
+        // 未登録の顧客エイリアスがある場合
+        if(session('unregistered_aliases')){
+            return redirect()->route('client_alias_create.index')->with([
+                'alert_type'    => 'info',
+                'alert_message' => "収支データ取込が完了しました。\n未登録の荷主名があるので、登録を行って下さい。",
             ]);
         }
         return redirect()->route('financial_import_history.index')->with([

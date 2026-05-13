@@ -13,5 +13,11 @@ class FinancialImportHistory extends Model
         'import_original_file_name',
         'error_file_name',
         'message',
+        'imported_by',
     ];
+    // usersテーブルとのリレーション
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'imported_by', 'user_no');
+    }
 }

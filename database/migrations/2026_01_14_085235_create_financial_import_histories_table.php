@@ -16,7 +16,10 @@ return new class extends Migration
             $table->string('import_original_file_name', 255)->nullable();
             $table->string('error_file_name', 255)->nullable();
             $table->string('message', 255)->nullable();
+            $table->unsignedInteger('imported_by');
             $table->timestamps();
+            // 外部キー
+            $table->foreign('imported_by')->references('user_no')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 

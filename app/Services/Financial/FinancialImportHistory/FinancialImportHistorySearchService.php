@@ -15,7 +15,7 @@ class FinancialImportHistorySearchService extends BaseFilterService
     protected function baseQuery()
     {
         // クエリをセット
-        return FinancialImportHistory::query();
+        return FinancialImportHistory::with(['user']);
     }
 
     public function setSearchCondition($request)
@@ -48,6 +48,12 @@ class FinancialImportHistorySearchService extends BaseFilterService
                 $query->whereRaw('DATE_FORMAT(created_at, "%H:%i:%s") = ?', [
                     date('H:i:s', strtotime($value))
                 ]);
+            },
+            // ユーザー
+            'filter_user_name' => function ($query, $value) {
+                $query->whereHas('user', function ($q) use ($value) {
+                    $q->where('user_name', 'LIKE', '%'. $value .'%');
+                });
             },
         ];
     }

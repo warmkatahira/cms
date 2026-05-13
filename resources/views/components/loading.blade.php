@@ -1,7 +1,15 @@
-<div id="loading" class="fixed z-50 inset-0 bg-gray-400 bg-opacity-60 overflow-y-auto h-full w-full">
-    <div class="wrapper top-32 mx-auto text-center">
-        <div class="floating-image text-center flex flex-row">
-            <img src="{{ asset('image/favicon.svg') }}" class="w-[500px]">
+<div id="loading" class="fixed z-50 inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center">
+    <div class="flex flex-col items-center gap-6">
+        <div class="chase">
+            <div class="chase-dot"></div>
+            <div class="chase-dot"></div>
+            <div class="chase-dot"></div>
+            <div class="chase-dot"></div>
+            <div class="chase-dot"></div>
+            <div class="chase-dot"></div>
+            <div class="chase-dot"></div>
+            <div class="chase-dot"></div>
         </div>
+        <p class="text-white text-base font-medium tracking-widest">Loading...</p>
     </div>
 </div>

@@ -4,6 +4,8 @@ namespace App\Services\Financial\FinancialImport;
 
 // モデル
 use App\Models\FinancialImport;
+use App\Models\ClientAlias;
+use App\Models\MonthlyFinancial;
 // サービス
 use App\Services\Common\ImportErrorCreateService;
 use App\Services\Common\CsvConvertService;
@@ -184,8 +186,8 @@ class FinancialImportService
         return empty($message) ? null : array($record_num.'行目', $message);
     }
 
-    // importsへデータを追加
-    public function createArrayImportData($financial_create_data)
+    // financial_importsへデータを追加
+    public function createFinancialImport($financial_create_data)
     {
         // テーブルをロック
         FinancialImport::select()->lockForUpdate()->get();
@@ -216,6 +218,130 @@ class FinancialImportService
                 "営業所名が正しくないレコードが存在します\n{$names}",
                 $original_file_name,
                 null
+            );
+        }
+    }
+
+    // 既に取り込まれている営業所×年月でないか確認
+    public function checkDuplicateMonthlyFinancials($original_file_name)
+    {
+        // financial_importsから営業所IDと年月を重複を除いて取得
+        $importRows = FinancialImport::select('base_id', 'base_name', 'year_month')
+                            ->distinct()
+                            ->get();
+        // client_aliasesとmonthly_financialsをjoinして事前取得
+        // "base_id:year_month" のセットを作成
+        $existingSet = MonthlyFinancial::join('client_aliases', 'monthly_financials.client_alias_id', '=', 'client_aliases.client_alias_id')
+                        ->select('client_aliases.base_id', 'monthly_financials.year_month')
+                        ->distinct()
+                        ->get()
+                        ->map(fn($row) => "{$row->base_id}:{$row->year_month}")
+                        ->toArray();
+        // 重複していた情報を格納する配列を初期化
+        $duplicates = [];
+        // 営業所IDと年月の組み合わせの分だけループ処理
+        foreach($importRows as $import){
+            // キーを作成
+            $key = "{$import->base_id}:{$import->year_month}";
+            // キーが既にmonthly_financialsテーブルに存在する場合
+            if(in_array($key, $existingSet)){
+                // 配列に情報を格納
+                $duplicates[] = "{$import->base_name} / " . CarbonImmutable::parse($import->year_month)->isoFormat('YYYY年MM月');
+            }
+        }
+        // 重複情報が存在する場合
+        if(!empty($duplicates)){
+            $names = implode("\n", $duplicates);
+            throw new FinancialImportException(
+                "既に取り込まれているデータが存在します\n{$names}",
+                $original_file_name,
+                null
+            );
+        }
+    }
+
+    // client_alias_nameが登録されているか確認
+    public function checkClientAliases($original_file_name)
+    {
+        // client_aliasesテーブルに存在しているエイリアスを取得
+        $existing_aliases = ClientAlias::all()
+                                ->groupBy('base_id')
+                                ->map(fn($aliases) => $aliases->pluck('client_alias_name')->toArray())
+                                ->toArray();
+        // financial_importsから「base_id」と「client_alias_name」を取得
+        $imported_rows = FinancialImport::select('base_id', 'client_alias_name')
+                            ->distinct()
+                            ->get();
+        // エイリアスが未登録の情報を格納する配列を初期化
+        $unregistered = [];
+        // 取り込んだ収支データの分だけループ処理
+        foreach ($imported_rows as $row) {
+            // そのbase_idに紐づく登録済みのclient_alias_nameを取得（なければ空配列）
+            $registered = $existing_aliases[$row->base_id] ?? [];
+            // 登録済みの中に該当のclient_alias_nameが存在しない場合
+            if(!in_array($row->client_alias_name, $registered)){
+                // base_idとclient_alias_nameの組み合わせをキーとして重複を防ぐ
+                $key = "{$row->base_id}:{$row->client_alias_name}";
+                // 同じ組み合わせがまだ未登録配列に存在しない場合のみ追加
+                if(!isset($unregistered[$key])){
+                    $unregistered[$key] = [
+                        'base_id'           => $row->base_id,
+                        'client_alias_name' => $row->client_alias_name,
+                    ];
+                }
+            }
+        }
+        return array_values($unregistered);
+    }
+
+    // monthly_financialsテーブルへ追加
+    public function createMonthlyFinancials()
+    {
+        // financial_importsを全件取得
+        $financial_imports = FinancialImport::all();
+        // client_aliasesを事前取得（N+1防止）
+        // "base_id:client_alias_name" => client_alias_id のマップを作成
+        $aliasMap = ClientAlias::all()
+                        ->mapWithKeys(fn($alias) => [
+                            "{$alias->base_id}:{$alias->client_alias_name}" => $alias->client_alias_id
+                        ])
+                        ->toArray();
+        // monthly_financialsに追加するデータを格納する配列を初期化
+        $monthly_financials = [];
+        // 取り込んだ収支データの分だけループ処理
+        foreach($financial_imports as $import){
+            // base_idとclient_alias_nameの組み合わせをキーにclient_alias_idを取得
+            $key           = "{$import->base_id}:{$import->client_alias_name}";
+            $client_alias_id = $aliasMap[$key] ?? null;
+            // client_alias_idが解決できない場合はスキップ
+            if (!$client_alias_id) continue;
+            // monthly_financialsに追加するデータを配列に格納
+            $monthly_financials[] = [
+                'client_alias_id' => $client_alias_id,
+                'year_month'      => $import->year_month,
+                'sales_storage'   => $import->sales_storage,
+                'sales_handling'  => $import->sales_handling,
+                'sales_freight'   => $import->sales_freight,
+                'sales_other'     => $import->sales_other,
+                'cost_storage'    => $import->cost_storage,
+                'cost_employee'   => $import->cost_employee,
+                'cost_part'       => $import->cost_part,
+                'cost_temp'       => $import->cost_temp,
+                'cost_freight'    => $import->cost_freight,
+                'cost_other'      => $import->cost_other,
+                'cost_hq'         => $import->cost_hq,
+            ];
+        }
+        // 200件ごとにupsert（client_alias_id + year_monthがユニーク制約のため既存データは上書き）
+        foreach(collect($monthly_financials)->chunk(200) as $chunk){
+            MonthlyFinancial::upsert(
+                $chunk->values()->toArray(),
+                ['client_alias_id', 'year_month'],
+                [
+                    'sales_storage', 'sales_handling', 'sales_freight', 'sales_other',
+                    'cost_storage', 'cost_employee', 'cost_part', 'cost_temp',
+                    'cost_freight', 'cost_other', 'cost_hq',
+                ]
             );
         }
     }

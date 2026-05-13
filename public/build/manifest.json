@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-u8d64JP4.css",
+    "file": "assets/app-CERKNlUZ.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -28,6 +28,15 @@
       "resources/js/loading.js"
     ]
   },
+  "resources/js/client/client_alias/client_alias.js": {
+    "file": "assets/client_alias-DsqNOso_.js",
+    "name": "client_alias",
+    "src": "resources/js/client/client_alias/client_alias.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/loading.js"
+    ]
+  },
   "resources/js/common.js": {
     "file": "assets/common-DYSTgVaS.js",
     "name": "common",
@@ -47,7 +56,7 @@
     "isEntry": true
   },
   "resources/js/filter.js": {
-    "file": "assets/filter-DDzpwv3T.js",
+    "file": "assets/filter-f8vnWbvj.js",
     "name": "filter",
     "src": "resources/js/filter.js",
     "isEntry": true
@@ -135,12 +144,12 @@
     "isEntry": true
   },
   "resources/sass/height_adjustment.scss": {
-    "file": "assets/height_adjustment-DS4XRfmW.css",
+    "file": "assets/height_adjustment-CyZ-v8iT.css",
     "src": "resources/sass/height_adjustment.scss",
     "isEntry": true
   },
   "resources/sass/loading.scss": {
-    "file": "assets/loading-CSRlsW_J.css",
+    "file": "assets/loading--oHUFLAT.css",
     "src": "resources/sass/loading.scss",
     "isEntry": true
   },

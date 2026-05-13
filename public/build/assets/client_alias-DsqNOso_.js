@@ -1,0 +1,1 @@
+import{s as e}from"./loading-CLXJ3Lsj.js";$(function(){$(".select2").select2({placeholder:"顧客名を入力して検索",allowClear:!0,width:"100%",language:{noResults:function(){return"該当する顧客が見つかりません"},searching:function(){return"検索中..."}}})});$("#client_alias_create_enter").on("click",function(){window.confirm("登録を実行しますか？")===!0&&(e(),$("#client_alias_create_form").submit())});

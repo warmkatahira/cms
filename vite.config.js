@@ -25,6 +25,8 @@ export default defineConfig({
                 'resources/sass/common.scss',
                 // 認証
                 'resources/js/auth/register.js',
+                // 顧客
+                'resources/js/client/client_alias/client_alias.js',
                 // 収支データ
                 'resources/js/financial/financial_import/financial_import.js',
                 // 管理

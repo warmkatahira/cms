@@ -5,6 +5,7 @@
                 <tr class="text-left text-white bg-table-header whitespace-nowrap sticky top-0 h-7 z-10">
                     <th class="font-thin py-1 px-2 text-center">取込日</th>
                     <th class="font-thin py-1 px-2 text-center">取込時間</th>
+                    <th class="font-thin py-1 px-2 text-center">取込ユーザー</th>
                     <th class="font-thin py-1 px-2 text-center">取込ファイル名</th>
                     <th class="font-thin py-1 px-2 text-center">エラーファイル</th>
                     <th class="font-thin py-1 px-2 text-center">メッセージ</th>
@@ -12,6 +13,7 @@
                 <tr class="filter-row sticky top-[28px] bg-white z-10">
                     <x-filter.date-period type="date" fromId="filter_import_date_from" fromName="filter_import_date_from" toId="filter_import_date_to" toName="filter_import_date_to" />
                     <x-filter.input type="tel" id="filter_import_time" name="filter_import_time" />
+                    <x-filter.input type="text" id="filter_user_name" name="filter_user_name" />
                     <x-filter.input type="text" id="filter_import_original_file_name" name="filter_import_original_file_name" />
                     <x-filter.input type="text" id="filter_error_file_name" name="filter_error_file_name" />
                     <x-filter.input type="text" id="filter_message" name="filter_error_message" />
@@ -22,6 +24,12 @@
                     <tr class="text-left cursor-default whitespace-nowrap hover:bg-table-hover group @if($financial_import_history->message) bg-table-error @endif">
                         <td class="py-1 px-2 border-b border-gray-400 text-center">{{ CarbonImmutable::parse($financial_import_history->created_at)->isoFormat('YYYY年MM月DD日(ddd)') }}</td>
                         <td class="py-1 px-2 border-b border-gray-400 text-center">{{ CarbonImmutable::parse($financial_import_history->created_at)->isoFormat('HH時mm分ss秒') }}</td>
+                        <td class="py-1 px-2 border-b border-gray-400 ">
+                            <div class="flex items-center gap-1">
+                                <img class="profile_image_normal image_fade_in_modal_open flex-shrink-0" src="{{ asset('storage/profile_images/'.$financial_import_history->user->profile_image_file_name) }}">
+                                {{ $financial_import_history->user->user_name }}
+                            </div>
+                        </td>
                         <td class="py-1 px-2 border-b border-gray-400">{{ $financial_import_history->import_original_file_name }}</td>
                         <td class="py-1 px-2 border-b border-gray-400 text-center">
                             @if(!is_null($financial_import_history->error_file_name))
