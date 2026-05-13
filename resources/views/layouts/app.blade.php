@@ -30,7 +30,7 @@
             'resources/sass/navigation.scss',
             'resources/sass/loading.scss',
             'resources/sass/dropdown.scss',
-            'resources/sass/profile/profile_image.scss',
+            'resources/sass/image.scss',
             'resources/sass/height_adjustment.scss',
         ])
 

@@ -16,3 +16,12 @@
     object-fit: cover;
     vertical-align: middle;
 }
+/*  顧客画像用  */
+.client_image_normal {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;  // 少し角丸にする程度
+    object-fit: contain; // はみ出さずに収める
+    vertical-align: middle;
+}

@@ -23,6 +23,7 @@ export default defineConfig({
                 'resources/sass/height_adjustment.scss',
                 'resources/sass/welcome.scss',
                 'resources/sass/common.scss',
+                'resources/sass/image.scss',
                 // 認証
                 'resources/js/auth/register.js',
                 // 顧客
@@ -38,7 +39,6 @@ export default defineConfig({
                 // プロフィール
                 'resources/js/profile/profile.js',
                 'resources/sass/profile/profile.scss',
-                'resources/sass/profile/profile_image.scss',
             ],
             refresh: true,
         }),

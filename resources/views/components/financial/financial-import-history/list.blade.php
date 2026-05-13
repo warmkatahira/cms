@@ -5,7 +5,7 @@
                 <tr class="text-left text-white bg-table-header whitespace-nowrap sticky top-0 h-7 z-10">
                     <th class="font-thin py-1 px-2 text-center">取込日</th>
                     <th class="font-thin py-1 px-2 text-center">取込時間</th>
-                    <th class="font-thin py-1 px-2 text-center">取込ユーザー</th>
+                    <th class="font-thin py-1 px-2 text-center">取込者</th>
                     <th class="font-thin py-1 px-2 text-center">取込ファイル名</th>
                     <th class="font-thin py-1 px-2 text-center">エラーファイル</th>
                     <th class="font-thin py-1 px-2 text-center">メッセージ</th>

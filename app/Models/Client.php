@@ -25,4 +25,9 @@ class Client extends Model
     {
         return $this->belongsTo(User::class, 'updated_by', 'user_no');
     }
+    // client_aliasesテーブルとのリレーション
+    public function client_aliases()
+    {
+        return $this->hasMany(ClientAlias::class, 'client_id', 'client_id');
+    }
 }

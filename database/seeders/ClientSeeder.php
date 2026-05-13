@@ -18,6 +18,7 @@ class ClientSeeder extends Seeder
         Client::create([
             'client_name'   => 'PIA',
             'updated_by'    => 1,
+            'client_image_file_name'    => 'pia.png',
         ]);
         ClientAlias::create([
             'base_id'           => 'LP',
@@ -33,6 +34,7 @@ class ClientSeeder extends Seeder
         Client::create([
             'client_name'   => '拓洋',
             'updated_by'    => 1,
+            'client_image_file_name'    => 'takuyou.png',
         ]);
         ClientAlias::create([
             'base_id'           => 'LP',

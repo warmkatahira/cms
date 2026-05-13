@@ -6,9 +6,16 @@
     <div class="flex flex-col gap-3 pt-7 pl-5">
         <!-- ダッシュボード -->
         <x-navigation-btn route="dashboard.index" label="ダッシュボード" icon="las la-home" isRightMargin="true" />
+        <!-- 顧客 -->
+        <div class="flex flex-col gap-0.5">
+            <x-navigation-btn label="顧客" icon="las la-building" openCloseKey="client" />
+            <div class="navigation-content hidden">
+                <x-navigation-btn route="client.index" label="顧客一覧" isLeftMargin="true" isRightMargin="true" />
+            </div>
+        </div>
         <!-- 収支データ -->
         <div class="flex flex-col gap-0.5">
-            <x-navigation-btn label="収支データ" icon="las la-users-cog" openCloseKey="system_admin" />
+            <x-navigation-btn label="収支データ" icon="las la-coins" openCloseKey="financial" />
             <div class="navigation-content hidden">
                 <x-navigation-btn route="financial_import.index" label="データ取込" isLeftMargin="true" isRightMargin="true" />
                 <x-navigation-btn route="financial_import_history.index" label="取込履歴" isLeftMargin="true" isRightMargin="true" />
@@ -17,7 +24,7 @@
         @can('base_admin_check')
             <!-- 管理 -->
              <div class="flex flex-col gap-0.5">
-                <x-navigation-btn label="管理" icon="las la-users-cog" openCloseKey="system_admin" />
+                <x-navigation-btn label="管理" icon="las la-users-cog" openCloseKey="admin" />
                 <div class="navigation-content hidden">
                     <x-navigation-btn route="employee.index" label="従業員一覧" isLeftMargin="true" isRightMargin="true" />
                     @can('admin_check')

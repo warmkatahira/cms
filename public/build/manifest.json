@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CERKNlUZ.css",
+    "file": "assets/app-BDc9zcmm.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -144,8 +144,13 @@
     "isEntry": true
   },
   "resources/sass/height_adjustment.scss": {
-    "file": "assets/height_adjustment-CyZ-v8iT.css",
+    "file": "assets/height_adjustment-xXwASWdb.css",
     "src": "resources/sass/height_adjustment.scss",
+    "isEntry": true
+  },
+  "resources/sass/image.scss": {
+    "file": "assets/image-GO7v5J9b.css",
+    "src": "resources/sass/image.scss",
     "isEntry": true
   },
   "resources/sass/loading.scss": {
@@ -161,11 +166,6 @@
   "resources/sass/profile/profile.scss": {
     "file": "assets/profile-sn2S9o_Z.css",
     "src": "resources/sass/profile/profile.scss",
-    "isEntry": true
-  },
-  "resources/sass/profile/profile_image.scss": {
-    "file": "assets/profile_image-DRJ8DOA0.css",
-    "src": "resources/sass/profile/profile_image.scss",
     "isEntry": true
   },
   "resources/sass/theme.scss": {
