@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 // モデル
 use App\Models\Client;
 use App\Models\Base;
+// リクエスト
+use App\Http\Requests\Client\ClientAlias\ClientAliasCreateRequest;
+// サービス
+use App\Services\Client\ClientAlias\ClientAliasCreateService;
+// その他
+use Illuminate\Support\Facades\DB;
 
 class ClientAliasCreateController extends Controller
 {
@@ -27,8 +33,26 @@ class ClientAliasCreateController extends Controller
         ]);
     }
 
-    public function create(Request $request)
+    public function create(ClientAliasCreateRequest $request)
     {
-
+        try {
+            DB::transaction(function () use ($request) {
+                // インスタンス化
+                $ClientAliasCreateService = new ClientAliasCreateService;
+                // エイリアスを登録
+                $ClientAliasCreateService->createClientAliases($request->aliases);
+            });
+        } catch (\Exception $e) {
+            return redirect()->route('financial_import_history.index')->with([
+                'alert_type'    => 'error',
+                'alert_message' => $e->getMessage(),
+            ]);
+        }
+        // セッションをクリア
+        session()->forget('unregistered_aliases');
+        return redirect()->route('financial_import.index')->with([
+            'alert_type'    => 'success',
+            'alert_message' => '紐付け登録が完了しました。再度収支データを取り込んでください。',
+        ]);
     }
 }

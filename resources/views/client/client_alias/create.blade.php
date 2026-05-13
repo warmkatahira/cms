@@ -1,7 +1,11 @@
 <x-app-layout>
     <div class="w-full max-w-3xl">
         <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            <p class="text-sm text-gray-600 mb-6">以下の荷主名が未登録です。既存の顧客と紐付けてください。</p>
+            @if(!empty($unregistered_aliases))
+                <p class="text-sm text-gray-600 mb-6">以下の荷主名が顧客と紐付けされていません。紐付けを行ってください。</p>
+            @else
+                <p class="text-sm text-gray-600 mb-6">未登録の荷主名はありません。</p>
+            @endif
             <form method="POST" action="{{ route('client_alias_create.create') }}" id="client_alias_create_form">
                 @csrf
                 <div class="space-y-4">
@@ -36,14 +40,16 @@
                     @endforeach
                 </div>
                 <div class="mt-6 flex justify-end">
-                    <button
-                        type="button"
-                        id="client_alias_create_enter"
-                        class="btn inline-flex items-center gap-2 bg-btn-enter text-white text-sm px-8 py-3 rounded-xl shadow-sm transition-all duration-150"
-                    >
-                        <i class="las la-save la-lg"></i>
-                        登録
-                    </button>
+                    @if(!empty($unregistered_aliases))
+                        <button
+                            type="button"
+                            id="client_alias_create_enter"
+                            class="btn inline-flex items-center gap-2 bg-btn-enter text-white text-sm px-8 py-3 rounded-xl shadow-sm transition-all duration-150"
+                        >
+                            <i class="las la-save la-lg"></i>
+                            登録
+                        </button>
+                    @endif
                 </div>
             </form>
         </div>
