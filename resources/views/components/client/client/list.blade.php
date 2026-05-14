@@ -23,18 +23,18 @@
                         <td class="py-1 px-2 border-b border-gray-400 text-center">
                             <x-list.status :value="$client->is_active" label1="有効" label0="無効" />
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400">
+                        <td class="py-1 px-5 border-b border-gray-400">
                             <div class="flex items-center gap-3">
                                 <img class="client_image_normal image_fade_in_modal_open flex-shrink-0" src="{{ asset('storage/client_images/'.$client->client_image_file_name) }}">
                                 {{ $client->client_name }}
                             </div>
                         </td>
                         <td class="py-1 px-2 border-b border-gray-400 text-center">
-                            <span class="inline-flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 rounded-full bg-gray-300 text-gray-600 font-medium">
+                            <span class="inline-flex items-center justify-center h-5 w-8 px-3 rounded bg-gray-300 text-gray-600 font-medium tippy_client_aliases" data-client-aliases="{{ $client->clientAliases->map(fn($a) => $a->client_alias_name . '【' . $a->base->base_name . '】')->join(',') }}">
                                 {{ number_format($client->client_aliases_count) }}
                             </span>
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400">
+                        <td class="py-1 px-5 border-b border-gray-400">
                             <div class="flex items-center gap-1">
                                 <img class="profile_image_normal image_fade_in_modal_open flex-shrink-0" src="{{ asset('storage/profile_images/'.$client->user->profile_image_file_name) }}">
                                 {{ $client->user->user_name }}

@@ -28,6 +28,12 @@
       "resources/js/loading.js"
     ]
   },
+  "resources/js/client/client/client.js": {
+    "file": "assets/client-DYvVMV0k.js",
+    "name": "client",
+    "src": "resources/js/client/client/client.js",
+    "isEntry": true
+  },
   "resources/js/client/client_alias/client_alias.js": {
     "file": "assets/client_alias-DsqNOso_.js",
     "name": "client_alias",

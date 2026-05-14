@@ -6,3 +6,6 @@
         <x-client.client.list :clients="$clients" />
     </div>
 </x-app-layout>
+@vite([
+    'resources/js/client/client/client.js',
+])

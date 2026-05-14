@@ -15,7 +15,7 @@ class ClientSearchService extends BaseFilterService
     protected function baseQuery()
     {
         // クエリをセット
-        return Client::with(['user'])->withCount('client_aliases');
+        return Client::with(['user', 'clientAliases.base'])->withCount('clientAliases');
     }
 
     public function setSearchCondition($request)

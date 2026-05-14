@@ -14,4 +14,9 @@ class ClientAlias extends Model
         'client_id',
         'client_alias_name',
     ];
+    // basesテーブルとのリレーション
+    public function base()
+    {
+        return $this->belongsTo(Base::class, 'base_id', 'base_id');
+    }
 }
