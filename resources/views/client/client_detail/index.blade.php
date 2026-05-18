@@ -45,6 +45,7 @@
                 <div>
                     <p class="text-xs text-gray-400 mb-0.5">経費合計</p>
                     <p id="total_cost" class="text-gray-700 font-medium">¥{{ number_format($summary['total_cost']) }}</p>
+                    <p id="hq_cost_row" class="text-xs text-gray-400 mt-0.5">うち本社管理費 ¥{{ number_format($summary['total_cost_hq']) }}</p>
                 </div>
                 <div>
                     <p class="text-xs text-gray-400 mb-0.5">収支</p>
@@ -64,6 +65,8 @@
         <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
             <p class="text-sm font-semibold text-gray-600 mb-4">{{ now()->year }}年 月次推移</p>
             <canvas id="monthly_chart"></canvas>
+            {{-- カスタム凡例（JS側で生成） --}}
+            <div id="chart_legend" class="mt-4 pt-4 border-t border-gray-100 flex flex-col gap-3"></div>
         </div>
         {{-- 月次データをデータ属性で渡す --}}
         <div id="monthly_data"

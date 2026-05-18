@@ -30,11 +30,12 @@ class ClientDetailService
                         ->first();
         // 売上合計・経費合計・収支を返す（データがない場合は0）
         return [
-            'total_sales'        => $summary->total_sales ?? 0,         // 売上合計
-            'total_cost'         => $summary->total_cost ?? 0,          // 経費合計（本社管理費含む）
-            'total_cost_ex_hq'   => $summary->total_cost_ex_hq ?? 0,    // 経費合計（本社管理費除く）
-            'gross_profit'       => ($summary->total_sales ?? 0) - ($summary->total_cost ?? 0),         // 収支（本社管理費含む）
-            'gross_profit_ex_hq' => ($summary->total_sales ?? 0) - ($summary->total_cost_ex_hq ?? 0),  // 収支（本社管理費除く）
+            'total_sales'        => $summary->total_sales ?? 0,
+            'total_cost'         => $summary->total_cost ?? 0,
+            'total_cost_ex_hq'   => $summary->total_cost_ex_hq ?? 0,
+            'total_cost_hq'      => $summary->total_cost_hq ?? 0,  // ← 追加
+            'gross_profit'       => ($summary->total_sales ?? 0) - ($summary->total_cost ?? 0),
+            'gross_profit_ex_hq' => ($summary->total_sales ?? 0) - ($summary->total_cost_ex_hq ?? 0),
         ];
     }
 
@@ -52,6 +53,13 @@ class ClientDetailService
                 . ' SUM(sales_freight) as sales_freight,'
                 . ' SUM(sales_other) as sales_other,'
                 . ' SUM(sales_storage + sales_handling + sales_freight + sales_other) as total_sales,'
+                . ' SUM(cost_storage) as cost_storage,'
+                . ' SUM(cost_employee) as cost_employee,'
+                . ' SUM(cost_part) as cost_part,'
+                . ' SUM(cost_temp) as cost_temp,'
+                . ' SUM(cost_freight) as cost_freight,'
+                . ' SUM(cost_other) as cost_other,'
+                . ' SUM(cost_hq) as cost_hq,'
                 . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other + cost_hq) as total_cost,'
                 . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other) as total_cost_ex_hq';
         // 月次データを取得
@@ -76,6 +84,13 @@ class ClientDetailService
                 'sales_freight'      => $row->sales_freight  ?? 0,
                 'sales_other'        => $row->sales_other    ?? 0,
                 'total_sales'        => $totalSales,
+                'cost_storage'       => $row->cost_storage   ?? 0,  // 追加
+                'cost_employee'      => $row->cost_employee  ?? 0,  // 追加
+                'cost_part'          => $row->cost_part      ?? 0,  // 追加
+                'cost_temp'          => $row->cost_temp      ?? 0,  // 追加
+                'cost_freight'       => $row->cost_freight   ?? 0,  // 追加
+                'cost_other'         => $row->cost_other     ?? 0,  // 追加
+                'cost_hq'            => $row->cost_hq        ?? 0,  // 追加
                 'total_cost'         => $totalCost,
                 'total_cost_ex_hq'   => $totalCostExHq,
                 'gross_profit'       => $totalSales - $totalCost,
@@ -99,6 +114,13 @@ class ClientDetailService
                 . ' SUM(sales_freight) as sales_freight,'
                 . ' SUM(sales_other) as sales_other,'
                 . ' SUM(sales_storage + sales_handling + sales_freight + sales_other) as total_sales,'
+                . ' SUM(cost_storage) as cost_storage,'
+                . ' SUM(cost_employee) as cost_employee,'
+                . ' SUM(cost_part) as cost_part,'
+                . ' SUM(cost_temp) as cost_temp,'
+                . ' SUM(cost_freight) as cost_freight,'
+                . ' SUM(cost_other) as cost_other,'
+                . ' SUM(cost_hq) as cost_hq,'
                 . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other + cost_hq) as total_cost,'
                 . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other) as total_cost_ex_hq';
         // 月次データを取得
@@ -123,6 +145,13 @@ class ClientDetailService
                 'sales_freight'      => $row->sales_freight  ?? 0,
                 'sales_other'        => $row->sales_other    ?? 0,
                 'total_sales'        => $totalSales,
+                'cost_storage'       => $row->cost_storage   ?? 0,  // 追加
+                'cost_employee'      => $row->cost_employee  ?? 0,  // 追加
+                'cost_part'          => $row->cost_part      ?? 0,  // 追加
+                'cost_temp'          => $row->cost_temp      ?? 0,  // 追加
+                'cost_freight'       => $row->cost_freight   ?? 0,  // 追加
+                'cost_other'         => $row->cost_other     ?? 0,  // 追加
+                'cost_hq'            => $row->cost_hq        ?? 0,  // 追加
                 'total_cost'         => $totalCost,
                 'total_cost_ex_hq'   => $totalCostExHq,
                 'gross_profit'       => $totalSales - $totalCost,
