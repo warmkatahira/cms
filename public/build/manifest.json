@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-Bb0pYUX7.css",
+    "file": "assets/app-DWOh9aWX.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -44,7 +44,7 @@
     ]
   },
   "resources/js/client/client_detail/chart.js": {
-    "file": "assets/chart-BYKueKDd.js",
+    "file": "assets/chart-BthmsmKh.js",
     "name": "chart",
     "src": "resources/js/client/client_detail/chart.js",
     "isEntry": true

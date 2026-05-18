@@ -18,7 +18,7 @@ const summary = {
 };
 
 function formatNumber(num) {
-    return '¥' + num.toLocaleString();
+    return '¥' + parseInt(num).toLocaleString();
 }
 
 // 売上内訳の色（青系・はっきり異なる色）
@@ -272,6 +272,29 @@ function updateSummary(includeHq) {
 
     $('#hq_cost_row').toggle(includeHq);
 
+    // 月別テーブルを更新
+    monthlyData.forEach((row, i) => {
+        const rowCost   = includeHq ? row.total_cost : row.total_cost_ex_hq;
+        const rowProfit = includeHq ? row.gross_profit : row.gross_profit_ex_hq;
+
+        $(`#monthly_cost_${i}`).text(formatNumber(rowCost));
+        $(`#monthly_hq_${i}`).css('visibility', includeHq ? 'visible' : 'hidden');
+        $(`#monthly_profit_${i}`)
+            .text(formatNumber(rowProfit))
+            .removeClass('text-green-600 text-red-500')
+            .addClass(rowProfit >= 0 ? 'text-green-600' : 'text-red-500');
+    });
+
+    // 合計行を更新
+    const totalCost   = includeHq ? summary.total_cost : summary.total_cost_ex_hq;
+    const totalProfit = includeHq ? summary.gross_profit : summary.gross_profit_ex_hq;
+    $('#monthly_cost_total').text(formatNumber(totalCost));
+    $('#monthly_hq_total').css('visibility', includeHq ? 'visible' : 'hidden');
+    $('#monthly_profit_total')
+        .text(formatNumber(totalProfit))
+        .removeClass('text-green-600 text-red-500')
+        .addClass(totalProfit >= 0 ? 'text-green-600' : 'text-red-500');
+
     renderChart(includeHq);
 
     if (includeHq) {
@@ -281,12 +304,39 @@ function updateSummary(includeHq) {
         $('#toggle_exclude_hq').removeClass('bg-white text-gray-500').addClass('bg-theme-main text-white');
         $('#toggle_include_hq').removeClass('bg-theme-main text-white').addClass('bg-white text-gray-500');
     }
+    // 本社管理費列の表示切り替え
+    $('#th_hq').css('visibility', includeHq ? 'visible' : 'hidden');
+    monthlyData.forEach((row, i) => {
+        $(`#monthly_hq_${i}`).css('visibility', includeHq ? 'visible' : 'hidden');
+    });
+    $('#monthly_hq_total').css('visibility', includeHq ? 'visible' : 'hidden');
 }
 
 $(function () {
     window._includeHq = true;
     renderChart(true);
     buildLegend();
+
+    // アコーディオン
+    $('#toggle_monthly_table').on('click', function () {
+        $('#monthly_table_body').toggleClass('hidden');
+        $('#toggle_monthly_table_icon').toggleClass('rotate-180');
+    });
+
+    $('#toggle_monthly_chart').on('click', function () {
+        const isHidden = $('#monthly_chart_body').hasClass('hidden');
+        $('#monthly_chart_body').toggleClass('hidden');
+        $('#toggle_monthly_chart_icon').toggleClass('rotate-180');
+        // グラフは表示時に初回描画
+        if (isHidden && !monthlyChart) {
+            renderChart(window._includeHq);
+        }
+    });
+
+    $('#toggle_aliases').on('click', function () {
+        $('#aliases_body').toggleClass('hidden');
+        $('#toggle_aliases_icon').toggleClass('rotate-180');
+    });
 
     $('#toggle_include_hq').on('click', function () { updateSummary(true); });
     $('#toggle_exclude_hq').on('click', function () { updateSummary(false); });
