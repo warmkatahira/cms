@@ -47,6 +47,10 @@ class ClientDetailService
         $clientAliasIds = $client->clientAliases->pluck('client_alias_id');
         // SQLを定義（year_monthは予約語と衝突するためバッククォートで囲む）
         $sql = 'MONTH(`year_month`) as month,'
+                . ' SUM(sales_storage) as sales_storage,'
+                . ' SUM(sales_handling) as sales_handling,'
+                . ' SUM(sales_freight) as sales_freight,'
+                . ' SUM(sales_other) as sales_other,'
                 . ' SUM(sales_storage + sales_handling + sales_freight + sales_other) as total_sales,'
                 . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other + cost_hq) as total_cost,'
                 . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other) as total_cost_ex_hq';
@@ -62,13 +66,20 @@ class ClientDetailService
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
             $row = $rows->get($m);
+            $totalSales = ($row->total_sales ?? 0);
+            $totalCost  = ($row->total_cost ?? 0);
+            $totalCostExHq = ($row->total_cost_ex_hq ?? 0);
             $monthly[] = [
-                'month'              => $m . '月',          // 月ラベル
-                'total_sales'        => $row->total_sales ?? 0,         // 売上合計
-                'total_cost'         => $row->total_cost ?? 0,          // 経費合計（本社管理費含む）
-                'total_cost_ex_hq'   => $row->total_cost_ex_hq ?? 0,    // 経費合計（本社管理費除く）
-                'gross_profit'       => ($row->total_sales ?? 0) - ($row->total_cost ?? 0),         // 収支（本社管理費含む）
-                'gross_profit_ex_hq' => ($row->total_sales ?? 0) - ($row->total_cost_ex_hq ?? 0),  // 収支（本社管理費除く）
+                'month'              => $m . '月',
+                'sales_storage'      => $row->sales_storage  ?? 0,
+                'sales_handling'     => $row->sales_handling ?? 0,
+                'sales_freight'      => $row->sales_freight  ?? 0,
+                'sales_other'        => $row->sales_other    ?? 0,
+                'total_sales'        => $totalSales,
+                'total_cost'         => $totalCost,
+                'total_cost_ex_hq'   => $totalCostExHq,
+                'gross_profit'       => $totalSales - $totalCost,
+                'gross_profit_ex_hq' => $totalSales - $totalCostExHq,
             ];
         }
         return $monthly;
@@ -83,9 +94,13 @@ class ClientDetailService
         $clientAliasIds = $client->clientAliases->pluck('client_alias_id');
         // SQLを定義
         $sql = 'MONTH(`year_month`) as month,'
-            . ' SUM(sales_storage + sales_handling + sales_freight + sales_other) as total_sales,'
-            . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other + cost_hq) as total_cost,'
-            . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other) as total_cost_ex_hq';
+                . ' SUM(sales_storage) as sales_storage,'
+                . ' SUM(sales_handling) as sales_handling,'
+                . ' SUM(sales_freight) as sales_freight,'
+                . ' SUM(sales_other) as sales_other,'
+                . ' SUM(sales_storage + sales_handling + sales_freight + sales_other) as total_sales,'
+                . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other + cost_hq) as total_cost,'
+                . ' SUM(cost_storage + cost_employee + cost_part + cost_temp + cost_freight + cost_other) as total_cost_ex_hq';
         // 月次データを取得
         $rows = MonthlyFinancial::whereIn('client_alias_id', $clientAliasIds)
                     ->whereYear('year_month', $lastYear)
@@ -98,13 +113,20 @@ class ClientDetailService
         $monthly = [];
         for ($m = 1; $m <= 12; $m++) {
             $row = $rows->get($m);
+            $totalSales = ($row->total_sales ?? 0);
+            $totalCost  = ($row->total_cost ?? 0);
+            $totalCostExHq = ($row->total_cost_ex_hq ?? 0);
             $monthly[] = [
                 'month'              => $m . '月',
-                'total_sales'        => $row->total_sales ?? 0,
-                'total_cost'         => $row->total_cost ?? 0,
-                'total_cost_ex_hq'   => $row->total_cost_ex_hq ?? 0,
-                'gross_profit'       => ($row->total_sales ?? 0) - ($row->total_cost ?? 0),
-                'gross_profit_ex_hq' => ($row->total_sales ?? 0) - ($row->total_cost_ex_hq ?? 0),
+                'sales_storage'      => $row->sales_storage  ?? 0,
+                'sales_handling'     => $row->sales_handling ?? 0,
+                'sales_freight'      => $row->sales_freight  ?? 0,
+                'sales_other'        => $row->sales_other    ?? 0,
+                'total_sales'        => $totalSales,
+                'total_cost'         => $totalCost,
+                'total_cost_ex_hq'   => $totalCostExHq,
+                'gross_profit'       => $totalSales - $totalCost,
+                'gross_profit_ex_hq' => $totalSales - $totalCostExHq,
             ];
         }
         return $monthly;
