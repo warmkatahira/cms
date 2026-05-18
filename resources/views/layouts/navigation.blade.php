@@ -21,30 +21,11 @@
                 <x-navigation-btn route="financial_import_history.index" label="取込履歴" isLeftMargin="true" isRightMargin="true" />
             </div>
         </div>
-        @can('base_admin_check')
-            <!-- 管理 -->
-             <div class="flex flex-col gap-0.5">
-                <x-navigation-btn label="管理" icon="las la-users-cog" openCloseKey="admin" />
-                <div class="navigation-content hidden">
-                    <x-navigation-btn route="employee.index" label="従業員一覧" isLeftMargin="true" isRightMargin="true" />
-                    @can('admin_check')
-                        <x-navigation-btn route="file_import.index" label="ファイル取込" isLeftMargin="true" isRightMargin="true" />
-                        <x-navigation-btn route="import_history.index" label="取込履歴" isLeftMargin="true" isRightMargin="true" />
-                    @endcan
-                </div>
-            </div>
-        @endcan
         @can('admin_check')
             <!-- システム管理 -->
              <div class="flex flex-col gap-0.5">
                 <x-navigation-btn label="システム管理" icon="las la-robot" openCloseKey="system_admin" />
                 <div class="navigation-content hidden">
-                    @can('system_admin_check')
-                        <x-navigation-btn route="role.index" label="権限" isLeftMargin="true" isRightMargin="true" />
-                    @endcan
-                    @can('admin_check')
-                        <x-navigation-btn route="base.index" label="営業所" isLeftMargin="true" isRightMargin="true" />
-                    @endcan
                     @can('system_admin_check')
                         <x-navigation-btn route="user.index" label="ユーザー" isLeftMargin="true" isRightMargin="true" />
                     @endcan

@@ -17,23 +17,8 @@ class UserSearchService extends BaseFilterService
     // ベースクエリ
     protected function baseQuery()
     {
-        // ログインユーザーを取得
-        $auth_user = Auth::user();
         // クエリをセット
-        $query = User::with(['role', 'base'])
-                    ->select('users.*')
-                    ->selectRaw("
-                        CONCAT(
-                            TIMESTAMPDIFF(YEAR, hire_date, NOW()), '年',
-                            MOD(TIMESTAMPDIFF(MONTH, hire_date, NOW()), 12), 'ヶ月'
-                        ) as service_years
-                    ");
-        // base_adminの場合、有効かつ自分の営業所のみに絞る
-        if($auth_user->role_id === RoleEnum::BASE_ADMIN){
-            $query->where('is_active', true)
-                ->where('base_id', $auth_user->base_id);
-        }
-        return $query;
+        return User::with(['role', 'base']);
     }
 
     public function setSearchCondition($request)
@@ -63,7 +48,6 @@ class UserSearchService extends BaseFilterService
         return [
             'filter_user_id',
             'filter_user_name',
-            'filter_email',
         ];
     }
 
@@ -83,55 +67,13 @@ class UserSearchService extends BaseFilterService
                     $q->where('base_id', $value);
                 });
             },
-            // 入社日
-            'filter_hire_date_from' => function ($query, $value) {
-                $query->whereDate('hire_date', '>=', session('filter_hire_date_from'))
-                    ->whereDate('hire_date', '<=', session('filter_hire_date_to'));
-            },
-            // 勤続年数
-            'filter_service_years' => function ($query, $value) {
-                $query->whereRaw("
-                    CONCAT(
-                        TIMESTAMPDIFF(YEAR, hire_date, NOW()), '年',
-                        MOD(TIMESTAMPDIFF(MONTH, hire_date, NOW()), 12), 'ヶ月'
-                    ) LIKE ?
-                ", ["%{$value}%"]);
-            },
-            // 総保有日数
-            'filter_total_days' => function ($query, $value) {
-                $query->whereRaw('(COALESCE(carried_over_days, 0) + COALESCE(granted_days, 0)) = ?', [(float) $value]);
-            },
-            // 残日数
-            'filter_remaining_days' => function ($query, $value) {
-                $query->whereRaw('(COALESCE(carried_over_days, 0) + COALESCE(granted_days, 0) - COALESCE(used_days, 0)) = ?', [(float) $value]);
-            },
-            // 総義務日数
-            'filter_total_required_days' => function ($query, $value) {
-                $query->whereRaw('(COALESCE(carried_over_required_days, 0) + COALESCE(granted_required_days, 0)) = ?', [(float) $value]);
-            },
-            // 義務残日数
-            'filter_remaining_required_days' => function ($query, $value) {
-                $query->whereRaw('GREATEST(0, COALESCE(carried_over_required_days, 0) + COALESCE(granted_required_days, 0) - COALESCE(used_days, 0)) = ?', [(float) $value]);
-            },
-            // 次回付与年月
-            'filter_next_grant_year_month' => function ($query, $value) {
-                // input[type=month]は"yyyy-mm"形式で送られてくるので"yyyymm"に変換
-                $query->where('next_grant_year_month', str_replace('-', '', $value));
-            },
-            // 使用日数リセット年月
-            'filter_used_days_reset_year_month' => function ($query, $value) {
-                // input[type=month]は"yyyy-mm"形式で送られてくるので"yyyymm"に変換
-                $query->where('used_days_reset_year_month', str_replace('-', '', $value));
-            },
         ];
     }
 
     // 無視するキー
     protected function ignoreKeys(): array
     {
-        return [
-            'filter_hire_date_to',
-        ];
+        return [];
     }
 
     // 並び替え

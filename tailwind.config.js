@@ -47,9 +47,12 @@ export default {
                     'disabled'      : "#d1d5db",
                 },
                 table: {
-                    'hover' : '#e2c8c0',
+                    'hover' : '#f0e4e0',
                     'header': '#3d5a80',
                     'error' : '#ffe8e8',
+                },
+                badge: {
+                    'normal' : '#cbd5e0',  
                 },
             },
             spacing: {

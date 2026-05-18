@@ -1,6 +1,6 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-BDc9zcmm.css",
+    "file": "assets/app-Bb0pYUX7.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -43,6 +43,18 @@
       "resources/js/loading.js"
     ]
   },
+  "resources/js/client/client_detail/chart.js": {
+    "file": "assets/chart-C1U4PoZS.js",
+    "name": "chart",
+    "src": "resources/js/client/client_detail/chart.js",
+    "isEntry": true
+  },
+  "resources/js/client/client_detail/client_detail.js": {
+    "file": "assets/client_detail-w6qv48N0.js",
+    "name": "client_detail",
+    "src": "resources/js/client/client_detail/client_detail.js",
+    "isEntry": true
+  },
   "resources/js/common.js": {
     "file": "assets/common-DYSTgVaS.js",
     "name": "common",
@@ -77,7 +89,7 @@
     ]
   },
   "resources/js/image_fade_in.js": {
-    "file": "assets/image_fade_in-BEYib6UT.js",
+    "file": "assets/image_fade_in-OSpMHL8M.js",
     "name": "image_fade_in",
     "src": "resources/js/image_fade_in.js",
     "isEntry": true
@@ -112,15 +124,6 @@
     "src": "resources/js/search_date.js",
     "isEntry": true
   },
-  "resources/js/system_admin/base/base.js": {
-    "file": "assets/base-BU6vc1zC.js",
-    "name": "base",
-    "src": "resources/js/system_admin/base/base.js",
-    "isEntry": true,
-    "imports": [
-      "resources/js/loading.js"
-    ]
-  },
   "resources/js/system_admin/user/user.js": {
     "file": "assets/user-BcyTqwT_.js",
     "name": "user",
@@ -130,22 +133,13 @@
       "resources/js/loading.js"
     ]
   },
-  "resources/js/system_admin/working_hour/working_hour.js": {
-    "file": "assets/working_hour-BOTitX25.js",
-    "name": "working_hour",
-    "src": "resources/js/system_admin/working_hour/working_hour.js",
-    "isEntry": true,
-    "imports": [
-      "resources/js/loading.js"
-    ]
-  },
   "resources/sass/common.scss": {
-    "file": "assets/common-C_Ek5JKF.css",
+    "file": "assets/common-B9dRLf3d.css",
     "src": "resources/sass/common.scss",
     "isEntry": true
   },
   "resources/sass/dropdown.scss": {
-    "file": "assets/dropdown-DLqcM_Df.css",
+    "file": "assets/dropdown-B2bCmhoy.css",
     "src": "resources/sass/dropdown.scss",
     "isEntry": true
   },
@@ -180,7 +174,7 @@
     "isEntry": true
   },
   "resources/sass/welcome.scss": {
-    "file": "assets/welcome-orYqPJqY.css",
+    "file": "assets/welcome-C7uKe4yg.css",
     "src": "resources/sass/welcome.scss",
     "isEntry": true
   }

@@ -43,19 +43,45 @@
         <script src="https://unpkg.com/tippy.js@6"></script>
     </head>
     <body>
+        <!-- アニメーション背景 -->
+        <div class="bg-animation">
+            <!-- ノード（点） -->
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <!-- パケット -->
+            <div class="packet"></div>
+            <div class="packet"></div>
+            <div class="packet"></div>
+            <div class="packet"></div>
+            <div class="packet"></div>
+            <!-- スキャンライン -->
+            <div class="scanline"></div>
+            <div class="scanline"></div>
+            <!-- データストリーム -->
+            <div class="data-stream">NAME · EMAIL · TEL · ADDRESS</div>
+            <div class="data-stream">ID · STATUS · DATE · AMOUNT</div>
+            <div class="data-stream">CUSTOMER · ORDER · HISTORY</div>
+            <div class="data-stream">CONTRACT · PLAN · RENEWAL</div>
+        </div>
         <!-- アラート表示 -->
         <x-alert/>
-        <div class="flex flex-col md:flex-row md:items-start md:justify-between md:mx-10">
-            <!-- ロゴ -->
-            <div class="text-center md:text-left">
-                <img src="{{ asset('image/cms_logo.svg') }}" class="welcome_logo mx-auto md:mx-0">
+        <!-- ログインボタン（右上） -->
+        @guest
+            <div class="absolute top-8 right-8">
+                <a href="{{ route('login') }}" class="btn rounded-md bg-theme-main text-white text-center py-5 px-10 text-sm">ログイン</a>
             </div>
-            <!-- ログインボタン -->
-            <div class="flex flex-col md:mt-5">
-                @guest
-                    <a href="{{ route('login') }}" class="btn md:ml-auto rounded-md bg-theme-main text-white text-center md:py-5 py-10 mx-5 md:mx-0 md:w-48 mt-5 md:mt-0 text-2xl md:text-sm">ログイン</a>
-                @endguest
-            </div>
+        @endguest
+        <!-- ロゴ（中央） -->
+        <div class="flex items-center justify-center min-h-screen">
+            <img src="{{ asset('image/cms_logo.svg') }}" class="welcome_logo">
         </div>
     </body>
 </html>

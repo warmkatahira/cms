@@ -28,15 +28,15 @@ export default defineConfig({
                 'resources/js/auth/register.js',
                 // 顧客
                 'resources/js/client/client/client.js',
+                'resources/js/client/client_detail/client_detail.js',
+                'resources/js/client/client_detail/chart.js',
                 'resources/js/client/client_alias/client_alias.js',
                 // 収支データ
                 'resources/js/financial/financial_import/financial_import.js',
                 // 管理
                 'resources/js/admin/employee/employee.js',
                 // システム管理
-                'resources/js/system_admin/base/base.js',
                 'resources/js/system_admin/user/user.js',
-                'resources/js/system_admin/working_hour/working_hour.js',
                 // プロフィール
                 'resources/js/profile/profile.js',
                 'resources/sass/profile/profile.scss',

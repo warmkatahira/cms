@@ -10,8 +10,8 @@ $(document).on('click', function(e){
         const src = e.target.getAttribute('src');
         // imgタグを作成
         const $img = $('<img>')
-                .attr('src', src)
-                .addClass('mx-auto');
+            .attr('src', src)
+            .addClass('mx-auto max-w-full max-h-[80vh] object-contain');
         // 追加
         $('#image_fade_in_div').empty().append($img);
         $('#image_fade_in_modal').removeClass('hidden');

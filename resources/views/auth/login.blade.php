@@ -17,7 +17,7 @@
             <x-auth.input id="password" label="パスワード" type="password" :db="null" />
         @endif
         <div class="flex mt-4">
-            <button type="submit" class="bg-black text-white text-center rounded-lg py-2 px-5 ml-auto">ログイン</button>
+            <button type="submit" class="bg-theme-main text-white text-center rounded-lg py-2 px-5 ml-auto">ログイン</button>
         </div>
     </form>
 </x-guest-layout>
