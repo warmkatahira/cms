@@ -18,6 +18,10 @@
   height: 40px;
 }
 
+.system_name {
+    @include font.SawarabiMincho;
+}
+
 /*  ツールチップのデザイン  */
 .tippy-box[data-theme~='tippy_main_theme'] {
   background-color: color.$tippy;

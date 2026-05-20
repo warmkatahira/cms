@@ -55,7 +55,7 @@
         <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
 
         <!-- Google Fonts -->
-        <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Oleo+Script:wght@400;700&family=Zen+Maru+Gothic:wght@900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Oleo+Script:wght@400;700&family=Zen+Maru+Gothic:wght@900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
 
         <!-- Lordicon -->
         <script src="https://cdn.lordicon.com/pzdvqjsp.js"></script>

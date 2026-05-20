@@ -8,6 +8,11 @@
     font-family: 'Zen Maru Gothic'
 }
 
+// 日本語のフォント
+@mixin SawarabiMincho {
+    font-family: 'Sawarabi Mincho'
+}
+
 // 英語のフォント
 @mixin OleoScript {
     font-family: 'Oleo Script'
