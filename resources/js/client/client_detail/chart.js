@@ -117,76 +117,26 @@ function renderChart(includeHq) {
             labels: monthlyData.map(d => d.month),
             datasets: [
                 // 売上内訳（積み上げ棒グラフ）
-                { type: 'bar', label: '売上：保管',        data: monthlyData.map(d => d.sales_storage),  backgroundColor: salesColors.storage.bg,  borderColor: salesColors.storage.border,  borderWidth: 0, stack: 'sales', order: 2, datalabels: { display: true, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '売上：保管',        data: monthlyData.map(d => d.sales_storage),  backgroundColor: salesColors.storage.bg,  borderColor: salesColors.storage.border,  borderWidth: 0, stack: 'sales', order: 1, datalabels: { display: true, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
                 { type: 'bar', label: '売上：荷役',        data: monthlyData.map(d => d.sales_handling), backgroundColor: salesColors.handling.bg, borderColor: salesColors.handling.border, borderWidth: 0, stack: 'sales', order: 2, datalabels: { display: true, formatter: () => '荷', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '売上：運賃',        data: monthlyData.map(d => d.sales_freight),  backgroundColor: salesColors.freight.bg,  borderColor: salesColors.freight.border,  borderWidth: 0, stack: 'sales', order: 2, datalabels: { display: true, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '売上：その他',      data: monthlyData.map(d => d.sales_other),    backgroundColor: salesColors.other.bg,    borderColor: salesColors.other.border,    borderWidth: 0, stack: 'sales', order: 2, datalabels: { display: true, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '経費：保管',        data: monthlyData.map(d => d.cost_storage),   backgroundColor: costColors.storage.bg,   borderColor: costColors.storage.border,   borderWidth: 0, stack: 'cost',  order: 2, datalabels: { display: true, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '経費：社員人件費',  data: monthlyData.map(d => d.cost_employee),  backgroundColor: costColors.employee.bg,  borderColor: costColors.employee.border,  borderWidth: 0, stack: 'cost',  order: 2, datalabels: { display: true, formatter: () => '社', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '経費：パート人件費',data: monthlyData.map(d => d.cost_part),      backgroundColor: costColors.part.bg,      borderColor: costColors.part.border,      borderWidth: 0, stack: 'cost',  order: 2, datalabels: { display: true, formatter: () => 'パ', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '経費：派遣人件費',  data: monthlyData.map(d => d.cost_temp),      backgroundColor: costColors.temp.bg,      borderColor: costColors.temp.border,      borderWidth: 0, stack: 'cost',  order: 2, datalabels: { display: true, formatter: () => '派', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '経費：運賃',        data: monthlyData.map(d => d.cost_freight),   backgroundColor: costColors.freight.bg,   borderColor: costColors.freight.border,   borderWidth: 0, stack: 'cost',  order: 2, datalabels: { display: true, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar', label: '経費：その他',      data: monthlyData.map(d => d.cost_other),     backgroundColor: costColors.other.bg,     borderColor: costColors.other.border,     borderWidth: 0, stack: 'cost',  order: 2, datalabels: { display: true, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '売上：運賃',        data: monthlyData.map(d => d.sales_freight),  backgroundColor: salesColors.freight.bg,  borderColor: salesColors.freight.border,  borderWidth: 0, stack: 'sales', order: 3, datalabels: { display: true, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '売上：その他',      data: monthlyData.map(d => d.sales_other),    backgroundColor: salesColors.other.bg,    borderColor: salesColors.other.border,    borderWidth: 0, stack: 'sales', order: 4, datalabels: { display: true, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '経費：保管',        data: monthlyData.map(d => d.cost_storage),   backgroundColor: costColors.storage.bg,   borderColor: costColors.storage.border,   borderWidth: 0, stack: 'cost',  order: 5, datalabels: { display: true, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '経費：社員人件費',  data: monthlyData.map(d => d.cost_employee),  backgroundColor: costColors.employee.bg,  borderColor: costColors.employee.border,  borderWidth: 0, stack: 'cost',  order: 6, datalabels: { display: true, formatter: () => '社', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '経費：パート人件費',data: monthlyData.map(d => d.cost_part),      backgroundColor: costColors.part.bg,      borderColor: costColors.part.border,      borderWidth: 0, stack: 'cost',  order: 7, datalabels: { display: true, formatter: () => 'パ', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '経費：派遣人件費',  data: monthlyData.map(d => d.cost_temp),      backgroundColor: costColors.temp.bg,      borderColor: costColors.temp.border,      borderWidth: 0, stack: 'cost',  order: 8, datalabels: { display: true, formatter: () => '派', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '経費：運賃',        data: monthlyData.map(d => d.cost_freight),   backgroundColor: costColors.freight.bg,   borderColor: costColors.freight.border,   borderWidth: 0, stack: 'cost',  order: 9, datalabels: { display: true, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar', label: '経費：その他',      data: monthlyData.map(d => d.cost_other),     backgroundColor: costColors.other.bg,     borderColor: costColors.other.border,     borderWidth: 0, stack: 'cost',  order: 10, datalabels: { display: true, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
                 // 本社管理費（折れ線・常に表示）
-                {
-                    type: 'line',
-                    label: '本社管理費',
-                    data: monthlyData.map(d => d.cost_hq),
-                    borderColor: 'rgba(245, 158, 11, 1)',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    tension: 0.3,
-                    order: 1,
-                },
+                { type: 'line', label: '本社管理費',       data: monthlyData.map(d => d.cost_hq),        backgroundColor: 'rgba(245, 158, 11, 0.1)', borderColor: 'rgba(245, 158, 11, 1)',   borderWidth: 2, pointRadius: 3, tension: 0.3, order: 11,},
                 // 収支（折れ線）※includeHqで計算切り替え
-                {
-                    type: 'line',
-                    label: '収支',
-                    data: profitData,
-                    borderColor: 'rgba(34, 197, 94, 1)',
-                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                    borderWidth: 2,
-                    pointRadius: 3,
-                    tension: 0.3,
-                    order: 1,
-                },
+                { type: 'line',label: '収支', data: profitData, borderColor: 'rgba(34, 197, 94, 1)', backgroundColor: 'rgba(34, 197, 94, 0.1)', borderWidth: 2, pointRadius: 3, tension: 0.3, order: 12, },
                 // 前年売上（点線）
-                {
-                    type: 'line',
-                    label: '前年売上',
-                    data: lastYearSales,
-                    borderColor: 'rgba(59, 130, 246, 0.4)',
-                    borderWidth: 1.5,
-                    borderDash: [5, 5],
-                    pointRadius: 2,
-                    tension: 0.3,
-                    order: 1,
-                },
+                { type: 'line', label: '前年売上', data: lastYearSales, borderColor: 'rgba(59, 130, 246, 0.4)', borderWidth: 1.5, borderDash: [5, 5], pointRadius: 2, tension: 0.3, order: 13, },
                 // 前年経費（点線）
-                {
-                    type: 'line',
-                    label: '前年経費',
-                    data: lastYearCost,
-                    borderColor: 'rgba(249, 115, 22, 0.4)',
-                    borderWidth: 1.5,
-                    borderDash: [5, 5],
-                    pointRadius: 2,
-                    tension: 0.3,
-                    order: 1,
-                },
+                { type: 'line', label: '前年経費', data: lastYearCost, borderColor: 'rgba(249, 115, 22, 0.4)', borderWidth: 1.5, borderDash: [5, 5], pointRadius: 2, tension: 0.3, order: 14, },
                 // 前年収支（点線）
-                {
-                    type: 'line',
-                    label: '前年収支',
-                    data: lastYearMonthlyData.map(d => includeHq ? d.gross_profit : d.gross_profit_ex_hq),
-                    borderColor: 'rgba(34, 197, 94, 0.4)',
-                    borderWidth: 1.5,
-                    borderDash: [5, 5],
-                    pointRadius: 2,
-                    tension: 0.3,
-                    order: 1,
-                },
+                { type: 'line', label: '前年収支', data: lastYearMonthlyData.map(d => includeHq ? d.gross_profit : d.gross_profit_ex_hq), borderColor: 'rgba(34, 197, 94, 0.4)', borderWidth: 1.5, borderDash: [5, 5], pointRadius: 2, tension: 0.3, order: 15, },
             ],
         },
         options: {
@@ -208,31 +158,26 @@ function renderChart(includeHq) {
                     display: false,
                 },
                 tooltip: {
+                    bodyFont: { size: 11 },
+                    titleFont: { size: 11 },
+                    padding: 8,
                     callbacks: {
-                        label: (context) => {
-                            if (context.parsed.y === 0) return null;
-                            return context.dataset.label + ': ¥' + context.parsed.y.toLocaleString();
+                        beforeLabel: (context) => {
+                            if (context.dataset.label === '売上：保管')  return '─── 売上 ───────────';
+                            if (context.dataset.label === '経費：保管')  return '─── 経費 ───────────';
+                            if (context.dataset.label === '収支')        return '─── 収支 ───────────';
+                            if (context.dataset.label === '前年売上')    return '─── 前年 ───────────';
+                            return null;
                         },
-                        afterBody: (tooltipItems) => {
-                            const month = tooltipItems[0]?.dataIndex;
-                            if (month === undefined) return [];
-
+                        label: (context) => {
+                            const month = context.dataIndex;
                             const ty = monthlyData[month];
                             const ly = lastYearMonthlyData[month];
                             const _includeHq = window._includeHq ?? true;
 
-                            const tySales  = ty.total_sales;
-                            const tyCost   = _includeHq ? ty.total_cost : ty.total_cost_ex_hq;
-                            const tyProfit = _includeHq ? ty.gross_profit : ty.gross_profit_ex_hq;
-                            const lySales  = parseInt(ly.total_sales)  || 0;
-                            const lyCost   = parseInt(_includeHq ? ly.total_cost : ly.total_cost_ex_hq) || 0;
-                            const lyProfit = parseInt(_includeHq ? ly.gross_profit : ly.gross_profit_ex_hq) || 0;
-
-                            // 増減金額・増減率を計算
                             const diff = (ty, ly) => {
                                 const d = ty - ly;
-                                if (d >= 0) return '+¥' + d.toLocaleString();
-                                return '-¥' + Math.abs(d).toLocaleString();
+                                return (d >= 0 ? '+¥' : '-¥') + Math.abs(d).toLocaleString();
                             };
                             const pct = (ty, ly) => {
                                 if (ly === 0) return '―';
@@ -240,16 +185,52 @@ function renderChart(includeHq) {
                                 return (p >= 0 ? '+' : '') + p + '%';
                             };
 
-                            return [
-                                '───   前年情報   ───────────',
-                                `前年売上: ¥${lySales.toLocaleString()}　${diff(tySales, lySales)}（${pct(tySales, lySales)}）`,
-                                `前年経費: ¥${lyCost.toLocaleString()}　${diff(tyCost, lyCost)}（${pct(tyCost, lyCost)}）`,
-                                `前年収支: ¥${lyProfit.toLocaleString()}　${diff(tyProfit, lyProfit)}（${pct(tyProfit, lyProfit)}）`,
-                            ];
+                            if (context.dataset.label === '前年売上') {
+                                const tySales = ty.total_sales;
+                                const lySales = parseInt(ly.total_sales) || 0;
+                                return `売上: ¥${lySales.toLocaleString()}　${diff(tySales, lySales)}（${pct(tySales, lySales)}）`;
+                            }
+                            if (context.dataset.label === '前年経費') {
+                                const tyCost = _includeHq ? ty.total_cost : ty.total_cost_ex_hq;
+                                const lyCost = parseInt(_includeHq ? ly.total_cost : ly.total_cost_ex_hq) || 0;
+                                return `経費: ¥${lyCost.toLocaleString()}　${diff(tyCost, lyCost)}（${pct(tyCost, lyCost)}）`;
+                            }
+                            if (context.dataset.label === '前年収支') {
+                                const tyProfit = _includeHq ? ty.gross_profit : ty.gross_profit_ex_hq;
+                                const lyProfit = parseInt(_includeHq ? ly.gross_profit : ly.gross_profit_ex_hq) || 0;
+                                return `収支: ¥${lyProfit.toLocaleString()}　${diff(tyProfit, lyProfit)}（${pct(tyProfit, lyProfit)}）`;
+                            }
+
+                            if (context.parsed.y === 0) return null;
+                            const name = context.dataset.label
+                                .replace('売上：', '')
+                                .replace('経費：', '');
+                            return name + ': ¥' + context.parsed.y.toLocaleString();
+                        },
+                        afterLabel: (context) => {
+                            const month = context.dataIndex;
+                            const ty = monthlyData[month];
+                            const _includeHq = window._includeHq ?? true;
+
+                            if (context.dataset.label === '売上：その他') {
+                                return `合計: ¥${parseInt(ty.total_sales).toLocaleString()}`;
+                            }
+                            if (context.dataset.label === '経費：その他') {
+                                if (!_includeHq) {
+                                    return `合計: ¥${parseInt(ty.total_cost_ex_hq).toLocaleString()}`;
+                                }
+                            }
+                            if (context.dataset.label === '本社管理費') {
+                                return `合計: ¥${parseInt(ty.total_cost).toLocaleString()}`;
+                            }
+
+                            return null;
                         },
                     },
                     filter: (tooltipItem) => {
-                        if (tooltipItem.dataset.label.startsWith('前年')) return false;
+                        const label = tooltipItem.dataset.label;
+                        if (label === '前年売上' || label === '前年経費' || label === '前年収支') return true;
+                        if (label === '本社管理費' && !(window._includeHq ?? true)) return false; // 除くときは非表示
                         if (tooltipItem.parsed.y === 0) return false;
                         return true;
                     },
