@@ -3,7 +3,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 Chart.register(...registerables, ChartDataLabels);
 
 // ─── 初期データ（当期・サーバーサイドで埋め込み済み） ────────────────
-let monthlyData        = JSON.parse(document.getElementById('monthly_data').getAttribute('data-monthly'));
+let monthlyData         = JSON.parse(document.getElementById('monthly_data').getAttribute('data-monthly'));
 let lastYearMonthlyData = JSON.parse(document.getElementById('monthly_data').getAttribute('data-last-year-monthly'));
 
 const $summaryData = $('#summary_data');
