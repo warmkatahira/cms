@@ -19,6 +19,7 @@ Route::middleware('common')->group(function (){
     // +-+-+-+-+-+-+-+- 顧客詳細 +-+-+-+-+-+-+-+-
     Route::controller(ClientDetailController::class)->prefix('client_detail')->name('client_detail.')->group(function(){
         Route::get('', 'index')->name('index');
+        Route::get('fiscal/{period}', 'fiscalData')->name('fiscal');
     });
     // +-+-+-+-+-+-+-+- エイリアス登録 +-+-+-+-+-+-+-+-
     Route::controller(ClientAliasCreateController::class)->prefix('client_alias_create')->name('client_alias_create.')->group(function(){
