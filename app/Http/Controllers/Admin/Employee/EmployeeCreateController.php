@@ -74,29 +74,29 @@ class EmployeeCreateController extends Controller
                 // 現在の日時を取得
                 $nowDate = CarbonImmutable::now();
                 // 選択したファイルのファイル名を取得
-                $import_original_file_name = $ImportService->getImportOriginalFileName($request->file('select_file'));
+                $importOriginalFileName = $ImportService->getImportOriginalFileName($request->file('select_file'));
                 // 選択したファイルをストレージにインポート
-                $save_file_path = $ImportService->importFile($request->file('select_file'), 'employee_create_import_data');
+                $saveFilePath = $ImportService->importFile($request->file('select_file'), 'employee_create_import_data');
                 // インポートしたデータのヘッダーを確認
-                $headers = $ImportService->checkHeader($save_file_path, $import_original_file_name, EmployeeCreateEnum::REQUIRE_HEADER, EmployeeCreateEnum::EN_CHANGE_LIST, ImportEnum::IMPORT_TYPE_CREATE);
+                $headers = $ImportService->checkHeader($saveFilePath, $importOriginalFileName, EmployeeCreateEnum::requireHeader, EmployeeCreateEnum::EN_CHANGE_LIST, ImportEnum::IMPORT_TYPE_CREATE);
                 // 追加するデータを配列に格納（同時にバリデーションも実施）
-                $data = $EmployeeCreateService->setArrayImportData($save_file_path, $headers, $import_original_file_name);
+                $data = $EmployeeCreateService->setArrayImportData($saveFilePath, $headers, $importOriginalFileName);
                 // インポートテーブルに追加
-                $EmployeeCreateService->createArrayImportData($data['create_data']);
+                $EmployeeCreateService->createArrayImportData($data['createData']);
                 // 従業員を追加
                 $EmployeeCreateService->createEmployeeByImport();
                 // import_historiesテーブルへ追加
-                $ImportHistoryCreateService->createImportHistory($import_original_file_name, ImportEnum::IMPORT_PROCESS_EMPLOYEE, ImportEnum::IMPORT_TYPE_CREATE, null, null);
+                $ImportHistoryCreateService->createImportHistory($importOriginalFileName, ImportEnum::IMPORT_PROCESS_EMPLOYEE, ImportEnum::IMPORT_TYPE_CREATE, null, null);
             });
         } catch (FinancialImportException $e) {
             // 渡された内容を取得
             $message                    = $e->getMessage();
             $import_process             = $e->getImportProcess();
             $import_type                = $e->getImportType();
-            $error_file_name            = $e->getErrorFileName();
-            $import_original_file_name  = $e->getImportOriginalFileName();
+            $errorFileName            = $e->getErrorFileName();
+            $importOriginalFileName  = $e->getImportOriginalFileName();
             // import_historiesテーブルへ追加
-            $ImportHistoryCreateService->createImportHistory($import_original_file_name, $import_process, $import_type, $error_file_name, $message);
+            $ImportHistoryCreateService->createImportHistory($importOriginalFileName, $import_process, $import_type, $errorFileName, $message);
             return redirect()->route('import_history.index')->with([
                 'alert_type' => 'error',
                 'alert_message' => $e->getMessage(),

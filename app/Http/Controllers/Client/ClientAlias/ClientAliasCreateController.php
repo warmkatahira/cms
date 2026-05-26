@@ -21,14 +21,14 @@ class ClientAliasCreateController extends Controller
         // ページヘッダーをセッションに格納
         session(['page_header' => '荷主名⇔顧客紐付け登録']);
         // セッションから未登録エイリアスを取得
-        $unregistered_aliases = session('unregistered_aliases', []);
+        $unregisteredAliases = session('unregisteredAliases', []);
         // clientsを全件取得
         $clients = Client::where('is_active', true)->orderBy('client_name')->get();
         // basesをbase_id => base_nameのマップで取得
         $baseMap = Base::pluck('base_name', 'base_id')->toArray();
         return view('client.client_alias.create')->with([
             'clients' => $clients,
-            'unregistered_aliases' => $unregistered_aliases,
+            'unregisteredAliases' => $unregisteredAliases,
             'baseMap' => $baseMap,
         ]);
     }
@@ -49,7 +49,7 @@ class ClientAliasCreateController extends Controller
             ]);
         }
         // セッションをクリア
-        session()->forget('unregistered_aliases');
+        session()->forget('unregisteredAliases');
         return redirect()->route('financial_import.index')->with([
             'alert_type'    => 'success',
             'alert_message' => '紐付け登録が完了しました。再度収支データを取り込んでください。',

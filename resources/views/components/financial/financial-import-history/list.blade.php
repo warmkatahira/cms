@@ -14,8 +14,8 @@
                     <x-filter.date-period type="date" fromId="filter_import_date_from" fromName="filter_import_date_from" toId="filter_import_date_to" toName="filter_import_date_to" />
                     <x-filter.input type="tel" id="filter_import_time" name="filter_import_time" />
                     <x-filter.input type="text" id="filter_user_name" name="filter_user_name" />
-                    <x-filter.input type="text" id="filter_import_original_file_name" name="filter_import_original_file_name" />
-                    <x-filter.input type="text" id="filter_error_file_name" name="filter_error_file_name" />
+                    <x-filter.input type="text" id="filter_importOriginalFileName" name="filter_importOriginalFileName" />
+                    <x-filter.input type="text" id="filter_errorFileName" name="filter_errorFileName" />
                     <x-filter.input type="text" id="filter_message" name="filter_error_message" />
                 </tr>
             </thead>
@@ -30,10 +30,10 @@
                                 {{ $financial_import_history->user->user_name }}
                             </div>
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400">{{ $financial_import_history->import_original_file_name }}</td>
+                        <td class="py-1 px-2 border-b border-gray-400">{{ $financial_import_history->importOriginalFileName }}</td>
                         <td class="py-1 px-2 border-b border-gray-400 text-center">
-                            @if(!is_null($financial_import_history->error_file_name))
-                                <a href="{{ route('error_file_download.download', ['filename' => $financial_import_history->error_file_name]) }}" class="text-center text-blue-500"><i class="las la-cloud-download-alt mr-1 la-lg"></i>ダウンロード</a>
+                            @if(!is_null($financial_import_history->errorFileName))
+                                <a href="{{ route('error_file_download.download', ['filename' => $financial_import_history->errorFileName]) }}" class="text-center text-blue-500"><i class="las la-cloud-download-alt mr-1 la-lg"></i>ダウンロード</a>
                             @else
                                 <span class="text-gray-700">―</span>
                             @endif

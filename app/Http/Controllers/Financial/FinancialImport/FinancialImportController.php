@@ -37,44 +37,44 @@ class FinancialImportController extends Controller
                 // 現在の日時を取得
                 $nowDate = CarbonImmutable::now();
                 // 選択したファイルをストレージにインポート
-                $financial_file_info = $FinancialImportService->importFile($request->file('financial_file'), FinancialImportEnum::SAVE_FILE_NAME_PREFIX);
+                $financialFileInfo = $FinancialImportService->importFile($request->file('financial_file'), FinancialImportEnum::saveFileName_PREFIX);
                 // インポートしたデータのヘッダーを確認
-                $FinancialImportService->checkHeader($financial_file_info, $nowDate);
+                $FinancialImportService->checkHeader($financialFileInfo, $nowDate);
                 // 追加する受注データを配列に格納（同時にバリデーションも実施）
-                $financial_create_data = $FinancialImportService->setArrayImport($financial_file_info, $nowDate);
-                // financial_importsへデータを追加
-                $FinancialImportService->createFinancialImport($financial_create_data);
+                $financialCreateData = $FinancialImportService->setArrayImport($financialFileInfo, $nowDate);
+                // financialImportsへデータを追加
+                $FinancialImportService->createFinancialImport($financialCreateData);
                 // base_idをbase_nameから更新
-                $FinancialImportService->updateBaseId($financial_file_info['original_file_name']);
+                $FinancialImportService->updateBaseId($financialFileInfo['originalFileName']);
                 // 既に取り込まれている営業所×年月でないか確認
-                $FinancialImportService->checkDuplicateMonthlyFinancials($financial_file_info['original_file_name']);
+                $FinancialImportService->checkDuplicateMonthlyFinancials($financialFileInfo['originalFileName']);
                 // client_alias_nameが登録されているか確認
-                $unregistered = $FinancialImportService->checkClientAliases($financial_file_info['original_file_name']);
+                $unregistered = $FinancialImportService->checkClientAliases($financialFileInfo['originalFileName']);
                 // 未登録の顧客エイリアスがある場合
                 if(!empty($unregistered)){
                     // セッションに格納して処理を抜ける
-                    session(['unregistered_aliases' => $unregistered]);
+                    session(['unregisteredAliases' => $unregistered]);
                     return;
                 }
                 // monthly_financialsテーブルへ追加
                 $FinancialImportService->createMonthlyFinancials();
                 // financial_import_historiesテーブルへ追加
-                $FinancialImportHistoryCreateService->createFinancialImportHistory($financial_file_info['original_file_name'], null, null);
+                $FinancialImportHistoryCreateService->createFinancialImportHistory($financialFileInfo['originalFileName'], null, null);
             });
         } catch (FinancialImportException $e) {
             // 渡された内容を取得
             $message                    = $e->getMessage();
-            $import_original_file_name  = $e->getImportOriginalFileName();
-            $error_file_name            = $e->getErrorFileName();
+            $importOriginalFileName     = $e->getImportOriginalFileName();
+            $errorFileName              = $e->getErrorFileName();
             // import_historiesテーブルへ追加
-            $FinancialImportHistoryCreateService->createFinancialImportHistory($import_original_file_name, $error_file_name, $message);
+            $FinancialImportHistoryCreateService->createFinancialImportHistory($importOriginalFileName, $errorFileName, $message);
             return redirect()->route('financial_import_history.index')->with([
                 'alert_type'    => 'error',
                 'alert_message' => $e->getMessage(),
             ]);
         }
         // 未登録の顧客エイリアスがある場合
-        if(session('unregistered_aliases')){
+        if(session('unregisteredAliases')){
             return redirect()->route('client_alias_create.index')->with([
                 'alert_type'    => 'info',
                 'alert_message' => "収支データ取込が完了しました。\n未登録の荷主名があるので、登録を行って下さい。",

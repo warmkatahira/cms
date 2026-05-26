@@ -10,8 +10,8 @@ class FinancialImportHistory extends Model
     protected $primaryKey = 'financial_import_history_id';
     // 操作可能なカラムを定義
     protected $fillable = [
-        'import_original_file_name',
-        'error_file_name',
+        'importOriginalFileName',
+        'errorFileName',
         'message',
         'imported_by',
     ];

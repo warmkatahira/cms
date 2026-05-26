@@ -28,8 +28,8 @@ class FinancialImportHistorySearchService extends BaseFilterService
     protected function likeKeys(): array
     {
         return [
-            'filter_import_original_file_name',
-            'filter_error_file_name',
+            'filter_importOriginalFileName',
+            'filter_errorFileName',
             'filter_message',
         ];
     }

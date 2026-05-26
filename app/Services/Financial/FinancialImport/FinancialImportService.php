@@ -21,45 +21,45 @@ use Illuminate\Support\Facades\DB;
 class FinancialImportService
 {
     // 選択したファイルをストレージにインポート
-    public function importFile($file, $save_file_name_prefix)
+    public function importFile($file, $saveFileNamePrefix)
     {
         // 現在の日時を取得
         $nowDate = CarbonImmutable::now();
         // 選択したデータのファイル名を取得
-        $original_file_name = $file->getClientOriginalName();
+        $originalFileName = $file->getClientOriginalName();
         // ストレージに保存する際のファイル名を設定
-        $save_file_name = $save_file_name_prefix.'_'.$nowDate->format('Y-m-d H-i-s').'.csv';
+        $saveFileName = $saveFileNamePrefix.'_'.$nowDate->format('Y-m-d H-i-s').'.csv';
         // ファイルを保存して保存先のパスを取得
-        $save_file_path = Storage::disk('public')->putFileAs('import', $file, $save_file_name);
+        $saveFilePath = Storage::disk('public')->putFileAs('import', $file, $saveFileName);
         // フルパスに調整する
         return [
-            'original_file_name'    => $original_file_name,
-            'save_file_path'        => Storage::disk('public')->path($save_file_path),
+            'originalFileName'    => $originalFileName,
+            'saveFilePath'        => Storage::disk('public')->path($saveFilePath),
         ];
     }
 
     // インポートしたデータのヘッダーを確認
-    public function checkHeader($file_info, $nowDate)
+    public function checkHeader($fileInfo, $nowDate)
     {
         // 全データを取得
-        $all_line = (new FastExcel)->import($file_info['save_file_path']);
+        $allLine = (new FastExcel)->import($fileInfo['saveFilePath']);
         // 全行をSJIS-winからUTF-8に変換
-        $converted = CsvConvertService::convertToUtf8($all_line);
+        $converted = CsvConvertService::convertToUtf8($allLine);
         // インポートしたデータのヘッダーを取得
-        $import_data_header = array_keys($converted[0]);
+        $importDataHeader = array_keys($converted[0]);
         // システムに定義している必須ヘッダーを取得
-        $require_headers = FinancialImport::requiredHeaders();
+        $requireHeaders = FinancialImport::requiredHeaders();
         // ヘッダーの分だけループ処理
-        foreach($require_headers as $require_header){
+        foreach($requireHeaders as $requireHeader){
             // ヘッダーが存在するか確認
-            $result = $this->checkValueExists($import_data_header, $require_header);
+            $result = $this->checkValueExists($importDataHeader, $requireHeader);
             // nullではない場合
             if(!is_null($result)){
                 // インスタンス化
                 $ImportErrorCreateService = new ImportErrorCreateService;
                 // エラーファイルを作成
-                $error_file_name = $ImportErrorCreateService->createImportError('ファイル取込エラー', [['ヘッダー行', $result]], $nowDate, 'ヘッダー不正', null);
-                throw new FinancialImportException("ファイルが正しくない為、取り込みできませんでした。", $file_info['original_file_name'], $error_file_name);
+                $errorFileName = $ImportErrorCreateService->createImportError('ファイル取込エラー', [['ヘッダー行', $result]], $nowDate, 'ヘッダー不正', null);
+                throw new FinancialImportException("ファイルが正しくない為、取り込みできませんでした。", $fileInfo['originalFileName'], $errorFileName);
             }
         }
     }
@@ -73,17 +73,17 @@ class FinancialImportService
     }
 
     // 追加する受注データを配列に格納（同時にバリデーションも実施）
-    public function setArrayImport($file_info, $nowDate)
+    public function setArrayImport($fileInfo, $nowDate)
     {
         // データの情報を取得
-        $all_line = (new FastExcel)->import($file_info['save_file_path']);
+        $allLine = (new FastExcel)->import($fileInfo['saveFilePath']);
         // 全行をSJIS-winからUTF-8に変換
-        $converted = CsvConvertService::convertToUtf8($all_line);
+        $converted = CsvConvertService::convertToUtf8($allLine);
         // 追加用の配列をセット
-        $create_data = [];
-        $validation_error = [];
+        $createData = [];
+        $validationError = [];
         // バリデーションエラー出力ファイルのヘッダーを定義
-        $validation_error_export_header = array('エラー行数', 'エラー内容');
+        $validationErrorExportHeader = array('エラー行数', 'エラー内容');
         // 取得したレコードの分だけループ
         foreach ($converted as $key => $line){
             // 追加先テーブルのカラム名に合わせて配列を整理
@@ -113,20 +113,20 @@ class FinancialImportService
             // エラーメッセージがある場合
             if(!is_null($message)){
                 // バリデーションエラーを配列に格納
-                $validation_error[] = array_combine($validation_error_export_header, $message);
+                $validationError[] = array_combine($validationErrorExportHeader, $message);
             }
             // 追加用の配列に整理した情報を格納
-            $create_data[] = $param;
+            $createData[] = $param;
         }
         // バリデーションエラー配列の中にnull以外があれば、エラー情報を出力
-        if(count(array_filter($validation_error)) != 0){
+        if(count(array_filter($validationError)) != 0){
             // インスタンス化
             $ImportErrorCreateService = new ImportErrorCreateService;
             // インポートエラー情報のファイルを作成
-            $error_file_name = $ImportErrorCreateService->createImportError('ファイル取込エラー', $validation_error, $nowDate, 'データ不正', null);
-            throw new FinancialImportException("データが正しくない為、取り込みできませんでした。", $file_info['original_file_name'], $error_file_name);
+            $errorFileName = $ImportErrorCreateService->createImportError('ファイル取込エラー', $validationError, $nowDate, 'データ不正', null);
+            throw new FinancialImportException("データが正しくない為、取り込みできませんでした。", $fileInfo['originalFileName'], $errorFileName);
         }
-        return $create_data;
+        return $createData;
     }
 
     // インポートデータのバリデーション処理
@@ -186,21 +186,21 @@ class FinancialImportService
         return empty($message) ? null : array($record_num.'行目', $message);
     }
 
-    // financial_importsへデータを追加
-    public function createFinancialImport($financial_create_data)
+    // financialImportsへデータを追加
+    public function createFinancialImport($financialCreateData)
     {
         // テーブルをロック
         FinancialImport::select()->lockForUpdate()->get();
         // 追加先のテーブルをクリア
         FinancialImport::query()->delete();
         // 200件ごとにデータを分けてインサート
-        foreach(collect($financial_create_data)->chunk(200) as $chunk){
+        foreach(collect($financialCreateData)->chunk(200) as $chunk){
             FinancialImport::insert($chunk->values()->toArray());
         }
     }
 
     // base_idをbase_nameから更新
-    public function updateBaseId($original_file_name)
+    public function updateBaseId($originalFileName)
     {
         // base_idをbase_nameから更新
         DB::statement('
@@ -216,16 +216,16 @@ class FinancialImportService
             $names = $unresolved->implode("\n");
             throw new FinancialImportException(
                 "営業所名が正しくないレコードが存在します\n{$names}",
-                $original_file_name,
+                $originalFileName,
                 null
             );
         }
     }
 
     // 既に取り込まれている営業所×年月でないか確認
-    public function checkDuplicateMonthlyFinancials($original_file_name)
+    public function checkDuplicateMonthlyFinancials($originalFileName)
     {
-        // financial_importsから営業所IDと年月を重複を除いて取得
+        // financialImportsから営業所IDと年月を重複を除いて取得
         $importRows = FinancialImport::select('base_id', 'base_name', 'year_month')
                             ->distinct()
                             ->get();
@@ -254,30 +254,30 @@ class FinancialImportService
             $names = implode("\n", $duplicates);
             throw new FinancialImportException(
                 "既に取り込まれているデータが存在します\n{$names}",
-                $original_file_name,
+                $originalFileName,
                 null
             );
         }
     }
 
     // client_alias_nameが登録されているか確認
-    public function checkClientAliases($original_file_name)
+    public function checkClientAliases($originalFileName)
     {
         // client_aliasesテーブルに存在しているエイリアスを取得
-        $existing_aliases = ClientAlias::all()
+        $existingAliases = ClientAlias::all()
                                 ->groupBy('base_id')
                                 ->map(fn($aliases) => $aliases->pluck('client_alias_name')->toArray())
                                 ->toArray();
-        // financial_importsから「base_id」と「client_alias_name」を取得
-        $imported_rows = FinancialImport::select('base_id', 'client_alias_name')
+        // financialImportsから「base_id」と「client_alias_name」を取得
+        $importedRows = FinancialImport::select('base_id', 'client_alias_name')
                             ->distinct()
                             ->get();
         // エイリアスが未登録の情報を格納する配列を初期化
         $unregistered = [];
         // 取り込んだ収支データの分だけループ処理
-        foreach ($imported_rows as $row) {
+        foreach ($importedRows as $row) {
             // そのbase_idに紐づく登録済みのclient_alias_nameを取得（なければ空配列）
-            $registered = $existing_aliases[$row->base_id] ?? [];
+            $registered = $existingAliases[$row->base_id] ?? [];
             // 登録済みの中に該当のclient_alias_nameが存在しない場合
             if(!in_array($row->client_alias_name, $registered)){
                 // base_idとclient_alias_nameの組み合わせをキーとして重複を防ぐ
@@ -297,8 +297,8 @@ class FinancialImportService
     // monthly_financialsテーブルへ追加
     public function createMonthlyFinancials()
     {
-        // financial_importsを全件取得
-        $financial_imports = FinancialImport::all();
+        // financialImportsを全件取得
+        $financialImports = FinancialImport::all();
         // client_aliasesを事前取得（N+1防止）
         // "base_id:client_alias_name" => client_alias_id のマップを作成
         $aliasMap = ClientAlias::all()
@@ -307,17 +307,17 @@ class FinancialImportService
                         ])
                         ->toArray();
         // monthly_financialsに追加するデータを格納する配列を初期化
-        $monthly_financials = [];
+        $monthlyFinancials = [];
         // 取り込んだ収支データの分だけループ処理
-        foreach($financial_imports as $import){
+        foreach($financialImports as $import){
             // base_idとclient_alias_nameの組み合わせをキーにclient_alias_idを取得
             $key           = "{$import->base_id}:{$import->client_alias_name}";
-            $client_alias_id = $aliasMap[$key] ?? null;
+            $clientAliasId = $aliasMap[$key] ?? null;
             // client_alias_idが解決できない場合はスキップ
-            if (!$client_alias_id) continue;
+            if (!$clientAliasId) continue;
             // monthly_financialsに追加するデータを配列に格納
-            $monthly_financials[] = [
-                'client_alias_id' => $client_alias_id,
+            $monthlyFinancials[] = [
+                'client_alias_id' => $clientAliasId,
                 'year_month'      => $import->year_month,
                 'sales_storage'   => $import->sales_storage,
                 'sales_handling'  => $import->sales_handling,
@@ -333,7 +333,7 @@ class FinancialImportService
             ];
         }
         // 200件ごとにupsert（client_alias_id + year_monthがユニーク制約のため既存データは上書き）
-        foreach(collect($monthly_financials)->chunk(200) as $chunk){
+        foreach(collect($monthlyFinancials)->chunk(200) as $chunk){
             MonthlyFinancial::upsert(
                 $chunk->values()->toArray(),
                 ['client_alias_id', 'year_month'],

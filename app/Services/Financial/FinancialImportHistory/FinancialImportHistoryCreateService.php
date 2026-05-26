@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Auth;
 class FinancialImportHistoryCreateService
 {
     // financial_import_historiesテーブルへ追加
-    public function createFinancialImportHistory($import_original_file_name, $error_file_name, $message)
+    public function createFinancialImportHistory($importOriginalFileName, $errorFileName, $message)
     {
         FinancialImportHistory::create([
-            'import_original_file_name' => $import_original_file_name,
-            'error_file_name'           => $error_file_name,
+            'importOriginalFileName'    => $importOriginalFileName,
+            'errorFileName'             => $errorFileName,
             'message'                   => $message,
             'imported_by'               => Auth::user()->user_no,
         ]);

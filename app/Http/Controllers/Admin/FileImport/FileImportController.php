@@ -43,18 +43,18 @@ class FileImportController extends Controller
                 // 現在の日時を取得
                 $nowDate = CarbonImmutable::now();
                 // 選択したファイルをストレージにインポート
-                $employee_file_info = $FileImportService->importFile($request->file('employee_file'), FileImportEnum::FILE_IMPORT_TYPE_EMPLOYEE);
-                $paid_leave_file_info = $FileImportService->importFile($request->file('paid_leave_file'), FileImportEnum::FILE_IMPORT_TYPE_PAID_LEAVE);
+                $employee_fileInfo = $FileImportService->importFile($request->file('employee_file'), FileImportEnum::FILE_IMPORT_TYPE_EMPLOYEE);
+                $paid_leave_fileInfo = $FileImportService->importFile($request->file('paid_leave_file'), FileImportEnum::FILE_IMPORT_TYPE_PAID_LEAVE);
                 // インポートしたデータのヘッダーを確認
-                $FileImportService->checkHeader($employee_file_info, FileImportEnum::FILE_IMPORT_TYPE_EMPLOYEE, $nowDate);
-                $FileImportService->checkHeader($paid_leave_file_info, FileImportEnum::FILE_IMPORT_TYPE_PAID_LEAVE, $nowDate);
+                $FileImportService->checkHeader($employee_fileInfo, FileImportEnum::FILE_IMPORT_TYPE_EMPLOYEE, $nowDate);
+                $FileImportService->checkHeader($paid_leave_fileInfo, FileImportEnum::FILE_IMPORT_TYPE_PAID_LEAVE, $nowDate);
                 // 追加する受注データを配列に格納（同時にバリデーションも実施）
-                $employee_create_data = $FileImportService->setArrayImport($employee_file_info, FileImportEnum::FILE_IMPORT_TYPE_EMPLOYEE, $nowDate);
-                $paid_leave_create_data = $FileImportService->setArrayImport($paid_leave_file_info, FileImportEnum::FILE_IMPORT_TYPE_PAID_LEAVE, $nowDate);
+                $employee_createData = $FileImportService->setArrayImport($employee_fileInfo, FileImportEnum::FILE_IMPORT_TYPE_EMPLOYEE, $nowDate);
+                $paid_leave_createData = $FileImportService->setArrayImport($paid_leave_fileInfo, FileImportEnum::FILE_IMPORT_TYPE_PAID_LEAVE, $nowDate);
                 // 2ファイル間の従業員番号の差分チェック
-                $FileImportService->checkEmployeeNoDiff($employee_create_data, $paid_leave_create_data, $nowDate);
+                $FileImportService->checkEmployeeNoDiff($employee_createData, $paid_leave_createData, $nowDate);
                 // file_importsへデータを追加
-                $FileImportService->createArrayImportData($employee_create_data, $paid_leave_create_data);
+                $FileImportService->createArrayImportData($employee_createData, $paid_leave_createData);
                 // usersテーブルに存在しない従業員番号が取り込まれていれば、追加する
                 $UserCreateService->createUser();
                 // usersテーブルに存在していて今回の取り込みに存在していない従業員のis_activeを無効に更新
@@ -64,16 +64,16 @@ class FileImportController extends Controller
                 // 付与月の従業員の処理
                 $PaidLeaveUpdateService->processGrantMonth();
                 // import_historiesテーブルへ追加
-                $ImportHistoryCreateService->createImportHistory($employee_file_info['original_file_name'], $paid_leave_file_info['original_file_name'], null, $missing_message ? "以下の従業員を無効にしました。\n" . $missing_message : null);
+                $ImportHistoryCreateService->createImportHistory($employee_fileInfo['originalFileName'], $paid_leave_fileInfo['originalFileName'], null, $missing_message ? "以下の従業員を無効にしました。\n" . $missing_message : null);
             });
         } catch (FinancialImportException $e) {
             // 渡された内容を取得
             $message                                = $e->getMessage();
-            $import_employee_original_file_name     = $e->getImportEmployeeOriginalFileName();
-            $import_paid_leave_original_file_name   = $e->getImportPaidLeaveOriginalFileName();
-            $error_file_name                        = $e->getErrorFileName();
+            $import_employee_originalFileName     = $e->getImportEmployeeOriginalFileName();
+            $import_paid_leave_originalFileName   = $e->getImportPaidLeaveOriginalFileName();
+            $errorFileName                        = $e->getErrorFileName();
             // import_historiesテーブルへ追加
-            $ImportHistoryCreateService->createImportHistory($import_employee_original_file_name, $import_paid_leave_original_file_name, $error_file_name, $message);
+            $ImportHistoryCreateService->createImportHistory($import_employee_originalFileName, $import_paid_leave_originalFileName, $errorFileName, $message);
             return redirect()->route('import_history.index')->with([
                 'alert_type'    => 'error',
                 'alert_message' => $e->getMessage(),

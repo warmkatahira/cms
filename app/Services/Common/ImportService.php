@@ -22,43 +22,43 @@ class ImportService
     }
 
     // 選択したファイルをストレージにインポート
-    public function importFile($select_file, $save_file_name_prefix)
+    public function importFile($select_file, $saveFileName_prefix)
     {
         // 選択したデータの拡張子を取得（例: csv, xlsx）
         $extension = $select_file->getClientOriginalExtension();
         // ストレージに保存する際のファイル名を設定
-        $save_file_name = $save_file_name_prefix.'.'.$extension;
+        $saveFileName = $saveFileName_prefix.'.'.$extension;
         // ファイルを保存して保存先のパスを取得
-        $save_file_path = Storage::disk('public')->putFileAs('import/', $select_file, $save_file_name);
+        $saveFilePath = Storage::disk('public')->putFileAs('import/', $select_file, $saveFileName);
         // パスを返す
-        return Storage::disk('public')->path($save_file_path);
+        return Storage::disk('public')->path($saveFilePath);
     }
 
     // インポートしたデータのヘッダーを確認
-    public function checkHeader($save_file_path, $import_original_file_name, $require_header, $en_change_list, $import_type)
+    public function checkHeader($saveFilePath, $importOriginalFileName, $requireHeader, $en_change_list, $import_type)
     {
         // 選択したデータの拡張子を取得（例: csv, xlsx）
-        $extension = strtolower(pathinfo($import_original_file_name, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($importOriginalFileName, PATHINFO_EXTENSION));
         // 全データを取得
-        $all_line = (new FastExcel)->import($save_file_path);
+        $allLine = (new FastExcel)->import($saveFilePath);
         // インポートしたデータのヘッダーを取得
         if($extension === 'csv'){
-            $import_data_header = array_keys(mb_convert_encoding($all_line[0], 'UTF-8', 'ASCII, JIS, UTF-8, SJIS-win'));
+            $importDataHeader = array_keys(mb_convert_encoding($allLine[0], 'UTF-8', 'ASCII, JIS, UTF-8, SJIS-win'));
         }else{
-            $import_data_header = array_keys($all_line[0]);
+            $importDataHeader = array_keys($allLine[0]);
         }
         // システムに定義している必須ヘッダーを取得
-        $require_header = $require_header;
+        $requireHeader = $requireHeader;
         // ヘッダーが存在するか確認
-        $result = $this->checkRequireHeader($import_data_header, $require_header);
+        $result = $this->checkRequireHeader($importDataHeader, $requireHeader);
         // Nullではない = 相違があるので、ここで処理を終了
         if(!is_null($result)){
-            throw new FinancialImportException($result, $import_original_file_name, null);
+            throw new FinancialImportException($result, $importOriginalFileName, null);
         }
         // 1行のデータを格納する配列をセット
         $param = [];
         // 追加先テーブルのカラム名に合わせて配列を整理
-        foreach($import_data_header as $header){
+        foreach($importDataHeader as $header){
             // 英語カラムを定義している配列から取得
             $en_column = ColumnChangeHelper::column_en_change($header, $en_change_list);
             // カラムが空ではない場合
@@ -71,12 +71,12 @@ class ImportService
     }
 
     // ヘッダーが存在するか確認
-    public function checkRequireHeader($import_data_header, $require_header)
+    public function checkRequireHeader($importDataHeader, $requireHeader)
     {
         // ヘッダーの分だけループ処理
-        foreach($require_header as $header){
+        foreach($requireHeader as $header){
             // ヘッダーが存在するか確認
-            $result = $this->checkValueExists($import_data_header, $header);
+            $result = $this->checkValueExists($importDataHeader, $header);
             // nullではない場合
             if(!is_null($result)){
                 // NG結果を返す

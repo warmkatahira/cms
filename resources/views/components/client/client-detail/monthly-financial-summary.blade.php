@@ -3,7 +3,7 @@
         <p id="label_monthly_title" class="text-sm font-semibold text-gray-600">月別収支サマリー</p>
         <i id="toggle_monthly_table_icon" class="las la-angle-down text-gray-400 transition-transform"></i>
     </button>
-    <div id="monthly_table_body" class="hidden px-6 pb-6">
+    <div id="monthly_table_body" class="px-6 pb-6">
         <div class="overflow-x-auto">
             <table class="w-full text-xs text-right">
                 <thead>

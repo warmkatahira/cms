@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('financial_import_histories', function (Blueprint $table) {
             $table->increments('financial_import_history_id');
-            $table->string('import_original_file_name', 255)->nullable();
-            $table->string('error_file_name', 255)->nullable();
+            $table->string('importOriginalFileName', 255)->nullable();
+            $table->string('errorFileName', 255)->nullable();
             $table->string('message', 255)->nullable();
             $table->unsignedInteger('imported_by');
             $table->timestamps();

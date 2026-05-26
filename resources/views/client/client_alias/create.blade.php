@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="w-full max-w-3xl">
         <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-            @if(!empty($unregistered_aliases))
+            @if(!empty($unregisteredAliases))
                 <p class="text-sm text-gray-600 mb-6">以下の荷主名が顧客と紐付けされていません。紐付けを行ってください。</p>
             @else
                 <p class="text-sm text-gray-600 mb-6">未登録の荷主名はありません。</p>
@@ -9,7 +9,7 @@
             <form method="POST" action="{{ route('client_alias_create.create') }}" id="client_alias_create_form">
                 @csrf
                 <div class="space-y-4">
-                    @foreach($unregistered_aliases as $index => $alias)
+                    @foreach($unregisteredAliases as $index => $alias)
                         <div class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50">
                             <input type="hidden" name="aliases[{{ $index }}][base_id]" value="{{ $alias['base_id'] }}">
                             <input type="hidden" name="aliases[{{ $index }}][client_alias_name]" value="{{ $alias['client_alias_name'] }}">
@@ -40,7 +40,7 @@
                     @endforeach
                 </div>
                 <div class="mt-6 flex justify-end">
-                    @if(!empty($unregistered_aliases))
+                    @if(!empty($unregisteredAliases))
                         <button
                             type="button"
                             id="client_alias_create_enter"
