@@ -24,5 +24,35 @@ class UserSeeder extends Seeder
             'base_id'                       => 'honsha',
             'is_password_change_required'   => false,
         ]);
+        User::create([
+            'user_id'                       => 'aaa',
+            'user_name'                     => 'テストA',
+            'email'                         => null,
+            'password'                      => bcrypt('katahira134'),
+            'is_active'                     => true,
+            'role_id'                       => 'user',
+            'base_id'                       => 'honsha',
+            'is_password_change_required'   => false,
+        ]);
+        User::create([
+            'user_id'                       => 'bbb',
+            'user_name'                     => 'テストB',
+            'email'                         => null,
+            'password'                      => bcrypt('katahira134'),
+            'is_active'                     => true,
+            'role_id'                       => 'user',
+            'base_id'                       => 'honsha',
+            'is_password_change_required'   => false,
+        ]);
+        User::create([
+            'user_id'                       => 'ccc',
+            'user_name'                     => 'テストC',
+            'email'                         => null,
+            'password'                      => bcrypt('katahira134'),
+            'is_active'                     => true,
+            'role_id'                       => 'user',
+            'base_id'                       => 'honsha',
+            'is_password_change_required'   => false,
+        ]);
     }
 }

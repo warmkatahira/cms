@@ -30,4 +30,39 @@ class Client extends Model
     {
         return $this->hasMany(ClientAlias::class, 'client_id', 'client_id');
     }
+    // 「is_active」に基づいて、有効 or 無効を返すアクセサ
+    public function getIsActiveTextAttribute(): string
+    {
+        return $this->is_active ? '有効' : '無効';
+    }
+    // 顧客単位のダウンロード時のヘッダーを定義
+    public static function downloadHeaderByClient()
+    {
+        return [
+            'ステータス',
+            '顧客名',
+            '顧客郵便番号',
+            '顧客住所',
+            '顧客電話番号',
+            '担当営業所/エイリアス名/担当従業員',
+            '最終更新者',
+            '最終更新日時',
+        ];
+    }
+    // エイリアス単位のダウンロード時のヘッダーを定義
+    public static function downloadHeaderByAlias()
+    {
+        return [
+            'ステータス',
+            '顧客名',
+            '顧客郵便番号',
+            '顧客住所',
+            '顧客電話番号',
+            '担当営業所',
+            'エイリアス名',
+            '担当従業員',
+            '最終更新者',
+            '最終更新日時',
+        ];
+    }
 }

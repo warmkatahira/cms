@@ -6,7 +6,7 @@
                     <th class="font-thin py-1 px-2 text-center">操作</th>
                     <th class="font-thin py-1 px-2 text-center">ステータス</th>
                     <th class="font-thin py-1 px-2 text-center">顧客名</th>
-                    <th class="font-thin py-1 px-2 text-center">営業所</th>
+                    <th class="font-thin py-1 px-2 text-center">担当営業所</th>
                     <th class="font-thin py-1 px-2 text-center">最終更新者</th>
                     <th class="font-thin py-1 px-2 text-center">最終更新日時</th>
                 </tr>
@@ -16,7 +16,7 @@
                     <x-filter.input type="text" id="filter_client_name" name="filter_client_name" />
                     <x-filter.select id="filter_base_id" name="filter_base_id" :selectItems="$bases" optionValue="base_id" optionText="base_name" />
                     <x-filter.input type="text" id="filter_user_name" name="filter_user_name" />
-                    <x-filter.input type="text" id="filter_updated_at" name="filter_updated_at" />
+                    <th></th>
                 </tr>
             </thead>
             <tbody class="bg-white">
@@ -41,7 +41,7 @@
                             <div class="flex flex-wrap gap-1">
                                 @foreach($bases as $baseId => $aliases)
                                     <span class="inline-flex items-center px-2 py-0.5 rounded bg-badge-normal text-xs tippy_base_aliases"
-                                        data-aliases="{{ $aliases->pluck('client_alias_name')->join(',') }}">
+                                        data-aliases="{{ $aliases->map(fn($a) => $a->client_alias_name . ($a->users->isNotEmpty() ? '【' . $a->users->map(fn($u) => $u->user_name)->join('・') . '】' : ''))->join(',') }}">
                                         {{ $aliases->first()->base->short_base_name ?? $baseId }}
                                     </span>
                                 @endforeach
@@ -53,7 +53,7 @@
                                 {{ $client->user->user_name }}
                             </div>
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400 text-center">{{ CarbonImmutable::parse($client->created_at)->isoFormat('YYYY年MM月DD日(ddd) HH時mm分ss秒') }}</td>
+                        <td class="py-1 px-2 border-b border-gray-400 text-center">{{ CarbonImmutable::parse($client->updated_at)->isoFormat('YYYY年MM月DD日(ddd) HH時mm分ss秒') }}</td>
                     </tr>
                 @endforeach
             </tbody>

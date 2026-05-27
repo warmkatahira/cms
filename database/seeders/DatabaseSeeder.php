@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ClientSeeder::class,
             FiscalYearSeeder::class,
+            ClientAliasUserSeeder::class,
         ]);
     }
 }

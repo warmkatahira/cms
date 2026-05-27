@@ -15,7 +15,7 @@ class ClientSearchService extends BaseFilterService
     protected function baseQuery()
     {
         // クエリをセット
-        return Client::with(['user', 'clientAliases.base']);
+        return Client::with(['user', 'clientAliases.base', 'clientAliases.users']);
     }
 
     public function setSearchCondition($request)
@@ -47,10 +47,6 @@ class ClientSearchService extends BaseFilterService
                 $query->whereHas('clientAliases', function ($q) use ($value) {
                     $q->where('base_id', '=', $value);
                 });
-            },
-            // 最終更新日時
-            'filter_updated_at' => function ($query, $value) {
-                $query->where('updated_at', 'LIKE', '%' . $value . '%');
             },
         ];
     }

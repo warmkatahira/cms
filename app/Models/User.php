@@ -34,10 +34,10 @@ class User extends Authenticatable
         'is_password_change_required',
         'last_login_at',
     ];
-    // 全てのレコードを取得
-    public static function getAll()
+    // 「user_no」で並び替え
+    public function scopeOrdered($query)
     {
-        return self::orderBy('user_no', 'asc');
+        return $query->orderBy('user_no', 'asc');
     }
     // rolesテーブルとのリレーション
     public function role()

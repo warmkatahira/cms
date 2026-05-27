@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 // +-+-+-+-+-+-+-+- 顧客 +-+-+-+-+-+-+-+-
 // +-+-+-+-+-+-+-+- 顧客一覧 +-+-+-+-+-+-+-+-
 use App\Http\Controllers\Client\Client\ClientController;
+// +-+-+-+-+-+-+-+- 顧客ダウンロード +-+-+-+-+-+-+-+-
+use App\Http\Controllers\Client\Client\ClientDownloadController;
 // +-+-+-+-+-+-+-+- 顧客詳細 +-+-+-+-+-+-+-+-
 use App\Http\Controllers\Client\ClientDetail\ClientDetailController;
 // +-+-+-+-+-+-+-+- エイリアス登録 +-+-+-+-+-+-+-+-
@@ -15,6 +17,11 @@ Route::middleware('common')->group(function (){
     // +-+-+-+-+-+-+-+- 顧客一覧 +-+-+-+-+-+-+-+-
     Route::controller(ClientController::class)->prefix('client')->name('client.')->group(function(){
         Route::get('', 'index')->name('index');
+    });
+    // +-+-+-+-+-+-+-+- 顧客ダウンロード +-+-+-+-+-+-+-+-
+    Route::controller(ClientDownloadController::class)->prefix('client_download')->name('client_download.')->group(function(){
+        Route::get('download_by_client', 'downloadByClient')->name('download_by_client');
+        Route::get('download_by_alias', 'downloadByAlias')->name('download_by_alias');
     });
     // +-+-+-+-+-+-+-+- 顧客詳細 +-+-+-+-+-+-+-+-
     Route::controller(ClientDetailController::class)->prefix('client_detail')->name('client_detail.')->group(function(){
