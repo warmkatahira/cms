@@ -305,7 +305,7 @@ function updatePeriodLabels(fiscalYear) {
     // 各セクションタイトルを更新
     $('#label_summary_title').text(label + ' 収支サマリー');
     $('#label_monthly_title').text(label + ' 月別収支サマリー');
-    $('#label_chart_title').text(label + ' 月次推移');
+    $('#label_chart_title').text(label + ' 月別収支グラフ');
 }
 
 // ─── 月別テーブルを再構築（期切り替え時・行数が変わるため） ──────────
