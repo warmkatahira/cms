@@ -19,6 +19,7 @@ export default defineConfig({
                 'resources/sass/navigation.scss',
                 'resources/js/dropdown.js',
                 'resources/js/image_fade_in.js',
+                'resources/js/modal.js',
                 'resources/sass/dropdown.scss',
                 'resources/sass/height_adjustment.scss',
                 'resources/sass/welcome.scss',

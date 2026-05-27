@@ -1,1 +1,0 @@
-tippy(".tippy_base_aliases",{content(e){const t=e.getAttribute("data-aliases");return t?t.split(",").map((i,a)=>`<div style="${a>0?"border-top: 2px solid rgba(255,255,255,0.5); padding-top: 3px; margin-top: 3px;":""}">${i}</div>`).join(""):"荷主なし"},duration:500,maxWidth:"none",allowHTML:!0,placement:"right",theme:"tippy_main_theme"});

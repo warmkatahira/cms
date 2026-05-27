@@ -2,9 +2,9 @@
     <div class="w-full max-w-3xl">
         <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
             @if(!empty($unregisteredAliases))
-                <p class="text-sm text-gray-600 mb-6">以下の荷主名が顧客と紐付けされていません。紐付けを行ってください。</p>
+                <p class="text-sm text-gray-600 mb-6">以下のエイリアス名が顧客と紐付けされていません。紐付けを行ってください。</p>
             @else
-                <p class="text-sm text-gray-600 mb-6">未登録の荷主名はありません。</p>
+                <p class="text-sm text-gray-600 mb-6">未登録のエイリアス名はありません。</p>
             @endif
             <form method="POST" action="{{ route('client_alias_create.create') }}" id="client_alias_create_form">
                 @csrf
@@ -13,9 +13,9 @@
                         <div class="flex items-center gap-4 p-4 border border-gray-200 rounded-xl bg-gray-50">
                             <input type="hidden" name="aliases[{{ $index }}][base_id]" value="{{ $alias['base_id'] }}">
                             <input type="hidden" name="aliases[{{ $index }}][client_alias_name]" value="{{ $alias['client_alias_name'] }}">
-                            {{-- 荷主名 --}}
+                            {{-- エイリアス名 --}}
                             <div class="flex-1">
-                                <p class="text-xs text-gray-400 mb-0.5">荷主名</p>
+                                <p class="text-xs text-gray-400 mb-0.5">エイリアス名</p>
                                 <p class="text-sm font-medium text-gray-700">{{ $alias['client_alias_name'] }}</p>
                                 <p class="text-xs text-gray-400 mt-0.5">{{ $baseMap[$alias['base_id']] ?? $alias['base_id'] }}</p>
                             </div>

@@ -45,6 +45,7 @@
             'resources/js/image_fade_in.js',
             'resources/js/file_select.js',
             'resources/js/filter.js',
+            'resources/js/modal.js',
         ])
 
         <!-- Select2 -->

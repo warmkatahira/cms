@@ -19,7 +19,7 @@ class ClientAliasCreateController extends Controller
     public function index()
     {
         // ページヘッダーをセッションに格納
-        session(['page_header' => '荷主名⇔顧客紐付け登録']);
+        session(['page_header' => 'エイリアス名⇔顧客紐付け登録']);
         // セッションから未登録エイリアスを取得
         $unregisteredAliases = session('unregisteredAliases', []);
         // clientsを全件取得

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Client\Client\ClientController;
 // +-+-+-+-+-+-+-+- 顧客ダウンロード +-+-+-+-+-+-+-+-
 use App\Http\Controllers\Client\Client\ClientDownloadController;
+// +-+-+-+-+-+-+-+- 顧客収支ダウンロード +-+-+-+-+-+-+-+-
+use App\Http\Controllers\Client\Client\ClientFinancialDownloadController;
 // +-+-+-+-+-+-+-+- 顧客詳細 +-+-+-+-+-+-+-+-
 use App\Http\Controllers\Client\ClientDetail\ClientDetailController;
 // +-+-+-+-+-+-+-+- エイリアス登録 +-+-+-+-+-+-+-+-
@@ -20,6 +22,11 @@ Route::middleware('common')->group(function (){
     });
     // +-+-+-+-+-+-+-+- 顧客ダウンロード +-+-+-+-+-+-+-+-
     Route::controller(ClientDownloadController::class)->prefix('client_download')->name('client_download.')->group(function(){
+        Route::get('download_by_client', 'downloadByClient')->name('download_by_client');
+        Route::get('download_by_alias', 'downloadByAlias')->name('download_by_alias');
+    });
+    // +-+-+-+-+-+-+-+- 顧客収支ダウンロード +-+-+-+-+-+-+-+-
+    Route::controller(ClientFinancialDownloadController::class)->prefix('client_financial_download')->name('client_financial_download.')->group(function(){
         Route::get('download_by_client', 'downloadByClient')->name('download_by_client');
         Route::get('download_by_alias', 'downloadByAlias')->name('download_by_alias');
     });

@@ -77,7 +77,7 @@ class FinancialImportController extends Controller
         if(session('unregisteredAliases')){
             return redirect()->route('client_alias_create.index')->with([
                 'alert_type'    => 'info',
-                'alert_message' => "収支データ取込が完了しました。\n未登録の荷主名があるので、登録を行って下さい。",
+                'alert_message' => "収支データ取込が完了しました。\n未登録のエイリアス名があるので、登録を行って下さい。",
             ]);
         }
         return redirect()->route('financial_import_history.index')->with([

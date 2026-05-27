@@ -1,0 +1,1 @@
+$(document).on("click",".modal_overlay",function(o){$(o.target).is(".modal_overlay")&&$(this).hide()});$(document).on("click","[data-modal-open]",function(){$($(this).data("modal-open")).show()});$(document).on("click","[data-modal-close]",function(){$(this).closest(".modal_overlay").hide()});$(function(){$("body").append($(".modal_overlay"))});

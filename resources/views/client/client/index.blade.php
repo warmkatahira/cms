@@ -6,6 +6,7 @@
     <div class="flex flex-row gap-x-5 items-start">
         <x-client.client.list :clients="$clients" :bases="$bases" />
     </div>
+    <x-client.client.client-financial-download-modal :fiscalYears="$fiscalYears" />
 </x-app-layout>
 @vite([
     'resources/js/client/client/client.js',

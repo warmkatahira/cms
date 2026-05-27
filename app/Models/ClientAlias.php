@@ -14,6 +14,11 @@ class ClientAlias extends Model
         'client_id',
         'client_alias_name',
     ];
+    // clientsテーブルとのリレーション
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id', 'client_id');
+    }
     // basesテーブルとのリレーション
     public function base()
     {

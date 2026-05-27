@@ -5,7 +5,7 @@
     </button>
     <div id="aliases_body" class="px-6 pb-6">
         @if($client->clientAliases->isEmpty())
-            <p class="text-sm text-gray-400">紐付けされている荷主名はありません。</p>
+            <p class="text-sm text-gray-400">紐付けされているエイリアス名はありません。</p>
         @else
             <div class="flex flex-col gap-3">
                 @foreach($client->clientAliases->groupBy('base_id') as $base_id => $aliases)

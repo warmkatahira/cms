@@ -20,6 +20,11 @@ class FiscalYear extends Model
         'start_date' => 'date',
         'end_date'   => 'date',
     ];
+    // 「period」で並び替え
+    public function scopeOrdered($query, string $direction = 'asc')
+    {
+        return $query->orderBy('period', $direction);
+    }
     // 当期を取得
     public static function current(): ?self
     {
