@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('bases', function (Blueprint $table){
             $table->string('base_id', 10)->primary();
             $table->string('base_name', 20)->unique();
+            $table->string('short_base_name', 10)->unique();
             $table->unsignedInteger('sort_order')->default(100);
             $table->timestamps();
         });

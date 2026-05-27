@@ -42,7 +42,7 @@
                                 @foreach($bases as $baseId => $aliases)
                                     <span class="inline-flex items-center px-2 py-0.5 rounded bg-badge-normal text-xs tippy_base_aliases"
                                         data-aliases="{{ $aliases->pluck('client_alias_name')->join(',') }}">
-                                        {{ $aliases->first()->base->base_name ?? $baseId }}
+                                        {{ $aliases->first()->base->short_base_name ?? $baseId }}
                                     </span>
                                 @endforeach
                             </div>

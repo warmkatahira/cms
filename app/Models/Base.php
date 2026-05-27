@@ -14,6 +14,7 @@ class Base extends Model
     protected $fillable = [
         'base_id',
         'base_name',
+        'short_base_name',
         'sort_order',
     ];
     // 「sort_order」で並び替え
