@@ -20,6 +20,7 @@ const $meta    = $('#page_meta');
 const clientId = $meta.data('client-id');
 
 let monthlyChart = null;
+let showDatalabels = true;
 
 // ─── フォーマット ────────────────────────────────────────────────────
 function formatNumber(num) {
@@ -115,16 +116,16 @@ function renderChart(includeHq) {
         data: {
             labels: monthlyData.map(d => d.month),
             datasets: [
-                { type: 'bar',  label: '売上：保管',         data: monthlyData.map(d => d.sales_storage),  backgroundColor: salesColors.storage.bg,  borderWidth: 0, stack: 'sales', order: 1,  datalabels: { display: true, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '売上：荷役',         data: monthlyData.map(d => d.sales_handling), backgroundColor: salesColors.handling.bg, borderWidth: 0, stack: 'sales', order: 2,  datalabels: { display: true, formatter: () => '荷', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '売上：運賃',         data: monthlyData.map(d => d.sales_freight),  backgroundColor: salesColors.freight.bg,  borderWidth: 0, stack: 'sales', order: 3,  datalabels: { display: true, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '売上：その他',       data: monthlyData.map(d => d.sales_other),    backgroundColor: salesColors.other.bg,    borderWidth: 0, stack: 'sales', order: 4,  datalabels: { display: true, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '経費：保管',         data: monthlyData.map(d => d.cost_storage),   backgroundColor: costColors.storage.bg,   borderWidth: 0, stack: 'cost',  order: 5,  datalabels: { display: true, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '経費：社員人件費',   data: monthlyData.map(d => d.cost_employee),  backgroundColor: costColors.employee.bg,  borderWidth: 0, stack: 'cost',  order: 6,  datalabels: { display: true, formatter: () => '社', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '経費：パート人件費', data: monthlyData.map(d => d.cost_part),      backgroundColor: costColors.part.bg,      borderWidth: 0, stack: 'cost',  order: 7,  datalabels: { display: true, formatter: () => 'パ', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '経費：派遣人件費',   data: monthlyData.map(d => d.cost_temp),      backgroundColor: costColors.temp.bg,      borderWidth: 0, stack: 'cost',  order: 8,  datalabels: { display: true, formatter: () => '派', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '経費：運賃',         data: monthlyData.map(d => d.cost_freight),   backgroundColor: costColors.freight.bg,   borderWidth: 0, stack: 'cost',  order: 9,  datalabels: { display: true, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
-                { type: 'bar',  label: '経費：その他',       data: monthlyData.map(d => d.cost_other),     backgroundColor: costColors.other.bg,     borderWidth: 0, stack: 'cost',  order: 10, datalabels: { display: true, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '売上：保管',         data: monthlyData.map(d => d.sales_storage),  backgroundColor: salesColors.storage.bg,  borderWidth: 0, stack: 'sales', order: 1,  datalabels: { display: showDatalabels, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '売上：荷役',         data: monthlyData.map(d => d.sales_handling), backgroundColor: salesColors.handling.bg, borderWidth: 0, stack: 'sales', order: 2,  datalabels: { display: showDatalabels, formatter: () => '荷', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '売上：運賃',         data: monthlyData.map(d => d.sales_freight),  backgroundColor: salesColors.freight.bg,  borderWidth: 0, stack: 'sales', order: 3,  datalabels: { display: showDatalabels, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '売上：その他',       data: monthlyData.map(d => d.sales_other),    backgroundColor: salesColors.other.bg,    borderWidth: 0, stack: 'sales', order: 4,  datalabels: { display: showDatalabels, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '経費：保管',         data: monthlyData.map(d => d.cost_storage),   backgroundColor: costColors.storage.bg,   borderWidth: 0, stack: 'cost',  order: 5,  datalabels: { display: showDatalabels, formatter: () => '保', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '経費：社員人件費',   data: monthlyData.map(d => d.cost_employee),  backgroundColor: costColors.employee.bg,  borderWidth: 0, stack: 'cost',  order: 6,  datalabels: { display: showDatalabels, formatter: () => '社', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '経費：パート人件費', data: monthlyData.map(d => d.cost_part),      backgroundColor: costColors.part.bg,      borderWidth: 0, stack: 'cost',  order: 7,  datalabels: { display: showDatalabels, formatter: () => 'パ', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '経費：派遣人件費',   data: monthlyData.map(d => d.cost_temp),      backgroundColor: costColors.temp.bg,      borderWidth: 0, stack: 'cost',  order: 8,  datalabels: { display: showDatalabels, formatter: () => '派', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '経費：運賃',         data: monthlyData.map(d => d.cost_freight),   backgroundColor: costColors.freight.bg,   borderWidth: 0, stack: 'cost',  order: 9,  datalabels: { display: showDatalabels, formatter: () => '運', color: '#555', font: { size: 10, weight: 'bold' } } },
+                { type: 'bar',  label: '経費：その他',       data: monthlyData.map(d => d.cost_other),     backgroundColor: costColors.other.bg,     borderWidth: 0, stack: 'cost',  order: 10, datalabels: { display: showDatalabels, formatter: () => '他', color: '#555', font: { size: 10, weight: 'bold' } } },
                 { type: 'line', label: '本社管理費', data: monthlyData.map(d => d.cost_hq),  backgroundColor: 'rgba(245,158,11,0.1)', borderColor: 'rgba(245,158,11,1)',  borderWidth: 2, pointRadius: 3, tension: 0.3, order: 11 },
                 { type: 'line', label: '収支',       data: profitData,                        backgroundColor: 'rgba(34,197,94,0.1)',  borderColor: 'rgba(34,197,94,1)',   borderWidth: 2, pointRadius: 3, tension: 0.3, order: 12 },
                 { type: 'line', label: '前期売上',   data: lastYearSales,                     borderColor: 'rgba(59,130,246,0.4)',     borderWidth: 1.5, borderDash: [5,5], pointRadius: 2, tension: 0.3, order: 13 },
@@ -439,5 +440,12 @@ $(function () {
     $('#toggle_aliases').on('click', function () {
         $('#aliases_body').toggleClass('hidden');
         $('#toggle_aliases_icon').toggleClass('rotate-180');
+    });
+
+    // 内訳ラベルのボタンが押された場合
+    $('#toggle_datalabels').on('click', function () {
+        showDatalabels = !showDatalabels;
+        $(this).text(showDatalabels ? '内訳ラベルを非表示' : '内訳ラベルを表示');
+        renderChart(window._includeHq ?? true);
     });
 });
