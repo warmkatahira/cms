@@ -19,7 +19,7 @@ class ClientDetailController extends Controller
         // インスタンス化
         $ClientDetailService = new ClientDetailService;
         // 顧客を取得
-        $client = Client::with(['clientAliases.base', 'user'])->findOrFail($request->client_id);
+        $client = Client::with(['clientAliases.base', 'clientAliases.users', 'user'])->findOrFail($request->client_id);
         // 当期を取得
         $currentFiscalYear = FiscalYear::current();
         // 前期を取得
