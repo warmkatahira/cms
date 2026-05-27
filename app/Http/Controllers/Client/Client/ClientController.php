@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Client\Client;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+// モデル
+use App\Models\Base;
 // サービス
 use App\Services\Client\Client\ClientSearchService;
 // トレイト
@@ -27,8 +29,11 @@ class ClientController extends Controller
         $result = $ClientSearchService->getSearchResult();
         // ページネーションを実施
         $clients = $this->setPagination($result);
+        // 営業所を取得
+        $bases = Base::ordered()->get();
         return view('client.client.index')->with([
             'clients' => $clients,
+            'bases' => $bases,
         ]);
     }
 }

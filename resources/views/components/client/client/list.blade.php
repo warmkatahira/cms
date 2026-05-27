@@ -6,7 +6,7 @@
                     <th class="font-thin py-1 px-2 text-center">操作</th>
                     <th class="font-thin py-1 px-2 text-center">ステータス</th>
                     <th class="font-thin py-1 px-2 text-center">顧客名</th>
-                    <th class="font-thin py-1 px-2 text-center">紐付け荷主数</th>
+                    <th class="font-thin py-1 px-2 text-center">営業所</th>
                     <th class="font-thin py-1 px-2 text-center">最終更新者</th>
                     <th class="font-thin py-1 px-2 text-center">最終更新日時</th>
                 </tr>
@@ -14,7 +14,7 @@
                     <th></th>
                     <x-filter.select-boolean id="filter_is_active" name="filter_is_active" label1="有効" label0="無効" />
                     <x-filter.input type="text" id="filter_client_name" name="filter_client_name" />
-                    <x-filter.input type="tel" id="filter_client_alias_count" name="filter_client_alias_count" />
+                    <x-filter.select id="filter_base_id" name="filter_base_id" :selectItems="$bases" optionValue="base_id" optionText="base_name" />
                     <x-filter.input type="text" id="filter_user_name" name="filter_user_name" />
                     <x-filter.input type="text" id="filter_updated_at" name="filter_updated_at" />
                 </tr>
@@ -36,10 +36,16 @@
                                 {{ $client->client_name }}
                             </div>
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400 text-center">
-                            <span class="inline-flex items-center justify-center h-5 w-8 px-3 rounded bg-badge-normal font-medium tippy_client_aliases" data-client-aliases="{{ $client->clientAliases->map(fn($a) => $a->client_alias_name . '【' . $a->base->base_name . '】')->join(',') }}">
-                                {{ number_format($client->client_aliases_count) }}
-                            </span>
+                        <td class="py-1 px-2 border-b border-gray-400">
+                            @php $bases = $client->clientAliases->groupBy('base_id'); @endphp
+                            <div class="flex flex-wrap gap-1">
+                                @foreach($bases as $baseId => $aliases)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded bg-badge-normal text-xs tippy_base_aliases"
+                                        data-aliases="{{ $aliases->pluck('client_alias_name')->join(',') }}">
+                                        {{ $aliases->first()->base->base_name ?? $baseId }}
+                                    </span>
+                                @endforeach
+                            </div>
                         </td>
                         <td class="py-1 px-5 border-b border-gray-400">
                             <div class="flex items-center gap-1">

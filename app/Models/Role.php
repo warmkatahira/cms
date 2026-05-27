@@ -16,10 +16,10 @@ class Role extends Model
         'role_name',
         'sort_order',
     ];
-    // 全てのレコードを取得
-    public static function getAll()
+    // 「sort_order」で並び替え
+    public function scopeOrdered($query)
     {
-        return self::orderBy('sort_order', 'asc');
+        return $query->orderBy('sort_order', 'asc');
     }
     // usersテーブルとのリレーション
     public function users()

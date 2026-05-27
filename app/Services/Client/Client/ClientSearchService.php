@@ -15,7 +15,7 @@ class ClientSearchService extends BaseFilterService
     protected function baseQuery()
     {
         // クエリをセット
-        return Client::with(['user', 'clientAliases.base'])->withCount('clientAliases');
+        return Client::with(['user', 'clientAliases.base']);
     }
 
     public function setSearchCondition($request)
@@ -42,9 +42,11 @@ class ClientSearchService extends BaseFilterService
                     $q->where('user_name', 'LIKE', '%' . $value . '%');
                 });
             },
-            // 紐付け荷主数
-            'filter_client_alias_count' => function ($query, $value) {
-                $query->having('client_aliases_count', '=', $value);
+            // 営業所
+            'filter_base_id' => function ($query, $value) {
+                $query->whereHas('clientAliases', function ($q) use ($value) {
+                    $q->where('base_id', '=', $value);
+                });
             },
             // 最終更新日時
             'filter_updated_at' => function ($query, $value) {

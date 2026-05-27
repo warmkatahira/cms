@@ -33,6 +33,11 @@ class ClientSeeder extends Seeder
             'client_id'         => 1,
             'client_alias_name' => 'PIA(化粧品)',
         ]);
+        ClientAlias::create([
+            'base_id'           => 'LP',
+            'client_id'         => 1,
+            'client_alias_name' => 'PIA(什器)',
+        ]);
 
         Client::create([
             'client_name'               => '株式会社拓洋',
@@ -51,6 +56,11 @@ class ClientSeeder extends Seeder
             'base_id'           => 'LP',
             'client_id'         => 2,
             'client_alias_name' => '拓洋（豊商事）',
+        ]);
+        ClientAlias::create([
+            'base_id'           => 'LP',
+            'client_id'         => 2,
+            'client_alias_name' => '拓洋（太洋薬品）',
         ]);
 
         Client::create([

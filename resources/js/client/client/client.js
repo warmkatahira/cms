@@ -1,7 +1,7 @@
-// 紐付け荷主数のツールチップ
-tippy('.tippy_client_aliases', {
+// 営業所のツールチップ
+tippy('.tippy_base_aliases', {
     content(reference) {
-        const aliases = reference.getAttribute('data-client-aliases');
+        const aliases = reference.getAttribute('data-aliases');
         if (!aliases) return '荷主なし';
         return aliases.split(',').map(name => `<div>${name}</div>`).join('');
     },

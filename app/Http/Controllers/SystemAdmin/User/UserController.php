@@ -32,9 +32,9 @@ class UserController extends Controller
         // ページネーションを実施
         $users = $this->setPagination($result);
         // 営業所を取得
-        $bases = Base::getAll()->get();
+        $bases = Base::ordered()->get();
         // 権限を取得
-        $roles = Role::getAll()->get();
+        $roles = Role::ordered()->get();
         return view('system_admin.user.index')->with([
             'users' => $users,
             'bases' => $bases,
