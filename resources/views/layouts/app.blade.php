@@ -46,6 +46,7 @@
             'resources/js/file_select.js',
             'resources/js/filter.js',
             'resources/js/modal.js',
+            'resources/js/tippy.js',
         ])
 
         <!-- Select2 -->

@@ -24,9 +24,13 @@ class ClientFinancialDownloadService
     // 対象期間のyear_monthリストを生成
     private function getYearMonths($fiscalYears): array
     {
+        // year_monthを格納する配列を初期化
         $yearMonths = [];
+        // 期の分だけループ処理
         foreach ($fiscalYears as $fy) {
+            // 月の分だけループ処理
             foreach ($fy->monthSequence() as $month) {
+                // 年月（1日）を配列に格納
                 $yearMonths[] = CarbonImmutable::parse($fy->start_date)->month($month)->format('Y-m-d');
             }
         }

@@ -25,8 +25,8 @@
             </div>
         </div>
         <div class="flex gap-2 mt-6">
-            <a id="btn_monthly_download_by_client" href="#" class="btn rounded bg-btn-enter text-white py-1 px-3 text-xs">顧客単位</a>
-            <a id="btn_monthly_download_by_alias" href="#" class="btn rounded bg-btn-enter text-white py-1 px-3 text-xs">エイリアス単位</a>
+            <a id="btn_monthly_download_by_client" href="#" class="btn rounded bg-btn-enter text-white py-1 px-3 text-xs" data-tippy-content="「収支データ（顧客単位）」をCSV形式でダウンロードします。">顧客単位</a>
+            <a id="btn_monthly_download_by_alias" href="#" class="btn rounded bg-btn-enter text-white py-1 px-3 text-xs" data-tippy-content="「収支データ（エイリアス単位）」をCSV形式でダウンロードします。">エイリアス単位</a>
             <button data-modal-close class="btn rounded bg-btn-cancel ml-auto text-xs text-white px-3">キャンセル</button>
         </div>
     </div>
