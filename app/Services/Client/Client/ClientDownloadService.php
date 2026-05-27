@@ -39,7 +39,7 @@ class ClientDownloadService
                         // 営業所+エイリアス名+担当者名を追加
                         $client->clientAliases->map(function ($alias) {
                             $baseName = $alias->base->base_name ?? '';
-                            $users = $alias->users->isNotEmpty() ? ' / ' . $alias->users->map(fn($u) => $u->user_name)->join('・') : '';
+                            $users = $alias->users->isNotEmpty() ? ' / ' . $alias->users->map(fn($u) => $u->user_name)->join('・') : ' / 設定なし';
                             return "{$baseName} / {$alias->client_alias_name}{$users}";
                         })->join("\n"),
                         $client->user->user_name,
@@ -74,8 +74,9 @@ class ClientDownloadService
                 foreach($clients as $client){
                     // エイリアスの分だけループ処理
                     foreach ($client->clientAliases as $alias) {
+                        // 担当営業所と担当従業員を取得
                         $baseName = $alias->base->base_name ?? '';
-                        $users = $alias->users->isNotEmpty() ? $alias->users->map(fn($u) => $u->user_name)->join('・') : '';
+                        $users = $alias->users->isNotEmpty() ? $alias->users->map(fn($u) => $u->user_name)->join('・') : '設定なし';
                         // 変数に情報を格納
                         $row = [
                             $client->is_active_text,

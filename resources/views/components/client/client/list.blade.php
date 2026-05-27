@@ -41,7 +41,7 @@
                             <div class="flex flex-wrap gap-1">
                                 @foreach($bases as $baseId => $aliases)
                                     <span class="inline-flex items-center px-2 py-0.5 rounded bg-badge-normal text-xs tippy_base_aliases"
-                                        data-aliases="{{ $aliases->map(fn($a) => $a->client_alias_name . ($a->users->isNotEmpty() ? '【' . $a->users->map(fn($u) => $u->user_name)->join('・') . '】' : ''))->join(',') }}">
+                                        data-aliases="{{ $aliases->map(fn($a) => $a->client_alias_name . ($a->users->isNotEmpty() ? '【' . $a->users->map(fn($u) => $u->user_name)->join('・') . '】' : '【設定なし】'))->join(',') }}">
                                         {{ $aliases->first()->base->short_base_name ?? $baseId }}
                                     </span>
                                 @endforeach
