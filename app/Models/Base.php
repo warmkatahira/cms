@@ -15,6 +15,10 @@ class Base extends Model
         'base_id',
         'base_name',
         'short_base_name',
+        'base_postal_code',
+        'base_address',
+        'base_tel',
+        'base_fax',
         'sort_order',
     ];
     // 「sort_order」で並び替え
@@ -26,5 +30,10 @@ class Base extends Model
     public function users()
     {
         return $this->hasMany(User::class, 'base_id', 'base_id');
+    }
+    // client_aliasesテーブルとのリレーション
+    public function clientAliases()
+    {
+        return $this->hasMany(ClientAlias::class, 'base_id', 'base_id');
     }
 }

@@ -1,5 +1,6 @@
 <x-app-layout>
     <div class="w-full space-y-3">
+        <x-page-back />
         {{-- 期セレクタ（カスタムドロップダウン） --}}
         <x-client.client-detail.fiscal-year-dropdown :currentFiscalYear="$currentFiscalYear" :fiscalYears="$fiscalYears" />
         <div class="flex gap-5 items-stretch w-full">

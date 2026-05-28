@@ -15,6 +15,10 @@ return new class extends Migration
             $table->string('base_id', 10)->primary();
             $table->string('base_name', 20)->unique();
             $table->string('short_base_name', 10)->unique();
+            $table->string('base_postal_code', 8)->nullable();
+            $table->string('base_address', 255)->nullable();
+            $table->string('base_tel', 13)->nullable();
+            $table->string('base_fax', 13)->nullable();
             $table->unsignedInteger('sort_order')->default(100);
             $table->timestamps();
         });

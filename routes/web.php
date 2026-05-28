@@ -21,3 +21,4 @@ require __DIR__.'/route/profile.php';
 require __DIR__.'/route/financial.php';
 require __DIR__.'/route/common.php';
 require __DIR__.'/route/client.php';
+require __DIR__.'/route/base.php';

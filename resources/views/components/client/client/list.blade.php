@@ -22,12 +22,12 @@
             <tbody class="bg-white">
                 @foreach($clients as $client)
                     <tr class="text-left cursor-default whitespace-nowrap hover:bg-table-hover group">
-                        <td class="py-1 px-2 border-b border-gray-400">
+                        <td class="py-1 px-5 border-b border-gray-400">
                             <div class="flex flex-row gap-5">
                                 <a href="{{ route('client_detail.index', ['client_id' => $client->client_id]) }}" class="btn rounded bg-btn-enter text-white py-1 px-2">詳細</a>
                             </div>
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400 text-center">
+                        <td class="py-1 px-5 border-b border-gray-400 text-center">
                             <x-list.status :value="$client->is_active" label1="有効" label0="無効" />
                         </td>
                         <td class="py-1 px-5 border-b border-gray-400">
@@ -36,7 +36,7 @@
                                 {{ $client->client_name }}
                             </div>
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400">
+                        <td class="py-1 px-5 border-b border-gray-400">
                             @php $bases = $client->clientAliases->groupBy('base_id'); @endphp
                             <div class="flex flex-wrap gap-1">
                                 @foreach($bases as $baseId => $aliases)
@@ -53,7 +53,7 @@
                                 {{ $client->user->user_name }}
                             </div>
                         </td>
-                        <td class="py-1 px-2 border-b border-gray-400 text-center">{{ CarbonImmutable::parse($client->updated_at)->isoFormat('YYYY年MM月DD日(ddd) HH時mm分ss秒') }}</td>
+                        <td class="py-1 px-5 border-b border-gray-400 text-center">{{ CarbonImmutable::parse($client->updated_at)->isoFormat('YYYY年MM月DD日(ddd) HH時mm分ss秒') }}</td>
                     </tr>
                 @endforeach
             </tbody>

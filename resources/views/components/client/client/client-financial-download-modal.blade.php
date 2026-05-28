@@ -31,6 +31,3 @@
         </div>
     </div>
 </div>
-
-{{-- トリガーボタン --}}
-<button id="open_monthly_financial_download_modal" class="btn rounded bg-btn-enter text-white py-1 px-3 text-xs">月別財務データ</button>
