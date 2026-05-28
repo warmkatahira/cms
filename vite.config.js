@@ -9,7 +9,6 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/app.css',
                 'resources/sass/theme.scss',
-                'resources/js/common.js',
                 'resources/js/loading.js',
                 'resources/js/search.js',
                 'resources/js/file_select.js',

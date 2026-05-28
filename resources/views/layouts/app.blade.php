@@ -37,7 +37,6 @@
         <!-- Scripts -->
         @vite([
             'resources/js/app.js',
-            'resources/js/common.js',
             'resources/js/loading.js',
             'resources/js/dropdown.js',
             'resources/js/search.js',
@@ -82,7 +81,7 @@
                 <!-- ページヘッダー -->
                 <x-page-header />
                 <!-- プロフィール -->
-                <a class="btn tippy_profile ml-auto" href="{{ route('profile.index') }}" data-full-name="{{ Auth::user()->user_name }}">
+                <a class="btn tippy_profile ml-auto" href="{{ route('profile.index') }}" data-tippy-content="{{ Auth::user()->user_name }} さん">
                     <img id="profile" class="profile_image_navigation" src="{{ asset('storage/profile_images/' . Auth::user()->profile_image_file_name) }}">
                 </a>
             </div>
