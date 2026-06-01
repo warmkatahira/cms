@@ -15,7 +15,7 @@
         </div>
         <!-- 営業所 -->
         <div class="flex flex-col gap-0.5">
-            <x-navigation-btn label="営業所" icon="las la-building" openCloseKey="client" />
+            <x-navigation-btn label="営業所" icon="las la-warehouse" openCloseKey="client" />
             <div class="navigation-content hidden">
                 <x-navigation-btn route="base.index" label="営業所一覧" isLeftMargin="true" isRightMargin="true" />
             </div>
