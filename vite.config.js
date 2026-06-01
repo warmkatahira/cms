@@ -32,6 +32,8 @@ export default defineConfig({
                 'resources/js/client/client_detail/client_detail.js',
                 'resources/js/client/client_detail/chart.js',
                 'resources/js/client/client_alias/client_alias.js',
+                // 営業所
+                'resources/js/base/base_detail/chart.js',
                 // 収支データ
                 'resources/js/financial/financial_import/financial_import.js',
                 // 管理

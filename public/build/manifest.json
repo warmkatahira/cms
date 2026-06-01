@@ -1,4 +1,8 @@
 {
+  "_chartjs-plugin-datalabels.esm-CvPB72ym.js": {
+    "file": "assets/chartjs-plugin-datalabels.esm-CvPB72ym.js",
+    "name": "chartjs-plugin-datalabels.esm"
+  },
   "resources/css/app.css": {
     "file": "assets/app-BEjATql8.css",
     "src": "resources/css/app.css",
@@ -28,6 +32,15 @@
       "resources/js/loading.js"
     ]
   },
+  "resources/js/base/base_detail/chart.js": {
+    "file": "assets/chart-Pe_MMieq.js",
+    "name": "chart",
+    "src": "resources/js/base/base_detail/chart.js",
+    "isEntry": true,
+    "imports": [
+      "_chartjs-plugin-datalabels.esm-CvPB72ym.js"
+    ]
+  },
   "resources/js/client/client/client.js": {
     "file": "assets/client-CTIqf0Bv.js",
     "name": "client",
@@ -44,10 +57,13 @@
     ]
   },
   "resources/js/client/client_detail/chart.js": {
-    "file": "assets/chart-BUwV0u0o.js",
+    "file": "assets/chart-BAVofzdw.js",
     "name": "chart",
     "src": "resources/js/client/client_detail/chart.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_chartjs-plugin-datalabels.esm-CvPB72ym.js"
+    ]
   },
   "resources/js/client/client_detail/client_detail.js": {
     "file": "assets/client_detail-w6qv48N0.js",
