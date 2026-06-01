@@ -17,6 +17,10 @@
             {{-- 月別収支グラフ --}}
             <x-common.monthly-financial-chart />
         </div>
+        <div class="flex gap-5 items-start w-full">
+            {{-- 顧客情報 --}}
+            <x-base.base-detail.client-list :clients="$clients" />
+        </div>
     </div>
 </x-app-layout>
 @vite([

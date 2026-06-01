@@ -437,9 +437,9 @@ $(function () {
         $('#monthly_chart_body').toggleClass('hidden');
         $('#toggle_monthly_chart_icon').toggleClass('rotate-180');
     });
-    $('#toggle_aliases').on('click', function () {
-        $('#aliases_body').toggleClass('hidden');
-        $('#toggle_aliases_icon').toggleClass('rotate-180');
+    $('#toggle_clients').on('click', function () {
+        $('#clients_body').toggleClass('hidden');
+        $('#toggle_clients_icon').toggleClass('rotate-180');
     });
 
     // 内訳ラベルのボタンが押された場合

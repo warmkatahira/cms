@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 // モデル
 use App\Models\Base;
 use App\Models\FiscalYear;
+use App\Models\ClientAlias;
 // サービス
 use App\Services\Base\BaseDetail\BaseDetailService;
 
@@ -30,6 +31,11 @@ class BaseDetailController extends Controller
         $summary             = $BaseDetailService->getSummary($base, $currentFiscalYear);
         $monthlyData         = $BaseDetailService->getMonthly($base, $currentFiscalYear);
         $lastYearMonthlyData = $lastFiscalYear ? $BaseDetailService->getMonthly($base, $lastFiscalYear) : [];
+        // 営業所配下のエイリアスを、顧客ごとにまとめる
+        $clients = ClientAlias::where('base_id', $base->base_id)
+                        ->with(['client', 'users'])
+                        ->get()
+                        ->groupBy('client_id');
         return view('base.base_detail.index')->with([
             'base'                => $base,
             'currentFiscalYear'   => $currentFiscalYear,
@@ -37,6 +43,7 @@ class BaseDetailController extends Controller
             'summary'             => $summary,
             'monthlyData'         => $monthlyData,
             'lastYearMonthlyData' => $lastYearMonthlyData,
+            'clients'             => $clients,
         ]);
     }
 
