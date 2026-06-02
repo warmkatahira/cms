@@ -17,7 +17,16 @@
         </div>
         <div class="col-span-2">
             <p class="text-xs text-gray-400 mb-0.5">住所</p>
-            <p class="text-gray-700">{{ $base->base_address ?? '―' }}</p>
+            @if($base->base_address)
+                <a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($base->base_address) }}"
+                target="_blank" rel="noopener noreferrer"
+                class="inline-flex items-center gap-1 text-blue-600 hover:underline"
+                data-tippy-content='<i class="las la-map-marked-alt la-lg"></i> Google Mapで表示'>
+                    {{ $base->base_address }}
+                </a>
+            @else
+                <p class="text-gray-700">―</p>
+            @endif
         </div>
     </div>
 </div>
