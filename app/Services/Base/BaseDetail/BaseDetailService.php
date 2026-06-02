@@ -109,4 +109,34 @@ class BaseDetailService
         }
         return $monthly;
     }
+
+    // 指定期の売上トップ10エイリアス
+    public function getTopAliases(Base $base, FiscalYear $fiscalYear, int $limit = 10): array
+    {
+        $rows = MonthlyFinancial::whereIn('client_alias_id', $this->aliasIds($base))
+            ->whereBetween('year_month', [
+                $fiscalYear->start_date->format('Y-m-d'),
+                $fiscalYear->end_date->format('Y-m-d'),
+            ])
+            ->selectRaw('client_alias_id, SUM(sales_storage + sales_handling + sales_freight + sales_other) as total_sales')
+            ->groupBy('client_alias_id')
+            ->orderByDesc('total_sales')
+            ->limit($limit)
+            ->get();
+
+        // エイリアス名・顧客名を引くためのマップ
+        $aliases = ClientAlias::whereIn('client_alias_id', $rows->pluck('client_alias_id'))
+            ->with('client')
+            ->get()
+            ->keyBy('client_alias_id');
+
+        return $rows->map(function ($row) use ($aliases) {
+            $alias = $aliases->get($row->client_alias_id);
+            return [
+                'client_alias_name' => $alias->client_alias_name ?? '(不明)',
+                'client_name'       => $alias->client->client_name ?? '',
+                'total_sales'       => (float) $row->total_sales,
+            ];
+        })->values()->all();
+    }
 }

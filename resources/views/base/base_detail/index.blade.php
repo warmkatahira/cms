@@ -20,6 +20,8 @@
         <div class="flex gap-5 items-start w-full">
             {{-- 顧客情報 --}}
             <x-base.base-detail.client-list :clients="$clients" />
+            {{-- 売上トップ10エイリアス --}}
+            <x-base.base-detail.top-aliases :topAliases="$topAliases" />
         </div>
     </div>
 </x-app-layout>

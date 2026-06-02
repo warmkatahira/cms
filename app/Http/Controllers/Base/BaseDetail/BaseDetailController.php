@@ -36,14 +36,17 @@ class BaseDetailController extends Controller
                         ->with(['client', 'users'])
                         ->get()
                         ->groupBy('client_id');
+        // 指定期の売上トップ10エイリアス
+        $topAliases = $BaseDetailService->getTopAliases($base, $currentFiscalYear);
         return view('base.base_detail.index')->with([
-            'base'                => $base,
-            'currentFiscalYear'   => $currentFiscalYear,
-            'fiscalYears'         => $fiscalYears,
-            'summary'             => $summary,
-            'monthlyData'         => $monthlyData,
-            'lastYearMonthlyData' => $lastYearMonthlyData,
-            'clients'             => $clients,
+            'base'                  => $base,
+            'currentFiscalYear'     => $currentFiscalYear,
+            'fiscalYears'           => $fiscalYears,
+            'summary'               => $summary,
+            'monthlyData'           => $monthlyData,
+            'lastYearMonthlyData'   => $lastYearMonthlyData,
+            'clients'               => $clients,
+            'topAliases'            => $topAliases,
         ]);
     }
 
@@ -63,6 +66,7 @@ class BaseDetailController extends Controller
             'summary'           => $BaseDetailService->getSummary($base, $fiscalYear),
             'monthly'           => $BaseDetailService->getMonthly($base, $fiscalYear),
             'last_year_monthly' => $prevFiscalYear ? $BaseDetailService->getMonthly($base, $prevFiscalYear) : [],
+            'top_aliases'       => $BaseDetailService->getTopAliases($base, $fiscalYear),
         ]);
     }
 }

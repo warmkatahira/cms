@@ -328,6 +328,30 @@ function rebuildMonthlyTable() {
     $('#monthly_table_rows').html(rows);
 }
 
+// 売上トップ10エイリアスを再描画（期切り替え時）
+function rebuildTopAliases(topAliases) {
+    if (!topAliases || topAliases.length === 0) {
+        $('#top_aliases_list').html('<p class="text-sm text-gray-400">この期に売上のあるエイリアスはありません。</p>');
+        return;
+    }
+    const rows = topAliases.map((row, i) => {
+        const rankClass = i < 3 ? 'text-theme-main' : 'text-gray-400';
+        return `
+            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="w-6 text-center text-xs font-semibold ${rankClass}">${i + 1}</span>
+                    <div class="min-w-0">
+                        <p class="text-sm text-gray-700 truncate">${row.client_alias_name}</p>
+                        <p class="text-xs text-gray-400 truncate">${row.client_name}</p>
+                    </div>
+                </div>
+                <p class="text-sm font-medium text-gray-700 whitespace-nowrap ml-2">${formatNumber(row.total_sales)}</p>
+            </div>
+        `;
+    }).join('');
+    $('#top_aliases_list').html(rows);
+}
+
 // ─── 期切り替えAPI ───────────────────────────────────────────────────
 async function switchFiscalYear(period, fiscalYear) {
     try {
@@ -363,6 +387,7 @@ async function switchFiscalYear(period, fiscalYear) {
 
         updatePeriodLabels(data.fiscal_year ?? fiscalYear);
         rebuildMonthlyTable();
+        rebuildTopAliases(data.top_aliases);
         updateSummary(window._includeHq ?? true);
 
     } catch (e) {
@@ -440,6 +465,10 @@ $(function () {
     $('#toggle_clients').on('click', function () {
         $('#clients_body').toggleClass('hidden');
         $('#toggle_clients_icon').toggleClass('rotate-180');
+    });
+    $('#toggle_top_aliases').on('click', function () {
+        $('#top_aliases_body').toggleClass('hidden');
+        $('#toggle_top_aliases_icon').toggleClass('rotate-180');
     });
 
     // 内訳ラベルのボタンが押された場合

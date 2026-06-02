@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl border border-gray-200 w-5/12 shadow-sm">
+<div class="bg-white rounded-2xl border border-gray-200 w-6/12 shadow-sm">
     <button id="toggle_clients" class="w-full flex items-center justify-between p-6 text-left">
         <p class="text-sm font-semibold text-gray-600">顧客情報</p>
         <i id="toggle_clients_icon" class="las la-angle-down text-gray-400 transition-transform"></i>
