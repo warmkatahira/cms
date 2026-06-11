@@ -36,7 +36,7 @@
             <p class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">未配置</p>
 
             @foreach($staffList as $s)
-                @if(!isset($items[$s->staff_id]) || !$items[$s->staff_id]->on_board)
+                @if(!isset($staffItems[$s->staff_id]) || !$staffItems[$s->staff_id]->on_board)
                 <div class="magnet cursor-grab select-none"
                     data-id="{{ $s->staff_id }}"
                     data-color="{{ $s->color }}"
@@ -52,56 +52,70 @@
 
             {{-- ホワイトボード --}}
             <div id="board"
-                class="relative flex-1 min-h-[560px] rounded-xl border border-gray-300 overflow-hidden"
-                style="background:#f7f6f0;"
+                class="relative flex-1 min-h-[560px] rounded-xl border border-gray-300"
+                style="background:#f7f6f0; overflow:auto; cursor:default;"
                 data-whiteboard-id="{{ $whiteboard->whiteboard_id }}"
                 data-canvas-w="{{ $whiteboard->canvas_w }}"
                 data-canvas-h="{{ $whiteboard->canvas_h }}"
                 data-base-id="{{ $baseId }}">
 
-            {{-- ボードタイトル --}}
-            <p class="absolute top-2 left-3 text-xs text-gray-400 uppercase tracking-wide pointer-events-none select-none">
-                {{ $whiteboard->title }}
-            </p>
-
-            {{-- 顧客ゾーン --}}
-            @foreach($clients as $i => $client)
-                <div class="client-zone absolute border-2 rounded-xl pointer-events-none"
-                    data-client-id="{{ $client->client_alias_id }}"
+                {{-- 仮想キャンバス --}}
+                <div id="board-canvas" 
                     style="
-                    left:{{ 40 + $i * 200 }}px;
-                    top:40px;
-                    width:180px;
-                    height:280px;
-                    border-color:{{ zoneColor($i, 'border') }};
-                    background:{{ zoneColor($i, 'bg') }};
+                        position:relative; 
+                        width:{{ $whiteboard->canvas_w }}px; 
+                        height:{{ $whiteboard->canvas_h }}px;
+                        background-image: radial-gradient(circle, #c8c6be 1px, transparent 1px);
+                        background-size: 24px 24px;
                     ">
-                <span class="absolute -top-3 left-2 text-xs font-medium px-1 rounded"
-                        style="color:{{ zoneColor($i, 'text') }};background:#f7f6f0;">
-                    {{ $client->client_alias_name }}
-                </span>
-                </div>
-            @endforeach
 
-            {{-- ボード上の磁石 --}}
-            @foreach($staffList as $s)
-                @if(isset($items[$s->staff_id]) && $items[$s->staff_id]->on_board)
-                @php $item = $items[$s->staff_id]; @endphp
-                <div class="magnet absolute cursor-grab select-none"
-                    data-id="{{ $s->staff_id }}"
-                    data-color="{{ $s->color }}"
-                    data-size="{{ $s->size ?? 'M' }}"
-                    data-shape="{{ $s->shape ?? 'rect' }}"
-                    data-name="{{ $s->staff_name }}"
-                    data-role="{{ $s->role_name }}"
-                    style="
-                        left:{{ $item->pos_x / $whiteboard->canvas_w * 100 }}%;
-                        top:{{ $item->pos_y / $whiteboard->canvas_h * 100 }}%;
-                    ">
-                    {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->size ?? 'M', $s->shape ?? 'rect') !!}
+                    {{-- ボードタイトル --}}
+                    <p class="absolute top-2 left-3 text-xs text-gray-400 uppercase tracking-wide pointer-events-none select-none">
+                        {{ $whiteboard->title }}
+                    </p>
+
+                    {{-- 顧客ゾーン --}}
+                    @foreach($clients as $i => $client)
+                        @php $zone = $zoneItems[$client->client_alias_id] ?? null; @endphp
+                        <div class="client-zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl"
+                            data-zone-id="{{ $client->client_alias_id }}"
+                            style="
+                                left:{{ $zone ? $zone->pos_x . 'px' : (40 + $i * 200) . 'px' }};
+                                top:{{ $zone ? $zone->pos_y . 'px' : '40px' }};
+                                width:180px;
+                                height:280px;
+                                border-color:{{ zoneColor($i, 'border') }};
+                                background:{{ zoneColor($i, 'bg') }};
+                            ">
+                            <span class="absolute -top-3 left-2 text-xs font-medium px-1 rounded pointer-events-none select-none"
+                                style="color:{{ zoneColor($i, 'text') }};background:#f7f6f0;">
+                                {{ $client->client_alias_name }}
+                            </span>
+                        </div>
+                    @endforeach
+
+                    {{-- ボード上の磁石 --}}
+                    @foreach($staffList as $s)
+                        @if(isset($staffItems[$s->staff_id]) && $staffItems[$s->staff_id]->on_board)
+                        @php $item = $staffItems[$s->staff_id]; @endphp
+                        <div class="magnet absolute cursor-grab select-none"
+                            data-id="{{ $s->staff_id }}"
+                            data-color="{{ $s->color }}"
+                            data-size="{{ $s->size ?? 'M' }}"
+                            data-shape="{{ $s->shape ?? 'rect' }}"
+                            data-name="{{ $s->staff_name }}"
+                            data-role="{{ $s->role_name }}"
+                            style="
+                                left:{{ $item->pos_x / $whiteboard->canvas_w * 100 }}%;
+                                top:{{ $item->pos_y / $whiteboard->canvas_h * 100 }}%;
+                            ">
+                            {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->size ?? 'M', $s->shape ?? 'rect') !!}
+                        </div>
+                        @endif
+                    @endforeach
+
                 </div>
-                @endif
-            @endforeach
+                {{-- 仮想キャンバスここまで --}}
 
             </div>
         </div>

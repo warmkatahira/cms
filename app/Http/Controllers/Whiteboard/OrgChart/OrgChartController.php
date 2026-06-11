@@ -15,35 +15,53 @@ class OrgChartController extends Controller
 {
     public function index(Request $request)
     {
-        // ページヘッダーをセッションに格納
         session(['page_header' => '組織図']);
         $bases  = Base::ordered()->get();
         $baseId = $request->get('base_id', $bases->first()?->base_id);
 
-        // 営業所ごとにボードを1枚自動生成
         $whiteboard = Whiteboard::firstOrCreate(
             ['base_id' => $baseId, 'board_type' => 'staff_map'],
             [
                 'title'    => (Base::find($baseId)?->base_name ?? '未設定') . ' 組織図',
-                'canvas_w' => 1200,
-                'canvas_h' => 800,
+                'canvas_w' => config('whiteboard.canvas_w'),
+                'canvas_h' => config('whiteboard.canvas_h'),
             ]
         );
 
         $staffList = Staff::where('base_id', $baseId)
-                          ->where('is_active', true)
-                          ->get();
+                        ->where('is_active', true)
+                        ->get();
 
         $clients = ClientAlias::where('base_id', $baseId)->get();
 
-        // staff.id をキーにしたアイテム一覧
-        $items = $whiteboard->items()
-                            ->where('item_type', 'staff')
-                            ->get()
-                            ->keyBy('item_id');
+        // staff の座標
+        $staffItems = $whiteboard->items()
+                                ->where('item_type', 'staff')
+                                ->get()
+                                ->keyBy('item_id');
+
+        // client_zone の座標（なければ初期位置を自動生成）
+        $zoneItems = $whiteboard->items()
+                                ->where('item_type', 'client_zone')
+                                ->get()
+                                ->keyBy('item_id');
+
+        foreach ($clients as $i => $client) {
+            if (!isset($zoneItems[$client->client_alias_id])) {
+                $item = WhiteboardItem::create([
+                    'whiteboard_id' => $whiteboard->whiteboard_id,
+                    'item_type'     => 'client_zone',
+                    'item_id'       => $client->client_alias_id,
+                    'pos_x'         => 40 + $i * 200,
+                    'pos_y'         => 40,
+                    'on_board'      => true,
+                ]);
+                $zoneItems[$client->client_alias_id] = $item;
+            }
+        }
 
         return view('whiteboard.org_chart.index', compact(
-            'bases', 'whiteboard', 'staffList', 'clients', 'items', 'baseId'
+            'bases', 'whiteboard', 'staffList', 'clients', 'staffItems', 'zoneItems', 'baseId'
         ));
     }
 
@@ -52,6 +70,7 @@ class OrgChartController extends Controller
     {
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
+            'item_type'     => 'nullable|string|in:staff,client_zone',  // 追加
             'item_id'       => 'required|integer',
             'pos_x'         => 'required|numeric',
             'pos_y'         => 'required|numeric',
@@ -62,7 +81,7 @@ class OrgChartController extends Controller
         WhiteboardItem::updateOrCreate(
             [
                 'whiteboard_id' => $validated['whiteboard_id'],
-                'item_type'     => 'staff',
+                'item_type'     => $validated['item_type'] ?? 'staff',  // 追加
                 'item_id'       => $validated['item_id'],
             ],
             [

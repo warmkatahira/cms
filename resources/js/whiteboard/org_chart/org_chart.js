@@ -26,6 +26,121 @@ let pendingStartY = 0;
 
 document.querySelectorAll('.magnet').forEach(el => initMagnet(el));
 
+// 顧客ゾーンのドラッグ
+document.querySelectorAll('.magnet-zone').forEach(el => initZone(el));
+
+function initZone(el) {
+    el.addEventListener('mousedown',  e => startZoneDrag(e, el));
+    el.addEventListener('touchstart', e => startZoneDrag(e, el), { passive: false });
+}
+
+let draggingZone   = null;
+let zoneGhost      = null;
+let zoneOffX = 0, zoneOffY = 0;
+let pendingZone    = null;
+let pendingZoneCx  = 0;
+let pendingZoneCy  = 0;
+
+function startZoneDrag(e, el) {
+    if (e.target.classList.contains('chip-edit-btn')) return;
+    if (draggingZone) {
+        draggingZone.style.opacity = '1';
+        draggingZone = null;
+    }
+    if (zoneGhost) {
+        zoneGhost.remove();
+        zoneGhost = null;
+    }
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    pendingZone   = el;
+    pendingZoneCx = cx;
+    pendingZoneCy = cy;
+    document.addEventListener('mousemove', onZoneMoveCheck);
+    document.addEventListener('mouseup',   onZoneCancelPending);
+}
+
+function onZoneMoveCheck(e) {
+    const dx = e.clientX - pendingZoneCx;
+    const dy = e.clientY - pendingZoneCy;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        document.removeEventListener('mousemove', onZoneMoveCheck);
+        document.removeEventListener('mouseup',   onZoneCancelPending);
+        beginZoneDrag(pendingZone, pendingZoneCx, pendingZoneCy);
+        pendingZone = null;
+    }
+}
+
+function onZoneCancelPending() {
+    document.removeEventListener('mousemove', onZoneMoveCheck);
+    document.removeEventListener('mouseup',   onZoneCancelPending);
+    pendingZone = null;
+}
+
+function beginZoneDrag(el, startCx, startCy) {
+    draggingZone = el;
+    const rect = el.getBoundingClientRect();
+    zoneOffX = startCx - rect.left;
+    zoneOffY = startCy - rect.top;
+
+    zoneGhost = el.cloneNode(true);
+    zoneGhost.style.cssText = `
+        position:fixed;pointer-events:none;z-index:9998;opacity:0.7;
+        left:${rect.left}px;top:${rect.top}px;
+        width:${rect.width}px;height:${rect.height}px;
+    `;
+    document.body.appendChild(zoneGhost);
+    el.style.opacity = '0.3';
+
+    document.addEventListener('mousemove', onZoneMove);
+    document.addEventListener('mouseup',   onZoneUp);
+    document.addEventListener('touchmove', onZoneTouchMove, { passive: false });
+    document.addEventListener('touchend',  onZoneTouchEnd);
+}
+
+function onZoneMove(e)      { moveZoneGhost(e.clientX, e.clientY); }
+function onZoneTouchMove(e) { e.preventDefault(); moveZoneGhost(e.touches[0].clientX, e.touches[0].clientY); }
+function moveZoneGhost(cx, cy) {
+    zoneGhost.style.left = (cx - zoneOffX) + 'px';
+    zoneGhost.style.top  = (cy - zoneOffY) + 'px';
+}
+
+function onZoneUp(e)       { endZoneDrag(e.clientX, e.clientY); }
+function onZoneTouchEnd(e) { endZoneDrag(e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
+
+function endZoneDrag(cx, cy) {
+    document.removeEventListener('mousemove', onZoneMove);
+    document.removeEventListener('mouseup',   onZoneUp);
+    document.removeEventListener('touchmove', onZoneTouchMove);
+    document.removeEventListener('touchend',  onZoneTouchEnd);
+    zoneGhost.remove();
+    zoneGhost = null;
+
+    const boardRect = board.getBoundingClientRect();
+    const zoneId    = draggingZone.dataset.zoneId;
+
+    const px = cx - boardRect.left + board.scrollLeft - zoneOffX;
+    const py = cy - boardRect.top  + board.scrollTop  - zoneOffY;
+
+    draggingZone.style.left    = px + 'px';
+    draggingZone.style.top     = py + 'px';
+    draggingZone.style.opacity = '1';
+    draggingZone = null;
+
+    fetch('/org_chart/item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            item_type:     'client_zone',
+            item_id:       parseInt(zoneId),
+            on_board:      true,
+            pos_x:         px,
+            pos_y:         py,
+        }),
+    });
+}
+
 function startDrag(e, el) {
     if (dragging) {
         dragging.style.opacity = '1';
@@ -98,9 +213,9 @@ function endDrag(cx, cy) {
     ghost.remove();
     ghost = null;
 
-    const boardRect = board.getBoundingClientRect();
-    const trayRect  = tray.getBoundingClientRect();
-    const staffId   = dragging.dataset.id;
+    const boardRect   = board.getBoundingClientRect();
+    const trayRect    = tray.getBoundingClientRect();
+    const staffId     = dragging.dataset.id;
 
     const onBoard = cx >= boardRect.left && cx <= boardRect.right
                  && cy >= boardRect.top  && cy <= boardRect.bottom;
@@ -108,13 +223,14 @@ function endDrag(cx, cy) {
                  && cy >= trayRect.top   && cy <= trayRect.bottom;
 
     if (onBoard) {
-        const px = (cx - offX - boardRect.left) / boardRect.width  * CANVAS_W;
-        const py = (cy - offY - boardRect.top)  / boardRect.height * CANVAS_H;
+        // スクロール位置を考慮したpx座標
+        const px = cx - boardRect.left + board.scrollLeft - offX;
+        const py = cy - boardRect.top  + board.scrollTop  - offY;
         saveItem(staffId, true, px, py);
         dragging.style.position = 'absolute';
-        dragging.style.left = ((cx - offX - boardRect.left) / boardRect.width  * 100) + '%';
-        dragging.style.top  = ((cy - offY - boardRect.top)  / boardRect.height * 100) + '%';
-        board.appendChild(dragging);
+        dragging.style.left = px + 'px';
+        dragging.style.top  = py + 'px';
+        document.getElementById('board-canvas').appendChild(dragging);
     } else if (onTray) {
         saveItem(staffId, false, 0, 0);
         dragging.style.position = '';
@@ -508,4 +624,42 @@ document.getElementById('edit-delete').addEventListener('click', () => {
         activeMagnetEl.remove();
         modal.style.display = 'none';
     });
+});
+
+// パン処理
+let isPanning  = false;
+let panStartX  = 0;
+let panStartY  = 0;
+let scrollLeft = 0;
+let scrollTop  = 0;
+
+board.addEventListener('mousedown', e => {
+    // 磁石・ゾーン以外の場所でパン開始
+    if (
+        e.target === board ||
+        e.target.id === 'board-canvas' ||
+        e.target.closest('#board-canvas') === document.getElementById('board-canvas') &&
+        !e.target.closest('.magnet') &&
+        !e.target.closest('.magnet-zone')
+    ) {
+        isPanning  = true;
+        panStartX  = e.clientX;
+        panStartY  = e.clientY;
+        scrollLeft = board.scrollLeft;
+        scrollTop  = board.scrollTop;
+        board.style.cursor = 'grabbing';
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('mousemove', e => {
+    if (!isPanning) return;
+    board.scrollLeft = scrollLeft - (e.clientX - panStartX);
+    board.scrollTop  = scrollTop  - (e.clientY - panStartY);
+});
+
+document.addEventListener('mouseup', () => {
+    if (!isPanning) return;
+    isPanning = false;
+    board.style.cursor = 'default';
 });
