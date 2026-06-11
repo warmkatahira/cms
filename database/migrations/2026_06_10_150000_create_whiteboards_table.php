@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('whiteboards', function (Blueprint $table) {
             $table->increments('whiteboard_id');
-            $table->string('base_id', 10);
             $table->string('board_type', 30)->default('staff_map');
             $table->string('title', 100);
             $table->integer('canvas_w')->default(1200);
             $table->integer('canvas_h')->default(800);
+            $table->unsignedInteger('created_by');
             $table->timestamps();
             // 外部キー
-            $table->foreign('base_id')->references('base_id')->on('bases')->cascadeOnUpdate();
+            $table->foreign('created_by')->references('user_no')->on('users')->onDelete('cascade');
         });
     }
 

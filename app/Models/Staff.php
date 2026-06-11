@@ -10,7 +10,7 @@ class Staff extends Model
     protected $primaryKey = 'staff_id';
     // 操作可能なカラムを定義
     protected $fillable = [
-        'base_id',
+        'whiteboard_id',
         'staff_name',
         'role_name',
         'color',

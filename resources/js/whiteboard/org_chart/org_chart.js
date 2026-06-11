@@ -3,7 +3,6 @@ const tray          = document.getElementById('tray');
 const WHITEBOARD_ID = parseInt(board.dataset.whiteboardId);
 const CANVAS_W      = parseInt(board.dataset.canvasW);
 const CANVAS_H      = parseInt(board.dataset.canvasH);
-const BASE_ID       = document.getElementById('baseSel').value;
 const CSRF          = document.querySelector('meta[name="csrf-token"]').content;
 
 const COLORS = [
@@ -288,7 +287,11 @@ window.addStaff = function() {
     fetch('/org_chart/staff', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-        body: JSON.stringify({ base_id: BASE_ID, 'staff_name': name, 'role_name': role }),
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            staff_name: name,
+            role_name:  role,
+        }),
     })
     .then(r => r.json())
     .then(data => {

@@ -32,7 +32,7 @@
         <div class="flex flex-col gap-0.5">
             <x-navigation-btn label="ホワイトボード" icon="las la-chalkboard" openCloseKey="whiteboard" />
             <div class="navigation-content hidden">
-                <x-navigation-btn route="org_chart.index" label="組織図" isLeftMargin="true" isRightMargin="true" />
+                <x-navigation-btn route="whiteboard.index" label="ホワイトボード一覧" isLeftMargin="true" isRightMargin="true" />
             </div>
         </div>
         @can('admin_check')

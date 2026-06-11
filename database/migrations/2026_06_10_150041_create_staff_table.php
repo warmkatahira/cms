@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('staff', function (Blueprint $table) {
             $table->increments('staff_id');
-            $table->string('base_id', 10);
+            $table->unsignedInteger('whiteboard_id');
             $table->string('staff_name', 50);
             $table->string('role_name', 50)->nullable();
             $table->unsignedtinyInteger('color')->default(0);
@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             // 外部キー
-            $table->foreign('base_id')->references('base_id')->on('bases')->cascadeOnUpdate();
+            $table->foreign('whiteboard_id')->references('whiteboard_id')->on('whiteboards')->cascadeOnUpdate();
         });
     }
 

@@ -3,16 +3,11 @@
         {{-- ツールバー --}}
         <div class="flex items-center gap-3 mb-4 p-3 bg-white border border-gray-200 rounded-lg flex-wrap">
 
-            {{-- 営業所切り替え --}}
-            <span class="text-sm font-medium text-gray-700">営業所</span>
-            <select id="baseSel" class="text-sm border rounded px-2 py-1"
-                    onchange="location.href='?base_id='+this.value">
-            @foreach($bases as $base)
-                <option value="{{ $base->base_id }}" {{ $base->base_id == $baseId ? 'selected' : '' }}>
-                {{ $base->base_name }}
-                </option>
-            @endforeach
-            </select>
+            {{-- 一覧に戻る --}}
+            <a href="{{ route('whiteboard.index') }}"
+               class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
+                ← 一覧
+            </a>
 
             <span class="text-gray-300 mx-1">|</span>
 
@@ -23,9 +18,11 @@
                 class="text-sm border rounded px-2 py-1 w-28">
             <button onclick="addStaff()"
                     class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
-            追加
+                追加
             </button>
+
             <span class="text-gray-300 mx-1">|</span>
+
             {{-- グループ追加 --}}
             <input id="newZoneLabel" type="text" placeholder="グループ名"
                 class="text-sm border rounded px-2 py-1 w-28">
@@ -65,14 +62,13 @@
                 style="background:#f7f6f0; overflow:auto; cursor:default; height:{{ config('whiteboard.board_height') }}"
                 data-whiteboard-id="{{ $whiteboard->whiteboard_id }}"
                 data-canvas-w="{{ $whiteboard->canvas_w }}"
-                data-canvas-h="{{ $whiteboard->canvas_h }}"
-                data-base-id="{{ $baseId }}">
+                data-canvas-h="{{ $whiteboard->canvas_h }}">
 
                 {{-- 仮想キャンバス --}}
-                <div id="board-canvas" 
+                <div id="board-canvas"
                     style="
-                        position:relative; 
-                        width:{{ $whiteboard->canvas_w }}px; 
+                        position:relative;
+                        width:{{ $whiteboard->canvas_w }}px;
                         height:{{ $whiteboard->canvas_h }}px;
                         background-image: radial-gradient(circle, #c8c6be 1px, transparent 1px);
                         background-size: 24px 24px;
@@ -83,21 +79,20 @@
                         {{ $whiteboard->title }}
                     </p>
 
-                    {{-- 顧客ゾーン --}}
-                    @foreach($clients as $i => $client)
+                    {{-- ゾーン --}}
+                    @foreach($zoneItems as $i => $zone)
                         @php
-                            $zone       = $zoneItems[$client->client_alias_id] ?? null;
-                            $meta       = $zone?->meta ?? [];
-                            $colorIndex = $meta['color_index'] ?? $i;
-                            $label      = $meta['label'] ?? $client->client_alias_name;
+                            $meta       = $zone->meta ?? [];
+                            $colorIndex = $meta['color_index'] ?? 0;
+                            $label      = $meta['label'] ?? '';
                         @endphp
                         <div class="client-zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl"
-                            data-zone-id="{{ $client->client_alias_id }}"
+                            data-zone-id="{{ $zone->whiteboard_item_id }}"
                             data-color-index="{{ $colorIndex }}"
                             data-label="{{ $label }}"
                             style="
-                                left:{{ $zone ? $zone->pos_x . 'px' : (40 + $i * 200) . 'px' }};
-                                top:{{ $zone ? $zone->pos_y . 'px' : '40px' }};
+                                left:{{ $zone->pos_x }}px;
+                                top:{{ $zone->pos_y }}px;
                                 width:{{ isset($meta['width']) ? $meta['width'] . 'px' : '180px' }};
                                 height:{{ isset($meta['height']) ? $meta['height'] . 'px' : '280px' }};
                                 border-color:{{ zoneColor($colorIndex, 'border') }};
@@ -114,7 +109,6 @@
                                 align-items:center;justify-content:center;
                                 cursor:pointer;z-index:10;
                             ">✏</div>
-                            {{-- リサイズハンドル --}}
                             <div class="zone-resize-handle" style="
                                 display:none;position:absolute;bottom:-4px;right:-4px;
                                 width:14px;height:14px;border-radius:2px;
@@ -150,8 +144,6 @@
                     @endforeach
 
                 </div>
-                {{-- 仮想キャンバスここまで --}}
-
             </div>
         </div>
     </div>
