@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+// その他
+use Carbon\CarbonImmutable;
+
 class Whiteboard extends Model
 {
     // 主キーカラムを変更
@@ -37,8 +40,13 @@ class Whiteboard extends Model
             $this->updated_at,
             $this->items()->max('updated_at'),
             \DB::table('whiteboard_users')->where('whiteboard_id', $this->whiteboard_id)->max('updated_at'),
-        ])->filter()->map(fn($d) => \Carbon\Carbon::parse($d));
+        ])->filter()->map(fn($d) => CarbonImmutable::parse($d));
 
-        return $dates->max()->format('Y/m/d H:i:s');
+        $latest = $dates->max();
+
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $weekday  = $weekdays[$latest->dayOfWeek];
+
+        return $latest->format('Y/m/d') . '(' . $weekday . ') ' . $latest->format('H:i:s') . ' (' . $latest->diffForHumans() . ')';
     }
 }
