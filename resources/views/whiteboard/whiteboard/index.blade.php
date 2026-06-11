@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="p-4">
+    <div class="p-0">
 
         {{-- ヘッダー --}}
         <div class="flex items-center justify-between mb-4">

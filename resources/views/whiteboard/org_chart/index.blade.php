@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="p-4">
+    <div class="p-0">
         {{-- ツールバー --}}
         <div class="flex items-center gap-3 mb-4 p-3 bg-white border border-gray-200 rounded-lg flex-wrap">
 
