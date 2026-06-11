@@ -1,6 +1,6 @@
 <?php
 
-function staffChip(string $name, ?string $role, int $color, string $size = 'M', string $shape = 'rect'): string
+function staffChip(string $name, ?string $role, int $color, string $shape = 'rect', ?string $width = null, ?string $height = null): string
 {
     $colors = [
         ['bg'=>'#E6F1FB','border'=>'#378ADD','text'=>'#0C447C'],
@@ -11,24 +11,23 @@ function staffChip(string $name, ?string $role, int $color, string $size = 'M', 
         ['bg'=>'#EEEDFE','border'=>'#7F77DD','text'=>'#3C3489'],
         ['bg'=>'#FAECE7','border'=>'#D85A30','text'=>'#711B13'],
     ];
-    $sizes = ['XS'=>'50px','S'=>'70px','M'=>'90px','L'=>'110px','XL'=>'130px'];
     $c = $colors[$color % count($colors)];
-    $w = $sizes[$size] ?? '90px';
+    $w = $width ?? '90px';
+    $h = $height ? 'height:' . $height . ';' : '';
 
-    // 形に応じたスタイル
     $shapeStyles = [
-        'rect'   => 'border-radius:8px;',
-        'circle' => 'border-radius:50%;',
-        'sharp'  => 'border-radius:0;',
+        'rect'           => 'border-radius:8px;',
+        'circle'         => 'border-radius:50%;',
+        'sharp'          => 'border-radius:0;',
         'rounded_bottom' => 'border-radius:0 0 50% 50%;',
-        'tab'    => 'border-radius:0 0 8px 8px;border-top:4px solid '.$c['border'].';',
+        'tab'            => 'border-radius:0 0 8px 8px;border-top:4px solid '.$c['border'].';',
     ];
     $shapeStyle = $shapeStyles[$shape] ?? $shapeStyles['rect'];
 
     return '
         <div class="staff-chip-wrap" style="position:relative;display:inline-block;">
             <div style="
-                width:'.$w.';padding:6px;
+                width:'.$w.';'.$h.'padding:6px;
                 border:2px solid '.$c['border'].';background:'.$c['bg'].';
                 text-align:center;'.$shapeStyle.'
             ">
@@ -42,6 +41,11 @@ function staffChip(string $name, ?string $role, int $color, string $size = 'M', 
                 align-items:center;justify-content:center;
                 cursor:pointer;z-index:10;
             ">✏</div>
+            <div class="chip-resize-handle" style="
+                display:none;position:absolute;bottom:-4px;right:-4px;
+                width:10px;height:10px;border-radius:2px;
+                background:#374151;cursor:se-resize;z-index:10;
+            "></div>
         </div>';
 }
 

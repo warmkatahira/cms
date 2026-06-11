@@ -45,7 +45,7 @@
                         data-shape="{{ $s->shape ?? 'rect' }}"
                         data-name="{{ $s->staff_name }}"
                         data-role="{{ $s->role_name }}">
-                        {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->size ?? 'M', $s->shape ?? 'rect') !!}
+                        {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->shape ?? 'rect') !!}
                     </div>
                     @endif
                 @endforeach
@@ -119,7 +119,12 @@
                     {{-- ボード上の磁石 --}}
                     @foreach($staffList as $s)
                         @if(isset($staffItems[$s->staff_id]) && $staffItems[$s->staff_id]->on_board)
-                        @php $item = $staffItems[$s->staff_id]; @endphp
+                        @php
+                            $item     = $staffItems[$s->staff_id];
+                            $chipMeta = $item->meta ?? [];
+                            $chipW    = isset($chipMeta['width'])  ? $chipMeta['width']  . 'px' : null;
+                            $chipH    = isset($chipMeta['height']) ? $chipMeta['height'] . 'px' : null;
+                        @endphp
                         <div class="magnet absolute cursor-grab select-none"
                             data-id="{{ $s->staff_id }}"
                             data-color="{{ $s->color }}"
@@ -131,7 +136,7 @@
                                 left:{{ $item->pos_x / $whiteboard->canvas_w * 100 }}%;
                                 top:{{ $item->pos_y / $whiteboard->canvas_h * 100 }}%;
                             ">
-                            {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->size ?? 'M', $s->shape ?? 'rect') !!}
+                            {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->shape ?? 'rect', $chipW, $chipH) !!}
                         </div>
                         @endif
                     @endforeach

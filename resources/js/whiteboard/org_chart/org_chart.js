@@ -15,7 +15,6 @@ const COLORS = [
     { bg:'#EEEDFE', border:'#7F77DD', text:'#3C3489' },
     { bg:'#FAECE7', border:'#D85A30', text:'#711B13' },
 ];
-const SIZES = { XS: '50px', S: '70px', M: '90px', L: '110px', XL: '130px' };
 
 let dragging = null;
 let ghost    = null;
@@ -273,7 +272,7 @@ window.addStaff = function() {
     .then(data => {
         const s = data.staff;
         const c = COLORS[(s.color ?? 0) % COLORS.length];
-        const w = SIZES[s.size ?? 'M'];
+        const w = '90px';
         const el = document.createElement('div');
         el.className     = 'magnet cursor-grab select-none';
         el.dataset.id    = s.staff_id;
@@ -283,22 +282,27 @@ window.addStaff = function() {
         el.dataset.size = s.size ?? 'M';
         el.dataset.shape = s.shape ?? 'rect';
         el.innerHTML = `
-                <div class="staff-chip-wrap" style="position:relative;display:inline-block;">
-                    <div style="
-                        width:${w};padding:6px;border-radius:8px;text-align:center;
-                        border:2px solid ${c.border};background:${c.bg};
-                    ">
-                        <div data-field="name" style="font-size:12px;font-weight:500;color:${c.text};">${s.staff_name}</div>
-                        <div data-field="role" style="font-size:10px;color:${c.text};opacity:.7;">${s.role_name ?? ''}</div>
-                    </div>
-                    <div class="chip-edit-btn" style="
-                        display:none;position:absolute;top:-7px;right:-7px;
-                        width:18px;height:18px;border-radius:50%;
-                        background:#374151;color:white;font-size:10px;
-                        align-items:center;justify-content:center;
-                        cursor:pointer;z-index:10;
-                    ">✏</div>
-                </div>`;
+            <div class="staff-chip-wrap" style="position:relative;display:inline-block;">
+                <div style="
+                    width:${w};padding:6px;border-radius:8px;text-align:center;
+                    border:2px solid ${c.border};background:${c.bg};
+                ">
+                    <div data-field="name" style="font-size:12px;font-weight:500;color:${c.text};">${s.staff_name}</div>
+                    <div data-field="role" style="font-size:10px;color:${c.text};opacity:.7;">${s.role_name ?? ''}</div>
+                </div>
+                <div class="chip-edit-btn" style="
+                    display:none;position:absolute;top:-7px;right:-7px;
+                    width:18px;height:18px;border-radius:50%;
+                    background:#374151;color:white;font-size:10px;
+                    align-items:center;justify-content:center;
+                    cursor:pointer;z-index:10;
+                ">✏</div>
+                <div class="chip-resize-handle" style="
+                    display:none;position:absolute;bottom:-4px;right:-4px;
+                    width:10px;height:10px;border-radius:2px;
+                    background:#374151;cursor:se-resize;z-index:10;
+                "></div>
+            </div>`;
         initMagnet(el);
         tray.appendChild(el);
         document.getElementById('newName').value = '';
@@ -349,20 +353,6 @@ modal.innerHTML = `
                         <div class="edit-color-chip" data-color="${i}"
                              style="width:24px;height:24px;border-radius:50%;cursor:pointer;
                                     background:${c.bg};border:2px solid ${c.border};">
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            <div style="margin-bottom:16px;">
-                <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:8px;">サイズ</label>
-                <div style="display:flex;gap:8px;">
-                    ${['XS','S','M','L','XL'].map(s => `
-                        <div class="edit-size-chip" data-size="${s}"
-                             style="width:40px;height:32px;border-radius:6px;cursor:pointer;
-                                    display:flex;align-items:center;justify-content:center;
-                                    font-size:13px;font-weight:500;
-                                    border:1.5px solid #d1d5db;color:#374151;background:white;">
-                            ${s}
                         </div>
                     `).join('')}
                 </div>
@@ -456,21 +446,6 @@ modal.querySelectorAll('.edit-color-chip').forEach(chip => {
     });
 });
 
-// サイズチップ
-modal.querySelectorAll('.edit-size-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-        selectedSize = chip.dataset.size;
-        modal.querySelectorAll('.edit-size-chip').forEach(c => {
-            c.style.background  = 'white';
-            c.style.borderColor = '#d1d5db';
-            c.style.color       = '#374151';
-        });
-        chip.style.background  = '#374151';
-        chip.style.borderColor = '#374151';
-        chip.style.color       = 'white';
-    });
-});
-
 // 形チップ
 modal.querySelectorAll('.edit-shape-chip').forEach(chip => {
     chip.addEventListener('click', () => {
@@ -496,24 +471,35 @@ function initMagnet(el) {
     el.addEventListener('mousedown',  e => startDrag(e, el));
     el.addEventListener('touchstart', e => startDrag(e, el), { passive: false });
 
-    // ホバーで編集ボタン表示
+    // ホバーで編集・リサイズボタン表示
     el.addEventListener('mouseenter', () => {
         const btn = el.querySelector('.chip-edit-btn');
         if (btn) btn.style.display = 'flex';
+        const handle = el.querySelector('.chip-resize-handle');
+        if (handle) handle.style.display = 'block';
     });
     el.addEventListener('mouseleave', () => {
         const btn = el.querySelector('.chip-edit-btn');
         if (btn) btn.style.display = 'none';
+        const handle = el.querySelector('.chip-resize-handle');
+        if (handle) handle.style.display = 'none';
     });
 
     // 編集ボタンクリック
     const editBtn = el.querySelector('.chip-edit-btn');
     if (editBtn) {
-        editBtn.addEventListener('mousedown', e => e.stopPropagation()); // ドラッグ阻止
+        editBtn.addEventListener('mousedown', e => e.stopPropagation());
         editBtn.addEventListener('click', e => {
             e.stopPropagation();
             openEditModal(e, el);
         });
+    }
+
+    // リサイズハンドル
+    const resizeHandle = el.querySelector('.chip-resize-handle');
+    if (resizeHandle) {
+        resizeHandle.addEventListener('mousedown', e => startChipResize(e, el));
+        resizeHandle.addEventListener('touchstart', e => startChipResize(e, el), { passive: false });
     }
 }
 
@@ -575,7 +561,7 @@ document.getElementById('edit-save').addEventListener('click', () => {
     fetch('/org_chart/staff/' + activeStaffId, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-        body: JSON.stringify({ staff_name: name, role_name: role, color: selectedColor, size: selectedSize, shape: selectedShape }),
+        body: JSON.stringify({ staff_name: name, role_name: role, color: selectedColor, shape: selectedShape }),
     })
     .then(r => r.json())
     .then(() => {
@@ -585,7 +571,6 @@ document.getElementById('edit-save').addEventListener('click', () => {
         const chip = wrap.querySelector('div');  // ← 内側のdivを正しく取得
         chip.style.background  = c.bg;
         chip.style.borderColor = c.border;
-        chip.style.width       = SIZES[selectedSize];  // ← サイズ更新
         const SHAPES = {
             rect:   'border-radius:8px;clip-path:none;',
             circle: 'border-radius:50%;clip-path:none;',
@@ -597,7 +582,7 @@ document.getElementById('edit-save').addEventListener('click', () => {
             background:${c.bg};
             border:2px solid ${c.border};
             border-top:${selectedShape === 'tab' ? '4px' : '2px'} solid ${c.border};
-            width:${SIZES[selectedSize]};
+            width:${chip.style.width || '90px'};
             padding:6px;
             text-align:center;
             ${SHAPES[selectedShape] ?? SHAPES['rect']}
@@ -903,4 +888,75 @@ function endZoneResize(cx, cy) {
     });
 
     resizingZone = null;
+}
+
+let resizingChip  = null;
+let chipResStartX = 0;
+let chipResStartY = 0;
+let chipResStartW = 0;
+let chipResStartH = 0;
+
+function startChipResize(e, el) {
+    e.stopPropagation();
+    e.preventDefault();
+    resizingChip  = el;
+    chipResStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    chipResStartY = e.touches ? e.touches[0].clientY : e.clientY;
+    const chip = el.querySelector('.staff-chip-wrap > div');
+    chipResStartW = chip ? chip.offsetWidth  : 90;
+    chipResStartH = chip ? chip.offsetHeight : 40;
+
+    document.addEventListener('mousemove', onChipResize);
+    document.addEventListener('mouseup',   onChipResizeEnd);
+    document.addEventListener('touchmove', onChipResizeTouch, { passive: false });
+    document.addEventListener('touchend',  onChipResizeEndTouch);
+}
+
+function onChipResize(e)      { doChipResize(e.clientX, e.clientY); }
+function onChipResizeTouch(e) { e.preventDefault(); doChipResize(e.touches[0].clientX, e.touches[0].clientY); }
+
+function doChipResize(cx, cy) {
+    if (!resizingChip) return;
+    const dx = cx - chipResStartX;
+    const dy = cy - chipResStartY;
+    const newW = Math.max(50, chipResStartW + dx);
+    const newH = Math.max(40, chipResStartH + dy);
+    const chip = resizingChip.querySelector('.staff-chip-wrap > div');
+    if (chip) {
+        chip.style.width  = newW + 'px';
+        chip.style.height = newH + 'px';
+    }
+}
+
+function onChipResizeEnd(e)      { endChipResize(); }
+function onChipResizeEndTouch(e) { endChipResize(); }
+
+function endChipResize() {
+    document.removeEventListener('mousemove', onChipResize);
+    document.removeEventListener('mouseup',   onChipResizeEnd);
+    document.removeEventListener('touchmove', onChipResizeTouch);
+    document.removeEventListener('touchend',  onChipResizeEndTouch);
+
+    if (!resizingChip) return;
+
+    const chip   = resizingChip.querySelector('.staff-chip-wrap > div');
+    const staffId = resizingChip.dataset.id;
+    const w = chip ? chip.offsetWidth  : 90;
+    const h = chip ? chip.offsetHeight : 40;
+
+    // DBに保存（sizeの代わりにwidthとheightをmetaとして保存）
+    fetch('/org_chart/item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            item_id:       parseInt(staffId),
+            on_board:      true,
+            pos_x:         parseFloat(resizingChip.style.left) || 0,
+            pos_y:         parseFloat(resizingChip.style.top)  || 0,
+            meta: { width: w, height: h },
+        }),
+    });
+
+    resizingChip = null;
 }
