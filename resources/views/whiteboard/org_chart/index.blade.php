@@ -90,8 +90,8 @@
                             style="
                                 left:{{ $zone ? $zone->pos_x . 'px' : (40 + $i * 200) . 'px' }};
                                 top:{{ $zone ? $zone->pos_y . 'px' : '40px' }};
-                                width:180px;
-                                height:280px;
+                                width:{{ isset($meta['width']) ? $meta['width'] . 'px' : '180px' }};
+                                height:{{ isset($meta['height']) ? $meta['height'] . 'px' : '280px' }};
                                 border-color:{{ zoneColor($colorIndex, 'border') }};
                                 background:{{ zoneColor($colorIndex, 'bg') }};
                             ">
@@ -106,6 +106,13 @@
                                 align-items:center;justify-content:center;
                                 cursor:pointer;z-index:10;
                             ">✏</div>
+                            {{-- リサイズハンドル --}}
+                            <div class="zone-resize-handle" style="
+                                display:none;
+                                position:absolute;bottom:-4px;right:-4px;
+                                width:12px;height:12px;border-radius:2px;
+                                background:#374151;cursor:se-resize;z-index:10;
+                            "></div>
                         </div>
                     @endforeach
 

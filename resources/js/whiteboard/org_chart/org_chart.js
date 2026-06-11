@@ -788,10 +788,14 @@ function initZone(el) {
     el.addEventListener('mouseenter', () => {
         const btn = el.querySelector('.zone-edit-btn');
         if (btn) btn.style.display = 'flex';
+        const handle = el.querySelector('.zone-resize-handle');
+        if (handle) handle.style.display = 'block';
     });
     el.addEventListener('mouseleave', () => {
         const btn = el.querySelector('.zone-edit-btn');
         if (btn) btn.style.display = 'none';
+        const handle = el.querySelector('.zone-resize-handle');
+        if (handle) handle.style.display = 'none';
     });
 
     // 編集ボタンクリック
@@ -816,7 +820,87 @@ function initZone(el) {
             zoneModal.style.display = 'flex';
         });
     }
+    // リサイズハンドル
+    const resizeHandle = el.querySelector('.zone-resize-handle');
+    if (resizeHandle) {
+        resizeHandle.addEventListener('mousedown', e => startZoneResize(e, el));
+        resizeHandle.addEventListener('touchstart', e => startZoneResize(e, el), { passive: false });
+    }
 }
 
 // 既存のゾーンにinitZoneを適用
 document.querySelectorAll('.magnet-zone').forEach(el => initZone(el));
+
+let resizingZone  = null;
+let resizeStartX  = 0;
+let resizeStartY  = 0;
+let resizeStartW  = 0;
+let resizeStartH  = 0;
+
+function startZoneResize(e, el) {
+    e.stopPropagation();
+    e.preventDefault();
+    resizingZone = el;
+    resizeStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    resizeStartY = e.touches ? e.touches[0].clientY : e.clientY;
+    resizeStartW = el.offsetWidth;
+    resizeStartH = el.offsetHeight;
+
+    document.addEventListener('mousemove', onZoneResize);
+    document.addEventListener('mouseup',   onZoneResizeEnd);
+    document.addEventListener('touchmove', onZoneResizeTouch, { passive: false });
+    document.addEventListener('touchend',  onZoneResizeEndTouch);
+}
+
+function onZoneResize(e)      { doZoneResize(e.clientX, e.clientY); }
+function onZoneResizeTouch(e) { e.preventDefault(); doZoneResize(e.touches[0].clientX, e.touches[0].clientY); }
+
+function doZoneResize(cx, cy) {
+    if (!resizingZone) return;
+    const dx = cx - resizeStartX;
+    const dy = cy - resizeStartY;
+    const newW = Math.max(100, resizeStartW + dx);
+    const newH = Math.max(80,  resizeStartH + dy);
+    resizingZone.style.width  = newW + 'px';
+    resizingZone.style.height = newH + 'px';
+}
+
+function onZoneResizeEnd(e)      { endZoneResize(e.clientX, e.clientY); }
+function onZoneResizeEndTouch(e) { endZoneResize(e.changedTouches[0].clientX, e.changedTouches[0].clientY); }
+
+function endZoneResize(cx, cy) {
+    document.removeEventListener('mousemove', onZoneResize);
+    document.removeEventListener('mouseup',   onZoneResizeEnd);
+    document.removeEventListener('touchmove', onZoneResizeTouch);
+    document.removeEventListener('touchend',  onZoneResizeEndTouch);
+
+    if (!resizingZone) return;
+
+    const zoneId = resizingZone.dataset.zoneId;
+    const w = resizingZone.offsetWidth;
+    const h = resizingZone.offsetHeight;
+    const px = parseFloat(resizingZone.style.left) || 0;
+    const py = parseFloat(resizingZone.style.top)  || 0;
+    const meta = {
+        color_index: parseInt(resizingZone.dataset.colorIndex ?? 0),
+        label:       resizingZone.dataset.label ?? '',
+        width:       w,
+        height:      h,
+    };
+
+    fetch('/org_chart/item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            item_type:     'client_zone',
+            item_id:       parseInt(zoneId),
+            on_board:      true,
+            pos_x:         px,
+            pos_y:         py,
+            meta:          meta,
+        }),
+    });
+
+    resizingZone = null;
+}
