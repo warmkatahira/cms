@@ -128,7 +128,7 @@ function endZoneDrag(cx, cy) {
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
             whiteboard_id: WHITEBOARD_ID,
-            item_type:     'client_zone',
+            item_type:     'zone',
             item_id:       parseInt(zoneId),
             on_board:      true,
             pos_x:         px,
@@ -774,7 +774,7 @@ document.getElementById('zone-edit-save').addEventListener('click', () => {
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
             whiteboard_id: WHITEBOARD_ID,
-            item_type:     'client_zone',
+            item_type:     'zone',
             item_id:       parseInt(zoneId),
             on_board:      true,
             pos_x:         parseFloat(activeZoneEl.style.left) || 0,
@@ -916,7 +916,7 @@ function endZoneResize(cx, cy) {
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
             whiteboard_id: WHITEBOARD_ID,
-            item_type:     'client_zone',
+            item_type:     'zone',
             item_id:       parseInt(zoneId),
             on_board:      true,
             pos_x:         px,
@@ -1019,7 +1019,7 @@ window.addZone = function() {
         const meta = item.meta;
         const c    = ZONE_COLORS[meta.color_index ?? 0];
         const el   = document.createElement('div');
-        el.className = 'client-zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl';
+        el.className = 'zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl';
         el.dataset.zoneId     = item.whiteboard_item_id;
         el.dataset.colorIndex = meta.color_index ?? 0;
         el.dataset.label      = meta.label;

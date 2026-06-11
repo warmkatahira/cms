@@ -40,11 +40,11 @@ class OrgChartController extends Controller
                                 ->get()
                                 ->keyBy('item_id');
 
-        // client_zone の座標
+        // zone の座標
         $zoneItems = $whiteboard->items()
-                                ->where('item_type', 'client_zone')
-                                ->get()
-                                ->keyBy('item_id');
+                            ->where('item_type', 'zone')
+                            ->get()
+                            ->keyBy('item_id');
 
         return view('whiteboard.org_chart.index', compact(
             'whiteboard', 'staffList', 'staffItems', 'zoneItems'
@@ -56,7 +56,7 @@ class OrgChartController extends Controller
     {
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
-            'item_type'     => 'nullable|string|in:staff,client_zone',  // 追加
+            'item_type'     => 'nullable|string|in:staff,zone',
             'item_id'       => 'required|integer',
             'pos_x'         => 'required|numeric',
             'pos_y'         => 'required|numeric',
@@ -67,7 +67,7 @@ class OrgChartController extends Controller
         WhiteboardItem::updateOrCreate(
             [
                 'whiteboard_id' => $validated['whiteboard_id'],
-                'item_type'     => $validated['item_type'] ?? 'staff',  // 追加
+                'item_type'     => $validated['item_type'] ?? 'staff',
                 'item_id'       => $validated['item_id'],
             ],
             [
@@ -127,8 +127,8 @@ class OrgChartController extends Controller
 
         $item = WhiteboardItem::create([
             'whiteboard_id' => $validated['whiteboard_id'],
-            'item_type'     => 'client_zone',
-            'item_id'       => 0, // 仮のID（後で更新）
+            'item_type'     => 'zone',
+            'item_id'       => 0,
             'pos_x'         => 40,
             'pos_y'         => 40,
             'on_board'      => true,

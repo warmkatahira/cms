@@ -86,7 +86,7 @@
                             $colorIndex = $meta['color_index'] ?? 0;
                             $label      = $meta['label'] ?? '';
                         @endphp
-                        <div class="client-zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl"
+                        <div class="zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl"
                             data-zone-id="{{ $zone->whiteboard_item_id }}"
                             data-color-index="{{ $colorIndex }}"
                             data-label="{{ $label }}"
