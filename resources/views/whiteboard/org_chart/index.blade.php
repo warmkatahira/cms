@@ -30,30 +30,31 @@
         {{-- ボードエリア --}}
         <div class="flex gap-3">
 
-            {{-- トレイ（未配置） --}}
+            {{-- トレイ --}}
             <div id="tray"
-                class="w-36 min-h-[560px] bg-gray-50 border border-gray-200 rounded-xl p-2 flex flex-col gap-2 shrink-0">
-            <p class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">未配置</p>
+                class="w-36 bg-gray-50 overflow-y-auto border border-gray-200 rounded-xl p-2 flex flex-col gap-2 shrink-0"
+                style="height:{{ config('whiteboard.board_height') }}">
+                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">未配置</p>
 
-            @foreach($staffList as $s)
-                @if(!isset($staffItems[$s->staff_id]) || !$staffItems[$s->staff_id]->on_board)
-                <div class="magnet cursor-grab select-none"
-                    data-id="{{ $s->staff_id }}"
-                    data-color="{{ $s->color }}"
-                    data-size="{{ $s->size ?? 'M' }}"
-                    data-shape="{{ $s->shape ?? 'rect' }}"
-                    data-name="{{ $s->staff_name }}"
-                    data-role="{{ $s->role_name }}">
-                    {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->size ?? 'M', $s->shape ?? 'rect') !!}
-                </div>
-                @endif
-            @endforeach
+                @foreach($staffList as $s)
+                    @if(!isset($staffItems[$s->staff_id]) || !$staffItems[$s->staff_id]->on_board)
+                    <div class="magnet cursor-grab select-none"
+                        data-id="{{ $s->staff_id }}"
+                        data-color="{{ $s->color }}"
+                        data-size="{{ $s->size ?? 'M' }}"
+                        data-shape="{{ $s->shape ?? 'rect' }}"
+                        data-name="{{ $s->staff_name }}"
+                        data-role="{{ $s->role_name }}">
+                        {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->size ?? 'M', $s->shape ?? 'rect') !!}
+                    </div>
+                    @endif
+                @endforeach
             </div>
 
             {{-- ホワイトボード --}}
             <div id="board"
-                class="relative flex-1 min-h-[560px] rounded-xl border border-gray-300"
-                style="background:#f7f6f0; overflow:auto; cursor:default;"
+                class="relative flex-1 rounded-xl border border-gray-300"
+                style="background:#f7f6f0; overflow:auto; cursor:default; height:{{ config('whiteboard.board_height') }}"
                 data-whiteboard-id="{{ $whiteboard->whiteboard_id }}"
                 data-canvas-w="{{ $whiteboard->canvas_w }}"
                 data-canvas-h="{{ $whiteboard->canvas_h }}"
