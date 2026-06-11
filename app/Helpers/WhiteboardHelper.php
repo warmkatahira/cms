@@ -43,9 +43,10 @@ function staffChip(string $name, ?string $role, int $color, string $shape = 'rec
             ">✏</div>
             <div class="chip-resize-handle" style="
                 display:none;position:absolute;bottom:-4px;right:-4px;
-                width:10px;height:10px;border-radius:2px;
-                background:#374151;cursor:se-resize;z-index:10;
-            "></div>
+                width:14px;height:14px;border-radius:2px;
+                color:#374151;font-size:18px;line-height:14px;text-align:center;
+                cursor:se-resize;z-index:10;user-select:none;
+            ">⤡</div>
         </div>';
 }
 

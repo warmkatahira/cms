@@ -108,11 +108,11 @@
                             ">✏</div>
                             {{-- リサイズハンドル --}}
                             <div class="zone-resize-handle" style="
-                                display:none;
-                                position:absolute;bottom:-4px;right:-4px;
-                                width:12px;height:12px;border-radius:2px;
-                                background:#374151;cursor:se-resize;z-index:10;
-                            "></div>
+                                display:none;position:absolute;bottom:-4px;right:-4px;
+                                width:14px;height:14px;border-radius:2px;
+                                color:#374151;font-size:18px;line-height:14px;text-align:center;
+                                cursor:se-resize;z-index:10;user-select:none;
+                            ">⤡</div>
                         </div>
                     @endforeach
 
@@ -133,8 +133,8 @@
                             data-name="{{ $s->staff_name }}"
                             data-role="{{ $s->role_name }}"
                             style="
-                                left:{{ $item->pos_x / $whiteboard->canvas_w * 100 }}%;
-                                top:{{ $item->pos_y / $whiteboard->canvas_h * 100 }}%;
+                                left:{{ $item->pos_x }}px;
+                                top:{{ $item->pos_y }}px;
                             ">
                             {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->shape ?? 'rect', $chipW, $chipH) !!}
                         </div>

@@ -108,20 +108,20 @@ function endZoneDrag(cx, cy) {
     zoneGhost = null;
 
     const boardRect = board.getBoundingClientRect();
-    const zoneId    = draggingZone.dataset.zoneId;
+    const zoneEl    = draggingZone; // ← null にする前に保存
+    const zoneId    = zoneEl.dataset.zoneId;
 
     let px = cx - boardRect.left + board.scrollLeft - zoneOffX;
     let py = cy - boardRect.top  + board.scrollTop  - zoneOffY;
 
-    // ゾーンサイズ（180x280）を考慮してキャンバス内に収める
-    const zoneW = 180;
-    const zoneH = 280;
+    const zoneW = zoneEl.offsetWidth;
+    const zoneH = zoneEl.offsetHeight;
     px = Math.max(0, Math.min(px, CANVAS_W - zoneW));
     py = Math.max(0, Math.min(py, CANVAS_H - zoneH));
 
-    draggingZone.style.left    = px + 'px';
-    draggingZone.style.top     = py + 'px';
-    draggingZone.style.opacity = '1';
+    zoneEl.style.left    = px + 'px';
+    zoneEl.style.top     = py + 'px';
+    zoneEl.style.opacity = '1';
     draggingZone = null;
 
     fetch('/org_chart/item', {
@@ -134,6 +134,12 @@ function endZoneDrag(cx, cy) {
             on_board:      true,
             pos_x:         px,
             pos_y:         py,
+            meta: {
+                color_index: parseInt(zoneEl.dataset.colorIndex ?? 0),
+                label:       zoneEl.dataset.label ?? '',
+                width:       zoneEl.offsetWidth,
+                height:      zoneEl.offsetHeight,
+            },
         }),
     });
 }
@@ -237,6 +243,17 @@ function endDrag(cx, cy) {
         dragging.style.position = '';
         dragging.style.left = '';
         dragging.style.top  = '';
+
+        // サイズ・形をリセット
+        const chip = dragging.querySelector('.staff-chip-wrap > div');
+        if (chip) {
+            chip.style.width        = '90px';
+            chip.style.height       = '';
+            chip.style.borderRadius = '8px';
+            chip.style.clipPath     = '';
+        }
+        dragging.dataset.shape = 'rect';
+
         tray.appendChild(dragging);
     }
 
@@ -245,6 +262,10 @@ function endDrag(cx, cy) {
 }
 
 function saveItem(staffId, onBoard, posX, posY) {
+    const el   = document.querySelector(`.magnet[data-id="${staffId}"]`);
+    const chip = el ? el.querySelector('.staff-chip-wrap > div') : null;
+    const meta = chip ? { width: chip.offsetWidth, height: chip.offsetHeight } : null;
+
     fetch('/org_chart/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
@@ -254,6 +275,7 @@ function saveItem(staffId, onBoard, posX, posY) {
             on_board:      onBoard,
             pos_x:         posX,
             pos_y:         posY,
+            meta:          meta,
         }),
     });
 }
@@ -508,6 +530,11 @@ function openEditModal(e, el) {
     activeStaffId  = el.dataset.id;
     activeMagnetEl = el;
 
+    // トレイにいる場合は見た目タブを非表示
+    const isOnTray = tray.contains(el);
+    const appearanceTab = modal.querySelector('.modal-tab[data-tab="appearance"]');
+    if (appearanceTab) appearanceTab.style.display = isOnTray ? 'none' : 'block';
+
     document.getElementById('edit-name').value = el.dataset.name ?? '';
     document.getElementById('edit-role').value = el.dataset.role ?? '';
     selectedColor = parseInt(el.dataset.color ?? 0) || 0;
@@ -746,6 +773,8 @@ document.getElementById('zone-edit-save').addEventListener('click', () => {
             meta: {
                 color_index: selectedZoneColor,
                 label:       label,
+                width:       parseFloat(activeZoneEl.style.width)  || activeZoneEl.offsetWidth,
+                height:      parseFloat(activeZoneEl.style.height) || activeZoneEl.offsetHeight,
             },
         }),
     });
@@ -920,7 +949,7 @@ function doChipResize(cx, cy) {
     const dx = cx - chipResStartX;
     const dy = cy - chipResStartY;
     const newW = Math.max(50, chipResStartW + dx);
-    const newH = Math.max(40, chipResStartH + dy);
+    const newH = Math.max(50, chipResStartH + dy);
     const chip = resizingChip.querySelector('.staff-chip-wrap > div');
     if (chip) {
         chip.style.width  = newW + 'px';
