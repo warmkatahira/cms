@@ -76,21 +76,35 @@
 
                     {{-- 顧客ゾーン --}}
                     @foreach($clients as $i => $client)
-                        @php $zone = $zoneItems[$client->client_alias_id] ?? null; @endphp
+                        @php
+                            $zone       = $zoneItems[$client->client_alias_id] ?? null;
+                            $meta       = $zone?->meta ?? [];
+                            $colorIndex = $meta['color_index'] ?? $i;
+                            $label      = $meta['label'] ?? $client->client_alias_name;
+                        @endphp
                         <div class="client-zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl"
                             data-zone-id="{{ $client->client_alias_id }}"
+                            data-color-index="{{ $colorIndex }}"
+                            data-label="{{ $label }}"
                             style="
                                 left:{{ $zone ? $zone->pos_x . 'px' : (40 + $i * 200) . 'px' }};
                                 top:{{ $zone ? $zone->pos_y . 'px' : '40px' }};
                                 width:180px;
                                 height:280px;
-                                border-color:{{ zoneColor($i, 'border') }};
-                                background:{{ zoneColor($i, 'bg') }};
+                                border-color:{{ zoneColor($colorIndex, 'border') }};
+                                background:{{ zoneColor($colorIndex, 'bg') }};
                             ">
-                            <span class="absolute -top-3 left-2 text-xs font-medium px-1 rounded pointer-events-none select-none"
-                                style="color:{{ zoneColor($i, 'text') }};background:#f7f6f0;">
-                                {{ $client->client_alias_name }}
+                            <span class="zone-label-text absolute -top-3 left-2 text-xs font-medium px-1 rounded pointer-events-none select-none"
+                                style="color:{{ zoneColor($colorIndex, 'text') }};background:#f7f6f0;">
+                                {{ $label }}
                             </span>
+                            <div class="zone-edit-btn" style="
+                                display:none;position:absolute;top:-7px;right:-7px;
+                                width:18px;height:18px;border-radius:50%;
+                                background:#374151;color:white;font-size:10px;
+                                align-items:center;justify-content:center;
+                                cursor:pointer;z-index:10;
+                            ">✏</div>
                         </div>
                     @endforeach
 

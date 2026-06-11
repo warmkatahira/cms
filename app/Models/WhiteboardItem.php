@@ -18,4 +18,11 @@ class WhiteboardItem extends Model
         'on_board',
         'meta',
     ];
+    // キャスト
+    protected $casts = [
+        'on_board' => 'boolean',
+        'meta'     => 'array',
+        'pos_x'    => 'float',
+        'pos_y'    => 'float',
+    ];
 }

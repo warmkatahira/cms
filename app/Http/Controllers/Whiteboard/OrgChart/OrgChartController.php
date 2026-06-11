@@ -46,17 +46,41 @@ class OrgChartController extends Controller
                                 ->get()
                                 ->keyBy('item_id');
 
+        $zoneColors = [
+            ['border'=>'#378ADD','bg'=>'rgba(56,138,221,0.06)','text'=>'#0C447C'],
+            ['border'=>'#639922','bg'=>'rgba(99,153,34,0.06)', 'text'=>'#27500A'],
+            ['border'=>'#D4537E','bg'=>'rgba(212,83,126,0.06)','text'=>'#72243E'],
+            ['border'=>'#BA7517','bg'=>'rgba(186,117,23,0.06)','text'=>'#633806'],
+            ['border'=>'#7F77DD','bg'=>'rgba(127,119,221,0.06)','text'=>'#3C3489'],
+        ];
+
         foreach ($clients as $i => $client) {
             if (!isset($zoneItems[$client->client_alias_id])) {
                 $item = WhiteboardItem::create([
                     'whiteboard_id' => $whiteboard->whiteboard_id,
                     'item_type'     => 'client_zone',
                     'item_id'       => $client->client_alias_id,
-                    'pos_x'         => 40 + $i * 200,
-                    'pos_y'         => 40,
+                    'pos_x'         => 40 + ($i % 4) * 200,
+                    'pos_y'         => 40 + intdiv($i, 4) * 320,
                     'on_board'      => true,
+                    'meta'          => [
+                        'color_index' => $i % count($zoneColors),
+                        'label'       => $client->client_alias_name,
+                    ],
                 ]);
                 $zoneItems[$client->client_alias_id] = $item;
+            } else {
+                // metaがない場合はデフォルト値を補完
+                $item = $zoneItems[$client->client_alias_id];
+                if (empty($item->meta)) {
+                    $item->update([
+                        'meta' => [
+                            'color_index' => $i % count($zoneColors),
+                            'label'       => $client->client_alias_name,
+                        ],
+                    ]);
+                    $zoneItems[$client->client_alias_id] = $item->fresh();
+                }
             }
         }
 

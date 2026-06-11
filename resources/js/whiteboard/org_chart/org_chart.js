@@ -26,14 +26,6 @@ let pendingStartY = 0;
 
 document.querySelectorAll('.magnet').forEach(el => initMagnet(el));
 
-// 顧客ゾーンのドラッグ
-document.querySelectorAll('.magnet-zone').forEach(el => initZone(el));
-
-function initZone(el) {
-    el.addEventListener('mousedown',  e => startZoneDrag(e, el));
-    el.addEventListener('touchstart', e => startZoneDrag(e, el), { passive: false });
-}
-
 let draggingZone   = null;
 let zoneGhost      = null;
 let zoneOffX = 0, zoneOffY = 0;
@@ -119,8 +111,14 @@ function endZoneDrag(cx, cy) {
     const boardRect = board.getBoundingClientRect();
     const zoneId    = draggingZone.dataset.zoneId;
 
-    const px = cx - boardRect.left + board.scrollLeft - zoneOffX;
-    const py = cy - boardRect.top  + board.scrollTop  - zoneOffY;
+    let px = cx - boardRect.left + board.scrollLeft - zoneOffX;
+    let py = cy - boardRect.top  + board.scrollTop  - zoneOffY;
+
+    // ゾーンサイズ（180x280）を考慮してキャンバス内に収める
+    const zoneW = 180;
+    const zoneH = 280;
+    px = Math.max(0, Math.min(px, CANVAS_W - zoneW));
+    py = Math.max(0, Math.min(py, CANVAS_H - zoneH));
 
     draggingZone.style.left    = px + 'px';
     draggingZone.style.top     = py + 'px';
@@ -223,9 +221,13 @@ function endDrag(cx, cy) {
                  && cy >= trayRect.top   && cy <= trayRect.bottom;
 
     if (onBoard) {
-        // スクロール位置を考慮したpx座標
-        const px = cx - boardRect.left + board.scrollLeft - offX;
-        const py = cy - boardRect.top  + board.scrollTop  - offY;
+        let px = cx - boardRect.left + board.scrollLeft - offX;
+        let py = cy - boardRect.top  + board.scrollTop  - offY;
+
+        // キャンバス内に収める
+        px = Math.max(0, Math.min(px, CANVAS_W - 80));
+        py = Math.max(0, Math.min(py, CANVAS_H - 50));
+
         saveItem(staffId, true, px, py);
         dragging.style.position = 'absolute';
         dragging.style.left = px + 'px';
@@ -663,3 +665,158 @@ document.addEventListener('mouseup', () => {
     isPanning = false;
     board.style.cursor = 'default';
 });
+
+// ゾーンカラー定義
+const ZONE_COLORS = [
+    { border:'#378ADD', bg:'rgba(56,138,221,0.06)',  text:'#0C447C' },
+    { border:'#639922', bg:'rgba(99,153,34,0.06)',   text:'#27500A' },
+    { border:'#D4537E', bg:'rgba(212,83,126,0.06)',  text:'#72243E' },
+    { border:'#BA7517', bg:'rgba(186,117,23,0.06)',  text:'#633806' },
+    { border:'#7F77DD', bg:'rgba(127,119,221,0.06)', text:'#3C3489' },
+];
+
+// ゾーン編集モーダル
+const zoneModal = document.createElement('div');
+zoneModal.id = 'zone-edit-modal';
+zoneModal.style.cssText = `
+    display:none;position:fixed;inset:0;z-index:99999;
+    background:rgba(0,0,0,0.4);
+    align-items:center;justify-content:center;
+`;
+zoneModal.innerHTML = `
+    <div style="background:white;border-radius:12px;padding:24px;width:320px;">
+        <p style="font-size:15px;font-weight:500;margin-bottom:16px;">グループを編集</p>
+        <div style="margin-bottom:16px;">
+            <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px;">名称</label>
+            <input id="zone-edit-label" type="text" autocomplete="off"
+                   style="width:100%;font-size:14px;border:1px solid #d1d5db;border-radius:6px;padding:6px 10px;">
+        </div>
+        <div style="margin-bottom:20px;">
+            <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:8px;">色</label>
+            <div style="display:flex;gap:8px;">
+                ${ZONE_COLORS.map((c, i) => `
+                    <div class="zone-color-chip" data-color-index="${i}"
+                         style="width:28px;height:28px;border-radius:50%;cursor:pointer;
+                                background:${c.border};border:2px solid ${c.border};">
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;">
+            <button id="zone-edit-cancel"
+                    style="font-size:13px;padding:6px 16px;border:1px solid #d1d5db;
+                           border-radius:6px;cursor:pointer;background:white;">
+                キャンセル
+            </button>
+            <button id="zone-edit-save"
+                    style="font-size:13px;padding:6px 16px;border:none;
+                           border-radius:6px;cursor:pointer;background:#374151;color:white;">
+                保存
+            </button>
+        </div>
+    </div>
+`;
+document.body.appendChild(zoneModal);
+
+let selectedZoneColor = 0;
+let activeZoneEl      = null;
+
+// 色チップ選択
+zoneModal.querySelectorAll('.zone-color-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        selectedZoneColor = parseInt(chip.dataset.colorIndex);
+        zoneModal.querySelectorAll('.zone-color-chip').forEach(c => {
+            c.style.outline = 'none';
+            c.style.transform = 'scale(1)';
+        });
+        chip.style.outline = '2px solid #374151';
+        chip.style.outlineOffset = '2px';
+        chip.style.transform = 'scale(1.2)';
+    });
+});
+
+document.getElementById('zone-edit-cancel').addEventListener('click', () => {
+    zoneModal.style.display = 'none';
+});
+
+// 保存
+document.getElementById('zone-edit-save').addEventListener('click', () => {
+    const label = document.getElementById('zone-edit-label').value.trim();
+    if (!label) return;
+
+    const zoneId = activeZoneEl.dataset.zoneId;
+    const c      = ZONE_COLORS[selectedZoneColor];
+
+    // DB保存
+    fetch('/org_chart/item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            item_type:     'client_zone',
+            item_id:       parseInt(zoneId),
+            on_board:      true,
+            pos_x:         parseFloat(activeZoneEl.style.left) || 0,
+            pos_y:         parseFloat(activeZoneEl.style.top)  || 0,
+            meta: {
+                color_index: selectedZoneColor,
+                label:       label,
+            },
+        }),
+    });
+
+    // DOM更新
+    activeZoneEl.style.borderColor = c.border;
+    activeZoneEl.style.background  = c.bg;
+    activeZoneEl.dataset.colorIndex = selectedZoneColor;
+    activeZoneEl.dataset.label      = label;
+    const labelEl = activeZoneEl.querySelector('.zone-label-text');
+    if (labelEl) {
+        labelEl.textContent  = label;
+        labelEl.style.color  = c.text;
+    }
+
+    zoneModal.style.display = 'none';
+});
+
+// initZone にホバーと編集ボタンを追加
+function initZone(el) {
+    el.addEventListener('mousedown',  e => startZoneDrag(e, el));
+    el.addEventListener('touchstart', e => startZoneDrag(e, el), { passive: false });
+
+    // ホバーで編集ボタン表示
+    el.addEventListener('mouseenter', () => {
+        const btn = el.querySelector('.zone-edit-btn');
+        if (btn) btn.style.display = 'flex';
+    });
+    el.addEventListener('mouseleave', () => {
+        const btn = el.querySelector('.zone-edit-btn');
+        if (btn) btn.style.display = 'none';
+    });
+
+    // 編集ボタンクリック
+    const editBtn = el.querySelector('.zone-edit-btn');
+    if (editBtn) {
+        editBtn.addEventListener('mousedown', e => e.stopPropagation());
+        editBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            activeZoneEl      = el;
+            selectedZoneColor = parseInt(el.dataset.colorIndex ?? 0);
+
+            document.getElementById('zone-edit-label').value = el.dataset.label ?? '';
+
+            // 色チップのハイライト
+            zoneModal.querySelectorAll('.zone-color-chip').forEach(c => {
+                const active = parseInt(c.dataset.colorIndex) === selectedZoneColor;
+                c.style.outline   = active ? '2px solid #374151' : 'none';
+                c.style.outlineOffset = '2px';
+                c.style.transform = active ? 'scale(1.2)' : 'scale(1)';
+            });
+
+            zoneModal.style.display = 'flex';
+        });
+    }
+}
+
+// 既存のゾーンにinitZoneを適用
+document.querySelectorAll('.magnet-zone').forEach(el => initZone(el));
