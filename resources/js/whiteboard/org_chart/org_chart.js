@@ -714,15 +714,21 @@ zoneModal.innerHTML = `
                 `).join('')}
             </div>
         </div>
-        <div style="display:flex;justify-content:flex-end;gap:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+        <button id="zone-edit-delete"
+                style="font-size:13px;padding:6px 16px;border:1px solid #fca5a5;
+                    border-radius:6px;cursor:pointer;background:white;color:#dc2626;">
+            削除
+        </button>
+        <div style="display:flex;gap:8px;">
             <button id="zone-edit-cancel"
                     style="font-size:13px;padding:6px 16px;border:1px solid #d1d5db;
-                           border-radius:6px;cursor:pointer;background:white;">
+                        border-radius:6px;cursor:pointer;background:white;">
                 キャンセル
             </button>
             <button id="zone-edit-save"
                     style="font-size:13px;padding:6px 16px;border:none;
-                           border-radius:6px;cursor:pointer;background:#374151;color:white;">
+                        border-radius:6px;cursor:pointer;background:#374151;color:white;">
                 保存
             </button>
         </div>
@@ -989,3 +995,75 @@ function endChipResize() {
 
     resizingChip = null;
 }
+
+// グループ追加
+window.addZone = function() {
+    const label = document.getElementById('newZoneLabel').value.trim();
+    if (!label) return;
+
+    fetch('/org_chart/zone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            label:         label,
+            color_index:   0,
+        }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        const item = data.item;
+        const meta = item.meta;
+        const c    = ZONE_COLORS[meta.color_index ?? 0];
+        const el   = document.createElement('div');
+        el.className = 'client-zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl';
+        el.dataset.zoneId     = item.whiteboard_item_id;
+        el.dataset.colorIndex = meta.color_index ?? 0;
+        el.dataset.label      = meta.label;
+        el.style.cssText = `
+            left:40px;top:40px;
+            width:180px;height:280px;
+            border-color:${c.border};
+            background:${c.bg};
+        `;
+        el.innerHTML = `
+            <span class="zone-label-text absolute -top-3 left-2 text-xs font-medium px-1 rounded pointer-events-none select-none"
+                  style="color:${c.text};background:#f7f6f0;">
+                ${meta.label}
+            </span>
+            <div class="zone-edit-btn" style="
+                display:none;position:absolute;top:-7px;right:-7px;
+                width:18px;height:18px;border-radius:50%;
+                background:#374151;color:white;font-size:10px;
+                align-items:center;justify-content:center;
+                cursor:pointer;z-index:10;
+            ">✏</div>
+            <div class="zone-resize-handle" style="
+                display:none;position:absolute;bottom:-4px;right:-4px;
+                width:14px;height:14px;border-radius:2px;
+                color:#374151;font-size:18px;line-height:14px;text-align:center;
+                cursor:se-resize;z-index:10;user-select:none;
+            ">⤡</div>
+        `;
+        document.getElementById('board-canvas').appendChild(el);
+        initZone(el);
+        document.getElementById('newZoneLabel').value = '';
+    });
+};
+
+// グループ削除
+document.getElementById('zone-edit-delete').addEventListener('click', () => {
+    if (!confirm('このグループを削除しますか？')) return;
+
+    const zoneId = activeZoneEl.dataset.zoneId;
+
+    fetch('/org_chart/zone/' + zoneId, {
+        method: 'DELETE',
+        headers: { 'X-CSRF-TOKEN': CSRF },
+    })
+    .then(r => r.json())
+    .then(() => {
+        activeZoneEl.remove();
+        zoneModal.style.display = 'none';
+    });
+});

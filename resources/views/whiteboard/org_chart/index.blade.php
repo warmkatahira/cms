@@ -25,6 +25,14 @@
                     class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
             追加
             </button>
+            <span class="text-gray-300 mx-1">|</span>
+            {{-- グループ追加 --}}
+            <input id="newZoneLabel" type="text" placeholder="グループ名"
+                class="text-sm border rounded px-2 py-1 w-28">
+            <button onclick="addZone()"
+                    class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
+                グループ追加
+            </button>
         </div>
 
         {{-- ボードエリア --}}

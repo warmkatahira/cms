@@ -153,4 +153,41 @@ class OrgChartController extends Controller
         $staff->update($validated);
         return response()->json(['status' => 'ok']);
     }
+
+    // グループ追加
+    public function storeZone(Request $request)
+    {
+        $validated = $request->validate([
+            'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
+            'label'         => 'required|string|max:50',
+            'color_index'   => 'nullable|integer|min:0|max:4',
+        ]);
+
+        $item = WhiteboardItem::create([
+            'whiteboard_id' => $validated['whiteboard_id'],
+            'item_type'     => 'client_zone',
+            'item_id'       => 0, // 仮のID（後で更新）
+            'pos_x'         => 40,
+            'pos_y'         => 40,
+            'on_board'      => true,
+            'meta'          => [
+                'color_index' => $validated['color_index'] ?? 0,
+                'label'       => $validated['label'],
+                'width'       => 180,
+                'height'      => 280,
+            ],
+        ]);
+
+        // item_idをwhiteboard_item_idと同じにする
+        $item->update(['item_id' => $item->whiteboard_item_id]);
+
+        return response()->json(['status' => 'ok', 'item' => $item]);
+    }
+
+    // グループ削除
+    public function deleteZone(Request $request, WhiteboardItem $item)
+    {
+        $item->delete();
+        return response()->json(['status' => 'ok']);
+    }
 }
