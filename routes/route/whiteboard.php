@@ -15,6 +15,8 @@ Route::middleware('common')->group(function (){
         Route::get('', 'index')->name('index');
         Route::post('', 'store')->name('store');
         Route::delete('{whiteboard}', 'destroy')->name('destroy');
+        Route::patch('{whiteboard}', 'update')->name('update');
+        Route::patch('{whiteboard}/users', 'updateUsers')->name('update_users');
     });
     // +-+-+-+-+-+-+-+- 組織図 +-+-+-+-+-+-+-+-
     Route::controller(OrgChartController::class)->prefix('org_chart')->name('org_chart.')->group(function(){

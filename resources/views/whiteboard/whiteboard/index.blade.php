@@ -22,7 +22,12 @@
                         <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
                             <i class="ti ti-layout-board text-blue-600" aria-hidden="true"></i>
                         </div>
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ $wb->title }}</p>
+                        <p class="text-sm font-medium text-gray-800 truncate wb-title"
+                            data-id="{{ $wb->whiteboard_id }}"
+                            onclick="event.stopPropagation(); startEditTitle(this)"
+                            style="cursor:text;">
+                                {{ $wb->title }}
+                        </p>
                     </div>
                     <button onclick="event.stopPropagation(); deleteWhiteboard({{ $wb->whiteboard_id }})"
                             class="text-xs text-red-400 hover:text-red-600 shrink-0 px-1">
@@ -39,6 +44,10 @@
                     <div class="flex items-center gap-2 text-xs text-gray-400">
                         <i class="ti ti-users" style="font-size:13px;" aria-hidden="true"></i>
                         <span>{{ $wb->users->count() }}人参加</span>
+                        <button onclick="event.stopPropagation(); openEditUsers({{ $wb->whiteboard_id }}, {{ $wb->users->pluck('user_no')->toJson() }}, {{ $wb->created_by ?? 'null' }})"
+                                class="text-xs text-gray-400 hover:text-gray-600 underline">
+                            編集
+                        </button>
                         {{-- アバター --}}
                         <div class="flex">
                             @foreach($wb->users->take(5) as $u)
@@ -124,6 +133,49 @@
                         style="font-size:13px;padding:6px 16px;border:none;
                                border-radius:6px;cursor:pointer;background:#374151;color:white;">
                     作成
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- 参加者編集モーダル --}}
+    <div id="edit-users-modal" style="display:none;position:fixed;inset:0;z-index:99999;
+        background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
+        <div style="background:white;border-radius:12px;padding:24px;width:400px;">
+            <p style="font-size:15px;font-weight:500;margin-bottom:16px;">参加者を編集</p>
+
+            <div style="margin-bottom:20px;">
+                <div style="max-height:200px;overflow-y:auto;border:1px solid #d1d5db;border-radius:6px;padding:8px;">
+                    @foreach($users as $user)
+                    <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer;">
+                        <input type="checkbox" name="edit_user_nos[]" value="{{ $user->user_no }}"
+                            id="edit_user_{{ $user->user_no }}">
+                        @if($user->profile_image_file_name)
+                            <img src="{{ asset('storage/profile_images/'.$user->profile_image_file_name) }}"
+                                class="w-6 h-6 rounded-full object-cover">
+                        @else
+                            <div style="width:24px;height:24px;border-radius:50%;background:#E6F1FB;
+                                        display:flex;align-items:center;justify-content:center;
+                                        font-size:10px;font-weight:500;color:#185FA5;flex-shrink:0;">
+                                {{ mb_substr($user->user_name, 0, 1) }}
+                            </div>
+                        @endif
+                        {{ $user->user_name }}
+                    </label>
+                    @endforeach
+                </div>
+            </div>
+
+            <div style="display:flex;justify-content:flex-end;gap:8px;">
+                <button onclick="closeEditUsers()"
+                        style="font-size:13px;padding:6px 16px;border:1px solid #d1d5db;
+                            border-radius:6px;cursor:pointer;background:white;">
+                    キャンセル
+                </button>
+                <button onclick="submitEditUsers()"
+                        style="font-size:13px;padding:6px 16px;border:none;
+                            border-radius:6px;cursor:pointer;background:#374151;color:white;">
+                    保存
                 </button>
             </div>
         </div>

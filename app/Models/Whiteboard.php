@@ -13,7 +13,6 @@ class Whiteboard extends Model
     protected $primaryKey = 'whiteboard_id';
     // 操作可能なカラムを定義
     protected $fillable = [
-        'board_type',
         'title',
         'canvas_w',
         'canvas_h',

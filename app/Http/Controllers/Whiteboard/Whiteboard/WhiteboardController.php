@@ -41,7 +41,6 @@ class WhiteboardController extends Controller
 
         $whiteboard = Whiteboard::create([
             'title'      => $validated['title'],
-            'board_type' => 'staff_map',
             'canvas_w'   => config('whiteboard.canvas_w'),
             'canvas_h'   => config('whiteboard.canvas_h'),
             'created_by' => auth()->user()->user_no,
@@ -71,6 +70,47 @@ class WhiteboardController extends Controller
         }
 
         $whiteboard->delete();
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function update(Request $request, Whiteboard $whiteboard)
+    {
+        $userNo = auth()->user()->user_no;
+        if (!$whiteboard->users()->where('whiteboard_users.user_no', $userNo)->exists()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:50',
+        ]);
+
+        $whiteboard->update($validated);
+        return response()->json(['status' => 'ok']);
+    }
+
+    public function updateUsers(Request $request, Whiteboard $whiteboard)
+    {
+        $userNo = auth()->user()->user_no;
+        if (!$whiteboard->users()->where('whiteboard_users.user_no', $userNo)->exists()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'user_nos'   => 'required|array|min:1',
+            'user_nos.*' => 'exists:users,user_no',
+        ]);
+
+        // 作成者は必ず含める
+        $userNos = collect($validated['user_nos']);
+        if ($whiteboard->created_by && !$userNos->contains($whiteboard->created_by)) {
+            $userNos->push($whiteboard->created_by);
+        }
+
+        // 同期
+        $whiteboard->users()->sync(
+            $userNos->mapWithKeys(fn($no) => [$no => []])->toArray()
+        );
+
         return response()->json(['status' => 'ok']);
     }
 }
