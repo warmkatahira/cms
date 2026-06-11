@@ -4,7 +4,7 @@
     "name": "chartjs-plugin-datalabels.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-ObCkESvP.css",
+    "file": "assets/app-B3jrZg54.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -153,6 +153,12 @@
     "file": "assets/tippy-DdM4S3aO.js",
     "name": "tippy",
     "src": "resources/js/tippy.js",
+    "isEntry": true
+  },
+  "resources/js/whiteboard/org_chart/org_chart.js": {
+    "file": "assets/org_chart-CF3GCq0E.js",
+    "name": "org_chart",
+    "src": "resources/js/whiteboard/org_chart/org_chart.js",
     "isEntry": true
   },
   "resources/sass/common.scss": {

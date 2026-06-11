@@ -36,6 +36,8 @@ export default defineConfig({
                 'resources/js/base/base_detail/chart.js',
                 // 収支データ
                 'resources/js/financial/financial_import/financial_import.js',
+                // ホワイトボード
+                'resources/js/whiteboard/org_chart/org_chart.js',
                 // 管理
                 'resources/js/admin/employee/employee.js',
                 // システム管理

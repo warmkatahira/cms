@@ -28,6 +28,13 @@
                 <x-navigation-btn route="financial_import_history.index" label="取込履歴" isLeftMargin="true" isRightMargin="true" />
             </div>
         </div>
+        <!-- ホワイトボード -->
+        <div class="flex flex-col gap-0.5">
+            <x-navigation-btn label="ホワイトボード" icon="las la-chalkboard" openCloseKey="whiteboard" />
+            <div class="navigation-content hidden">
+                <x-navigation-btn route="org_chart.index" label="組織図" isLeftMargin="true" isRightMargin="true" />
+            </div>
+        </div>
         @can('admin_check')
             <!-- システム管理 -->
              <div class="flex flex-col gap-0.5">
