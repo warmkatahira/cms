@@ -120,15 +120,17 @@ class OrgChartController extends Controller
     // スタッフ削除
     public function deleteStaff(Request $request, Staff $staff)
     {
-        $whiteboardId = WhiteboardItem::where('item_id', $staff->staff_id)
-                                  ->where('item_type', 'staff')
-                                  ->value('whiteboard_id');
+        // staffテーブルのwhiteboard_idから直接取得
+        $whiteboardId = $staff->whiteboard_id;
+
         $staff->delete();
+
         broadcast(new WhiteboardUpdated(
             whiteboardId: $whiteboardId,
             action:       'staff.deleted',
             payload:      ['staffId' => $staff->staff_id],
         ));
+
         return response()->json(['status' => 'ok']);
     }
 
