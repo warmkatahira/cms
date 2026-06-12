@@ -613,7 +613,8 @@ document.getElementById('edit-save').addEventListener('click', () => {
             background:${c.bg};
             border:2px solid ${c.border};
             border-top:${selectedShape === 'tab' ? '4px' : '2px'} solid ${c.border};
-            width:${chip.style.width || '90px'};
+            width:${chip.style.width || chip.offsetWidth + 'px'};
+            height:${chip.style.height || chip.offsetHeight + 'px'};
             padding:6px;
             text-align:center;
             ${SHAPES[selectedShape] ?? SHAPES['rect']}
@@ -1162,6 +1163,11 @@ function handleStaffUpdated(p) {
     const wrap = el.querySelector('.staff-chip-wrap');
     const chip = wrap?.querySelector('div');
     if (!chip) return;
+
+    // 現在のサイズを保持（styleが空の場合はoffsetを使う）
+    const currentW = chip.style.width  || chip.offsetWidth  + 'px';
+    const currentH = chip.style.height || chip.offsetHeight + 'px';
+
     const SHAPES = {
         rect:           'border-radius:8px;',
         circle:         'border-radius:50%;',
@@ -1171,7 +1177,8 @@ function handleStaffUpdated(p) {
     };
     chip.style.cssText = `
         background:${c.bg};border:2px solid ${c.border};
-        width:${chip.style.width || '90px'};padding:6px;text-align:center;
+        width:${currentW};height:${currentH};
+        padding:6px;text-align:center;
         ${SHAPES[p.shape] ?? SHAPES['rect']}
     `;
     el.dataset.name  = p.staff_name;
