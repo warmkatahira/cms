@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\Staff;
 use App\Models\Whiteboard;
 use App\Models\WhiteboardItem;
+// イベント
+use App\Events\WhiteboardUpdated;
 
 class OrgChartController extends Controller
 {
@@ -78,6 +80,19 @@ class OrgChartController extends Controller
             ]
         );
 
+        broadcast(new WhiteboardUpdated(
+            whiteboardId: $validated['whiteboard_id'],
+            action:       'item.updated',
+            payload:      [
+                'itemType' => $validated['item_type'] ?? 'staff',
+                'itemId'   => $validated['item_id'],
+                'posX'     => $validated['pos_x'],
+                'posY'     => $validated['pos_y'],
+                'onBoard'  => $validated['on_board'],
+                'meta'     => $validated['meta'] ?? null,
+            ],
+        ));
+
         return response()->json(['status' => 'ok']);
     }
 
@@ -93,26 +108,49 @@ class OrgChartController extends Controller
 
         $staff = Staff::create($validated);
 
+        broadcast(new WhiteboardUpdated(
+            whiteboardId: $staff->whiteboard_id,
+            action:       'staff.added',
+            payload:      $staff->toArray(),
+        ));
+
         return response()->json(['status' => 'ok', 'staff' => $staff]);
     }
 
     // スタッフ削除
     public function deleteStaff(Request $request, Staff $staff)
     {
+        $whiteboardId = WhiteboardItem::where('item_id', $staff->staff_id)
+                                  ->where('item_type', 'staff')
+                                  ->value('whiteboard_id');
         $staff->delete();
+        broadcast(new WhiteboardUpdated(
+            whiteboardId: $whiteboardId,
+            action:       'staff.deleted',
+            payload:      ['staffId' => $staff->staff_id],
+        ));
         return response()->json(['status' => 'ok']);
     }
 
     public function updateStaff(Request $request, Staff $staff)
     {
         $validated = $request->validate([
-            'staff_name'    => 'required|string|max:50',
-            'role_name'     => 'nullable|string|max:50',
-            'color'         => 'nullable|integer|min:0|max:6',
-            'size'          => 'nullable|in:XS,S,M,L,XL',
-            'shape'         => 'nullable|in:rect,circle,sharp,rounded_bottom,tab',
+            'staff_name' => 'required|string|max:50',
+            'role_name'  => 'nullable|string|max:50',
+            'color'      => 'nullable|integer|min:0|max:6',
+            'size'       => 'nullable|in:XS,S,M,L,XL',
+            'shape'      => 'nullable|in:rect,circle,sharp,rounded_bottom,tab',
         ]);
+
         $staff->update($validated);
+
+        // staffのwhiteboard_idから取得
+        broadcast(new WhiteboardUpdated(
+            whiteboardId: $staff->whiteboard_id,  // ← request→staffから取得
+            action:       'staff.updated',
+            payload:      $staff->fresh()->toArray(),
+        ));
+
         return response()->json(['status' => 'ok']);
     }
 
@@ -143,13 +181,26 @@ class OrgChartController extends Controller
         // item_idをwhiteboard_item_idと同じにする
         $item->update(['item_id' => $item->whiteboard_item_id]);
 
+        broadcast(new WhiteboardUpdated(
+            whiteboardId: $validated['whiteboard_id'],
+            action:       'zone.added',
+            payload:      $item->toArray(),
+        ));
+
         return response()->json(['status' => 'ok', 'item' => $item]);
     }
 
     // グループ削除
     public function deleteZone(Request $request, WhiteboardItem $item)
     {
+        $whiteboardId = $item->whiteboard_id;
+        $zoneId       = $item->whiteboard_item_id;
         $item->delete();
+        broadcast(new WhiteboardUpdated(
+            whiteboardId: $whiteboardId,
+            action:       'zone.deleted',
+            payload:      ['zoneId' => $zoneId],
+        ));
         return response()->json(['status' => 'ok']);
     }
 }

@@ -284,6 +284,7 @@ window.addStaff = function() {
     const name = document.getElementById('newName').value.trim();
     const role = document.getElementById('newRole').value.trim();
     if (!name) return;
+
     fetch('/org_chart/staff', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
@@ -1070,3 +1071,148 @@ document.getElementById('zone-edit-delete').addEventListener('click', () => {
         zoneModal.style.display = 'none';
     });
 });
+
+window.Echo.channel('whiteboard.' + WHITEBOARD_ID)
+    .listen('.board.updated', (e) => {
+        switch (e.action) {
+            case 'item.updated':  handleItemUpdated(e.payload);  break;
+            case 'staff.added':   handleStaffAdded(e.payload);   break;
+            case 'staff.deleted': handleStaffDeleted(e.payload); break;
+            case 'staff.updated': handleStaffUpdated(e.payload); break;
+            case 'zone.added':    handleZoneAdded(e.payload);    break;
+            case 'zone.deleted':  handleZoneDeleted(e.payload);  break;
+        }
+    });
+
+function handleItemUpdated(p) {
+    if (p.itemType === 'staff') {
+        const el = document.querySelector(`.magnet[data-id="${p.itemId}"]`);
+        if (!el) return;
+        if (p.onBoard) {
+            el.style.position = 'absolute';
+            el.style.left     = p.posX + 'px';
+            el.style.top      = p.posY + 'px';
+            if (p.meta?.width)  el.querySelector('.staff-chip-wrap > div').style.width  = p.meta.width  + 'px';
+            if (p.meta?.height) el.querySelector('.staff-chip-wrap > div').style.height = p.meta.height + 'px';
+            document.getElementById('board-canvas').appendChild(el);
+        } else {
+            el.style.position = '';
+            el.style.left     = '';
+            el.style.top      = '';
+            tray.appendChild(el);
+        }
+    } else if (p.itemType === 'zone') {
+        const el = document.querySelector(`.magnet-zone[data-zone-id="${p.itemId}"]`);
+        if (!el) return;
+        el.style.left = p.posX + 'px';
+        el.style.top  = p.posY + 'px';
+        if (p.meta?.width)  el.style.width  = p.meta.width  + 'px';
+        if (p.meta?.height) el.style.height = p.meta.height + 'px';
+        if (p.meta?.colorIndex !== undefined) {
+            const c = ZONE_COLORS[p.meta.colorIndex];
+            el.style.borderColor = c.border;
+            el.style.background  = c.bg;
+        }
+        if (p.meta?.label) {
+            const labelEl = el.querySelector('.zone-label-text');
+            if (labelEl) labelEl.textContent = p.meta.label;
+        }
+    }
+}
+
+function handleStaffAdded(p) {
+    // 少し待ってDOMとSetを再チェック
+    setTimeout(() => {
+        if (document.querySelector(`.magnet[data-id="${p.staff_id}"]`)) return;
+        const c  = COLORS[(p.color ?? 0) % COLORS.length];
+        const el = document.createElement('div');
+        el.className     = 'magnet cursor-grab select-none';
+        el.dataset.id    = p.staff_id;
+        el.dataset.color = p.color ?? 0;
+        el.dataset.name  = p.staff_name;
+        el.dataset.role  = p.role_name ?? '';
+        el.dataset.shape = p.shape ?? 'rect';
+        el.innerHTML = `
+            <div class="staff-chip-wrap" style="position:relative;display:inline-block;">
+                <div style="width:90px;padding:6px;border-radius:8px;text-align:center;
+                            border:2px solid ${c.border};background:${c.bg};">
+                    <div data-field="name" style="font-size:12px;font-weight:500;color:${c.text};">${p.staff_name}</div>
+                    <div data-field="role" style="font-size:10px;color:${c.text};opacity:.7;">${p.role_name ?? ''}</div>
+                </div>
+                <div class="chip-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+                    width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
+                    align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
+                <div class="chip-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+                    width:10px;height:10px;border-radius:2px;background:#374151;cursor:se-resize;z-index:10;"></div>
+            </div>`;
+        initMagnet(el);
+        tray.appendChild(el);
+    }, 100); // 100ms待つ
+}
+
+function handleStaffDeleted(p) {
+    const el = document.querySelector(`.magnet[data-id="${p.staffId}"]`);
+    if (el) el.remove();
+}
+
+function handleStaffUpdated(p) {
+    const el = document.querySelector(`.magnet[data-id="${p.staff_id}"]`);
+    if (!el) return;
+    const c    = COLORS[(p.color ?? 0) % COLORS.length];
+    const wrap = el.querySelector('.staff-chip-wrap');
+    const chip = wrap?.querySelector('div');
+    if (!chip) return;
+    const SHAPES = {
+        rect:           'border-radius:8px;',
+        circle:         'border-radius:50%;',
+        sharp:          'border-radius:0;',
+        rounded_bottom: 'border-radius:0 0 50% 50%;',
+        tab:            'border-radius:0 0 8px 8px;',
+    };
+    chip.style.cssText = `
+        background:${c.bg};border:2px solid ${c.border};
+        width:${chip.style.width || '90px'};padding:6px;text-align:center;
+        ${SHAPES[p.shape] ?? SHAPES['rect']}
+    `;
+    el.dataset.name  = p.staff_name;
+    el.dataset.role  = p.role_name ?? '';
+    el.dataset.color = p.color ?? 0;
+    el.dataset.shape = p.shape ?? 'rect';
+    const nameEl = wrap.querySelector('[data-field="name"]');
+    const roleEl = wrap.querySelector('[data-field="role"]');
+    if (nameEl) { nameEl.textContent = p.staff_name; nameEl.style.color = c.text; }
+    if (roleEl) { roleEl.textContent = p.role_name ?? ''; roleEl.style.color = c.text; }
+}
+
+function handleZoneAdded(p) {
+    if (document.querySelector(`.magnet-zone[data-zone-id="${p.whiteboard_item_id}"]`)) return;
+    const meta = p.meta ?? {};
+    const c    = ZONE_COLORS[meta.color_index ?? 0];
+    const el   = document.createElement('div');
+    el.className = 'zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl';
+    el.dataset.zoneId     = p.whiteboard_item_id;
+    el.dataset.colorIndex = meta.color_index ?? 0;
+    el.dataset.label      = meta.label ?? '';
+    el.style.cssText = `
+        left:${p.pos_x}px;top:${p.pos_y}px;
+        width:${meta.width ?? 180}px;height:${meta.height ?? 280}px;
+        border-color:${c.border};background:${c.bg};
+    `;
+    el.innerHTML = `
+        <span class="zone-label-text absolute -top-3 left-2 text-xs font-medium px-1 rounded pointer-events-none select-none"
+              style="color:${c.text};background:#f7f6f0;">${meta.label ?? ''}</span>
+        <div class="zone-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+            width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
+            align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
+        <div class="zone-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+            width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
+            text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
+    `;
+    document.getElementById('board-canvas').appendChild(el);
+    initZone(el);
+}
+
+function handleZoneDeleted(p) {
+    const el = document.querySelector(`.magnet-zone[data-zone-id="${p.zoneId}"]`);
+    if (el) el.remove();
+}
