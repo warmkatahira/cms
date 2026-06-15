@@ -38,6 +38,25 @@
                     class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
                 テキスト追加
             </button>
+
+            <span class="text-gray-300 mx-1">|</span>
+
+            {{-- 図形追加 --}}
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open"
+                        class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
+                    図形追加 ▾
+                </button>
+                <div x-show="open" @click.away="open = false"
+                    class="absolute top-8 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2"
+                    style="min-width:140px;">
+                    <button onclick="addShape('rect')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">■ 四角</button>
+                    <button onclick="addShape('circle')"   class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">● 丸</button>
+                    <button onclick="addShape('triangle')" class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">▲ 三角</button>
+                    <button onclick="addShape('line')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">― 線</button>
+                    <button onclick="addShape('arrow')"    class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">→ 矢印</button>
+                </div>
+            </div>
         </div>
 
         {{-- ボードエリア --}}
@@ -145,6 +164,81 @@
                             <div class="text-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
                                 width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
                                 text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
+                        </div>
+                    @endforeach
+
+                    {{-- 図形 --}}
+                    @foreach($shapeItems as $shape)
+                        @php $meta = $shape->meta ?? []; @endphp
+                        <div class="shape-box absolute cursor-grab select-none"
+                            data-shape-id="{{ $shape->whiteboard_item_id }}"
+                            data-shape-type="{{ $meta['shape_type'] ?? 'rect' }}"
+                            data-fill-color="{{ $meta['fill_color'] ?? '#93c5fd' }}"
+                            data-stroke-color="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                            data-rotation="{{ $meta['rotation'] ?? 0 }}"
+                            style="
+                                left:{{ $shape->pos_x }}px;
+                                top:{{ $shape->pos_y }}px;
+                                width:{{ $meta['width'] ?? 120 }}px;
+                                height:{{ $meta['height'] ?? 120 }}px;
+                                position:absolute;
+                                transform:rotate({{ $meta['rotation'] ?? 0 }}deg);
+                            ">
+                            <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow:visible;">
+                                @switch($meta['shape_type'] ?? 'rect')
+                                    @case('rect')
+                                        <rect x="2" y="2" width="96" height="96"
+                                            fill="{{ $meta['fill_color'] ?? '#93c5fd' }}"
+                                            stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                                            stroke-width="2" rx="4" vector-effect="non-scaling-stroke"/>
+                                        @break
+                                    @case('circle')
+                                        <ellipse cx="50" cy="50" rx="48" ry="48"
+                                            fill="{{ $meta['fill_color'] ?? '#93c5fd' }}"
+                                            stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                                            stroke-width="2" vector-effect="non-scaling-stroke"/>
+                                        @break
+                                    @case('triangle')
+                                        <polygon points="50,2 98,98 2,98"
+                                            fill="{{ $meta['fill_color'] ?? '#93c5fd' }}"
+                                            stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                                            stroke-width="2" vector-effect="non-scaling-stroke"/>
+                                        @break
+                                    @case('line')
+                                        <line x1="0" y1="50" x2="100" y2="50"
+                                            stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                                            stroke-width="3" vector-effect="non-scaling-stroke"/>
+                                        @break
+                                    @case('arrow')
+                                        <defs>
+                                            <marker id="arrow-{{ $shape->whiteboard_item_id }}" markerWidth="10" markerHeight="7"
+                                                    refX="10" refY="3.5" orient="auto">
+                                                <polygon points="0 0, 10 3.5, 0 7"
+                                                    fill="{{ $meta['stroke_color'] ?? '#2563eb' }}"/>
+                                            </marker>
+                                        </defs>
+                                        <line x1="0" y1="50" x2="90" y2="50"
+                                            stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                                            stroke-width="3" vector-effect="non-scaling-stroke"
+                                            marker-end="url(#arrow-{{ $shape->whiteboard_item_id }})"/>
+                                        @break
+                                @endswitch
+                            </svg>
+                            <div class="shape-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+                                width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
+                                line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
+                            <div class="shape-copy-btn" style="display:none;position:absolute;top:-7px;right:14px;
+                                width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
+                                line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
+                            <div class="shape-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+                                width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
+                                text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
+                            <div class="shape-color-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+                                width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
+                                line-height:18px;text-align:center;cursor:pointer;z-index:10;">🎨</div>
+                            <div class="shape-rotate-handle" style="display:none;position:absolute;top:-7px;right:35px;
+                                width:14px;height:14px;border-radius:50%;background:#374151;
+                                cursor:grab;z-index:10;user-select:none;">↻</div>
                         </div>
                     @endforeach
 

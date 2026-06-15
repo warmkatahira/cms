@@ -52,8 +52,12 @@ class BoardController extends Controller
                         ->where('item_type', 'text')
                         ->get();
 
+        $shapeItems = $whiteboard->items()
+                ->where('item_type', 'shape')
+                ->get();
+
         return view('whiteboard.board.index', compact(
-            'whiteboard', 'staffList', 'staffItems', 'zoneItems', 'textItems'
+            'whiteboard', 'staffList', 'staffItems', 'zoneItems', 'textItems', 'shapeItems'
         ));
     }
 }

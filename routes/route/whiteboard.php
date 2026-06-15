@@ -8,6 +8,7 @@ use App\Http\Controllers\Whiteboard\Board\ItemController;
 use App\Http\Controllers\Whiteboard\Board\StaffController;
 use App\Http\Controllers\Whiteboard\Board\ZoneController;
 use App\Http\Controllers\Whiteboard\Board\TextController;
+use App\Http\Controllers\Whiteboard\Board\ShapeController;
 
 Route::middleware('common')->group(function () {
     // ホワイトボード一覧
@@ -41,5 +42,10 @@ Route::middleware('common')->group(function () {
     Route::controller(TextController::class)->prefix('board')->name('board.')->group(function () {
         Route::post('text', 'store')->name('store_text');
         Route::delete('text/{item}', 'destroy')->name('delete_text');
+    });
+    // 図形
+    Route::controller(ShapeController::class)->prefix('board')->name('board.')->group(function () {
+        Route::post('shape', 'store')->name('store_shape');
+        Route::delete('shape/{item}', 'destroy')->name('delete_shape');
     });
 });
