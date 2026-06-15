@@ -30,6 +30,14 @@
                     class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
                 グループ追加
             </button>
+
+            <span class="text-gray-300 mx-1">|</span>
+
+            {{-- テキスト追加 --}}
+            <button onclick="addText()"
+                    class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
+                テキスト追加
+            </button>
         </div>
 
         {{-- ボードエリア --}}
@@ -115,6 +123,38 @@
                                 color:#374151;font-size:18px;line-height:14px;text-align:center;
                                 cursor:se-resize;z-index:10;user-select:none;
                             ">⤡</div>
+                        </div>
+                    @endforeach
+
+                    {{-- テキストボックス --}}
+                    @foreach($textItems as $text)
+                        @php $meta = $text->meta ?? []; @endphp
+                        <div class="text-box absolute cursor-grab select-none"
+                            data-text-id="{{ $text->whiteboard_item_id }}"
+                            style="
+                                left:{{ $text->pos_x }}px;
+                                top:{{ $text->pos_y }}px;
+                                width:{{ $meta['width'] ?? 200 }}px;
+                                height:{{ $meta['height'] ?? 100 }}px;
+                                position:absolute;
+                            ">
+                            <div class="text-box-inner" style="
+                                width:100%;min-height:100%;padding:8px;
+                                font-size:{{ $meta['font_size'] ?? 14 }}px;
+                                color:{{ $meta['color'] ?? '#374151' }};
+                                border:1.5px dashed #d1d5db;border-radius:6px;
+                                background:white;word-break:break-all;
+                                box-sizing:border-box;
+                            ">{{ $meta['text'] ?? '' }}</div>
+                            <div class="text-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+                                width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
+                                align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
+                            <div class="text-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+                                width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
+                                line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
+                            <div class="text-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+                                width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
+                                text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
                         </div>
                     @endforeach
 

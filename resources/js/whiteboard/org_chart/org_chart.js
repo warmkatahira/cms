@@ -653,13 +653,13 @@ let scrollLeft = 0;
 let scrollTop  = 0;
 
 board.addEventListener('mousedown', e => {
-    // 磁石・ゾーン以外の場所でパン開始
     if (
         e.target === board ||
         e.target.id === 'board-canvas' ||
         e.target.closest('#board-canvas') === document.getElementById('board-canvas') &&
         !e.target.closest('.magnet') &&
-        !e.target.closest('.magnet-zone')
+        !e.target.closest('.magnet-zone') &&
+        !e.target.closest('.text-box')  // ← 追加
     ) {
         isPanning  = true;
         panStartX  = e.clientX;
@@ -1082,6 +1082,8 @@ window.Echo.channel('whiteboard.' + WHITEBOARD_ID)
             case 'staff.updated': handleStaffUpdated(e.payload); break;
             case 'zone.added':    handleZoneAdded(e.payload);    break;
             case 'zone.deleted':  handleZoneDeleted(e.payload);  break;
+            case 'text.added':   handleTextAdded(e.payload);   break;
+            case 'text.deleted': handleTextDeleted(e.payload); break;
         }
     });
 
@@ -1223,3 +1225,336 @@ function handleZoneDeleted(p) {
     const el = document.querySelector(`.magnet-zone[data-zone-id="${p.zoneId}"]`);
     if (el) el.remove();
 }
+
+// テキスト追加
+window.addText = function() {
+    fetch('/org_chart/text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            text:          'テキスト',
+        }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        const item = data.item;
+        const el   = createTextEl(item);
+        document.getElementById('board-canvas').appendChild(el);
+        initText(el);
+    });
+};
+
+function createTextEl(item) {
+    const meta = item.meta ?? {};
+    const el   = document.createElement('div');
+    el.className = 'text-box absolute cursor-grab select-none';
+    el.dataset.textId = item.whiteboard_item_id;
+    el.style.cssText = `
+        left:${item.pos_x}px;top:${item.pos_y}px;
+        width:${meta.width ?? 200}px;height:${meta.height ?? 100}px;
+        position:absolute;
+    `;
+    el.innerHTML = `
+        <div class="text-box-inner" style="
+            width:100%;min-height:100%;padding:8px;
+            font-size:${meta.font_size ?? 14}px;
+            color:${meta.color ?? '#374151'};
+            border:1.5px dashed #d1d5db;border-radius:6px;
+            background:white;word-break:break-all;
+            box-sizing:border-box;
+        ">${meta.text ?? ''}</div>
+        <div class="text-edit-btn" style="
+            display:none;position:absolute;top:-7px;right:-7px;
+            width:18px;height:18px;border-radius:50%;
+            background:#374151;color:white;font-size:10px;
+            align-items:center;justify-content:center;
+            cursor:pointer;z-index:10;
+        ">✏</div>
+        <div class="text-delete-btn" style="
+            display:none;position:absolute;top:-7px;left:-7px;
+            width:18px;height:18px;border-radius:50%;
+            background:#ef4444;color:white;font-size:12px;line-height:18px;
+            text-align:center;cursor:pointer;z-index:10;
+        ">×</div>
+        <div class="text-resize-handle" style="
+            display:none;position:absolute;bottom:-4px;right:-4px;
+            width:14px;height:14px;border-radius:2px;
+            color:#374151;font-size:18px;line-height:14px;text-align:center;
+            cursor:se-resize;z-index:10;user-select:none;
+        ">⤡</div>
+    `;
+    return el;
+}
+
+function initText(el) {
+    el.addEventListener('mousedown',  e => startTextDrag(e, el));
+    el.addEventListener('touchstart', e => startTextDrag(e, el), { passive: false });
+
+    el.addEventListener('mouseenter', () => {
+        el.querySelector('.text-edit-btn').style.display   = 'flex';
+        el.querySelector('.text-delete-btn').style.display = 'block';
+        el.querySelector('.text-resize-handle').style.display = 'block';
+    });
+    el.addEventListener('mouseleave', () => {
+        el.querySelector('.text-edit-btn').style.display   = 'none';
+        el.querySelector('.text-delete-btn').style.display = 'none';
+        el.querySelector('.text-resize-handle').style.display = 'none';
+    });
+
+    // ダブルクリックで編集
+    el.querySelector('.text-box-inner').addEventListener('dblclick', e => {
+        e.stopPropagation();
+        startTextEdit(el);
+    });
+
+    // 編集ボタン
+    const editBtn = el.querySelector('.text-edit-btn');
+    editBtn.addEventListener('mousedown', e => e.stopPropagation());
+    editBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        startTextEdit(el);
+    });
+
+    // 削除ボタン
+    const deleteBtn = el.querySelector('.text-delete-btn');
+    deleteBtn.addEventListener('mousedown', e => e.stopPropagation());
+    deleteBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        if (!confirm('このテキストを削除しますか？')) return;
+        fetch('/org_chart/text/' + el.dataset.textId, {
+            method: 'DELETE',
+            headers: { 'X-CSRF-TOKEN': CSRF },
+        })
+        .then(r => r.json())
+        .then(() => el.remove());
+    });
+
+    // リサイズ
+    const resizeHandle = el.querySelector('.text-resize-handle');
+    resizeHandle.addEventListener('mousedown', e => startTextResize(e, el));
+    resizeHandle.addEventListener('touchstart', e => startTextResize(e, el), { passive: false });
+}
+
+function startTextEdit(el) {
+    const inner   = el.querySelector('.text-box-inner');
+    const current = inner.textContent;
+
+    inner.contentEditable = 'true';
+    inner.style.cursor    = 'text';
+    inner.style.borderColor = '#374151';
+    inner.focus();
+
+    // カーソルを末尾に移動
+    const range = document.createRange();
+    range.selectNodeContents(inner);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    function saveText() {
+        inner.contentEditable = 'false';
+        inner.style.cursor    = 'default';
+        inner.style.borderColor = '#d1d5db';
+        const newText = inner.textContent.trim();
+
+        fetch('/org_chart/item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+            body: JSON.stringify({
+                whiteboard_id: WHITEBOARD_ID,
+                item_type:     'text',
+                item_id:       parseInt(el.dataset.textId),
+                on_board:      true,
+                pos_x:         parseFloat(el.style.left) || 0,
+                pos_y:         parseFloat(el.style.top)  || 0,
+                meta: {
+                    text:      newText,
+                    font_size: parseInt(inner.style.fontSize) || 14,
+                    color:     inner.style.color || '#374151',
+                    width:     el.offsetWidth,
+                    height:    el.offsetHeight,
+                },
+            }),
+        });
+    }
+
+    inner.addEventListener('blur', saveText, { once: true });
+    inner.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { inner.textContent = current; inner.blur(); }
+    });
+}
+
+// テキストドラッグ
+let draggingText = null;
+let textGhost    = null;
+let textOffX = 0, textOffY = 0;
+let pendingText  = null;
+let pendingTextCx = 0, pendingTextCy = 0;
+
+function startTextDrag(e, el) {
+    if (e.target.classList.contains('text-edit-btn'))   return;
+    if (e.target.classList.contains('text-delete-btn')) return;
+    if (e.target.classList.contains('text-resize-handle')) return;
+    if (e.target.contentEditable === 'true') return;
+
+    const cx = e.touches ? e.touches[0].clientX : e.clientX;
+    const cy = e.touches ? e.touches[0].clientY : e.clientY;
+    pendingText   = el;
+    pendingTextCx = cx;
+    pendingTextCy = cy;
+    document.addEventListener('mousemove', onTextMoveCheck);
+    document.addEventListener('mouseup',   onTextCancelPending);
+}
+
+function onTextMoveCheck(e) {
+    const dx = e.clientX - pendingTextCx;
+    const dy = e.clientY - pendingTextCy;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        document.removeEventListener('mousemove', onTextMoveCheck);
+        document.removeEventListener('mouseup',   onTextCancelPending);
+        beginTextDrag(pendingText, pendingTextCx, pendingTextCy);
+        pendingText = null;
+    }
+}
+
+function onTextCancelPending() {
+    document.removeEventListener('mousemove', onTextMoveCheck);
+    document.removeEventListener('mouseup',   onTextCancelPending);
+    pendingText = null;
+}
+
+function beginTextDrag(el, startCx, startCy) {
+    draggingText = el;
+    const rect = el.getBoundingClientRect();
+    textOffX = startCx - rect.left;
+    textOffY = startCy - rect.top;
+
+    textGhost = el.cloneNode(true);
+    textGhost.style.cssText += `position:fixed;pointer-events:none;z-index:9998;opacity:0.7;
+        left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;`;
+    document.body.appendChild(textGhost);
+    el.style.opacity = '0.3';
+
+    document.addEventListener('mousemove', onTextMove);
+    document.addEventListener('mouseup',   onTextUp);
+}
+
+function onTextMove(e) {
+    textGhost.style.left = (e.clientX - textOffX) + 'px';
+    textGhost.style.top  = (e.clientY - textOffY) + 'px';
+}
+
+function onTextUp(e) {
+    document.removeEventListener('mousemove', onTextMove);
+    document.removeEventListener('mouseup',   onTextUp);
+    textGhost.remove();
+    textGhost = null;
+
+    const boardRect  = board.getBoundingClientRect();
+    const textEl     = draggingText; // ← null にする前に保存
+    let px = e.clientX - boardRect.left + board.scrollLeft - textOffX;
+    let py = e.clientY - boardRect.top  + board.scrollTop  - textOffY;
+    px = Math.max(0, Math.min(px, CANVAS_W - textEl.offsetWidth));
+    py = Math.max(0, Math.min(py, CANVAS_H - textEl.offsetHeight));
+
+    textEl.style.left    = px + 'px';
+    textEl.style.top     = py + 'px';
+    textEl.style.opacity = '1';
+    draggingText = null;
+
+    const inner = textEl.querySelector('.text-box-inner');
+    fetch('/org_chart/item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            item_type:     'text',
+            item_id:       parseInt(textEl.dataset.textId),
+            on_board:      true,
+            pos_x:         px,
+            pos_y:         py,
+            meta: {
+                text:      inner.textContent,
+                font_size: parseInt(inner.style.fontSize) || 14,
+                color:     inner.style.color || '#374151',
+                width:     textEl.offsetWidth,
+                height:    textEl.offsetHeight,
+            },
+        }),
+    });
+}
+
+// テキストリサイズ
+let resizingText  = null;
+let textResStartX = 0, textResStartY = 0;
+let textResStartW = 0, textResStartH = 0;
+
+function startTextResize(e, el) {
+    e.stopPropagation();
+    e.preventDefault();
+    resizingText  = el;
+    textResStartX = e.touches ? e.touches[0].clientX : e.clientX;
+    textResStartY = e.touches ? e.touches[0].clientY : e.clientY;
+    textResStartW = el.offsetWidth;
+    textResStartH = el.offsetHeight;
+
+    document.addEventListener('mousemove', onTextResize);
+    document.addEventListener('mouseup',   onTextResizeEnd);
+}
+
+function onTextResize(e) {
+    if (!resizingText) return;
+    const newW = Math.max(100, textResStartW + (e.clientX - textResStartX));
+    const newH = Math.max(50,  textResStartH + (e.clientY - textResStartY));
+    resizingText.style.width  = newW + 'px';
+    resizingText.style.height = newH + 'px';
+    const inner = resizingText.querySelector('.text-box-inner');
+    if (inner) inner.style.minHeight = newH + 'px';
+}
+
+function onTextResizeEnd(e) {
+    document.removeEventListener('mousemove', onTextResize);
+    document.removeEventListener('mouseup',   onTextResizeEnd);
+    if (!resizingText) return;
+
+    const inner = resizingText.querySelector('.text-box-inner');
+    fetch('/org_chart/item', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            item_type:     'text',
+            item_id:       parseInt(resizingText.dataset.textId),
+            on_board:      true,
+            pos_x:         parseFloat(resizingText.style.left) || 0,
+            pos_y:         parseFloat(resizingText.style.top)  || 0,
+            meta: {
+                text:      inner.textContent,
+                font_size: parseInt(inner.style.fontSize) || 14,
+                color:     inner.style.color || '#374151',
+                width:     resizingText.offsetWidth,
+                height:    resizingText.offsetHeight,
+            },
+        }),
+    });
+    resizingText = null;
+}
+
+// リアルタイム受信
+function handleTextAdded(p) {
+    setTimeout(() => {
+        if (document.querySelector(`.text-box[data-text-id="${p.whiteboard_item_id}"]`)) return;
+        const el = createTextEl(p);
+        document.getElementById('board-canvas').appendChild(el);
+        initText(el);
+    }, 100);
+}
+
+function handleTextDeleted(p) {
+    const el = document.querySelector(`.text-box[data-text-id="${p.itemId}"]`);
+    if (el) el.remove();
+}
+
+document.querySelectorAll('.text-box').forEach(el => initText(el));
