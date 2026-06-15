@@ -1451,11 +1451,6 @@ function startTextEdit(el) {
             background:${currentBold ? '#f3f4f6' : 'white'};
             color:#374151;
         ">B</button>
-        <button class="tb-bg-clear" title="背景なし" style="
-            font-size:10px;width:24px;height:24px;
-            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
-            background:white;color:#374151;
-        ">✕</button>
     `;
     el.appendChild(toolbar);
 
@@ -1510,12 +1505,6 @@ function startTextEdit(el) {
             bgPalette.style.display = 'none';
             inner.focus();
         });
-    });
-
-    // 背景なし
-    toolbar.querySelector('.tb-bg-clear').addEventListener('click', () => {
-        inner.style.background = 'white';
-        bgBtn.style.background = 'white';
     });
 
     function saveText() {
