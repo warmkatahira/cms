@@ -34,8 +34,8 @@ export function createShapeSVG(shapeType, fillColor, strokeColor, itemId) {
                     stroke="${strokeColor}" stroke-width="3"
                     vector-effect="non-scaling-stroke"
                     marker-end="url(#arrow-${itemId})"/>`;
-                default:
-                    return '';
+        default:
+            return '';
             }
 }
 

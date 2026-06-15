@@ -1,62 +1,63 @@
 <x-app-layout>
     <div class="p-0">
         {{-- ツールバー --}}
-        <div class="flex items-center gap-3 mb-4 p-3 bg-white border border-gray-200 rounded-lg flex-wrap">
+        <div class="flex items-center gap-2 mb-4 p-2 bg-white border border-gray-200 rounded-xl flex-wrap">
 
             {{-- 一覧に戻る --}}
             <a href="{{ route('whiteboard.index') }}"
-               class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
-                ← 一覧
+            class="flex items-center gap-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-500 hover:bg-gray-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
             </a>
 
-            <span class="text-gray-300 mx-1">|</span>
+            <div class="w-px h-5 bg-gray-200 mx-1"></div>
 
             {{-- スタッフ追加 --}}
-            <input id="newName" type="text" placeholder="氏名"
-                class="text-sm border rounded px-2 py-1 w-28">
-            <input id="newRole" type="text" placeholder="役割"
-                class="text-sm border rounded px-2 py-1 w-28">
-            <button onclick="addStaff()"
-                    class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
-                追加
-            </button>
+            <div class="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-200 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
+                <input id="newName" type="text" placeholder="氏名"
+                    class="text-sm outline-none w-20 bg-transparent text-gray-800 placeholder-gray-400 border-none">
+                <input id="newRole" type="text" placeholder="役割"
+                    class="text-sm outline-none w-16 bg-transparent text-gray-800 placeholder-gray-400 border-none">
+                <button onclick="addStaff()"
+                        class="text-sm px-2 py-0.5 border border-gray-200 rounded-md hover:bg-gray-50 text-gray-600">+</button>
+            </div>
 
-            <span class="text-gray-300 mx-1">|</span>
+            <div class="w-px h-5 bg-gray-200 mx-1"></div>
 
             {{-- グループ追加 --}}
-            <input id="newZoneLabel" type="text" placeholder="グループ名"
-                class="text-sm border rounded px-2 py-1 w-28">
-            <button onclick="addZone()"
-                    class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
-                グループ追加
-            </button>
+            <div class="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-200 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                <input id="newZoneLabel" type="text" placeholder="グループ名"
+                    class="text-sm outline-none w-24 bg-transparent text-gray-800 placeholder-gray-400 border-none">
+                <button onclick="addZone()"
+                        class="text-sm px-2 py-0.5 border border-gray-200 rounded-md hover:bg-gray-50 text-gray-600">+</button>
+            </div>
 
-            <span class="text-gray-300 mx-1">|</span>
+            <div class="w-px h-5 bg-gray-200 mx-1"></div>
 
             {{-- テキスト追加 --}}
-            <button onclick="addText()"
-                    class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
-                テキスト追加
+            <button onclick="addText()" title="テキスト追加"
+                    class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
             </button>
-
-            <span class="text-gray-300 mx-1">|</span>
 
             {{-- 図形追加 --}}
             <div class="relative" x-data="{ open: false }">
-                <button @click="open = !open"
-                        class="text-sm border rounded px-3 py-1 bg-white hover:bg-gray-50">
-                    図形追加 ▾
+                <button @click="open = !open" title="図形追加"
+                        class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"/></svg>
                 </button>
                 <div x-show="open" @click.away="open = false"
-                    class="absolute top-8 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-2"
-                    style="min-width:140px;">
-                    <button onclick="addShape('rect')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">■ 四角</button>
-                    <button onclick="addShape('circle')"   class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">● 丸</button>
-                    <button onclick="addShape('triangle')" class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">▲ 三角</button>
-                    <button onclick="addShape('line')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">― 線</button>
-                    <button onclick="addShape('arrow')"    class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50 rounded">→ 矢印</button>
+                    class="absolute top-9 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+                    style="min-width:110px;">
+                    <button onclick="addShape('rect')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">■ 四角</button>
+                    <button onclick="addShape('circle')"   class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">● 丸</button>
+                    <button onclick="addShape('triangle')" class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">▲ 三角</button>
+                    <button onclick="addShape('line')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">― 線</button>
+                    <button onclick="addShape('arrow')"    class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">→ 矢印</button>
                 </div>
             </div>
+
         </div>
 
         {{-- ボードエリア --}}
