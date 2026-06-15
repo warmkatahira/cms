@@ -142,6 +142,7 @@
                                 width:100%;min-height:100%;padding:8px;
                                 font-size:{{ $meta['font_size'] ?? 14 }}px;
                                 color:{{ $meta['color'] ?? '#374151' }};
+                                font-weight:{{ $meta['font_weight'] ?? '400' }};
                                 border:1.5px dashed #d1d5db;border-radius:6px;
                                 background:white;word-break:break-all;
                                 box-sizing:border-box;

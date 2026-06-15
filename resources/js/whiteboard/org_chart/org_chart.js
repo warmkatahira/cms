@@ -1260,6 +1260,7 @@ function createTextEl(item) {
             width:100%;min-height:100%;padding:8px;
             font-size:${meta.font_size ?? 14}px;
             color:${meta.color ?? '#374151'};
+            font-weight:${meta.font_weight ?? '400'};
             border:1.5px dashed #d1d5db;border-radius:6px;
             background:white;word-break:break-all;
             box-sizing:border-box;
@@ -1353,10 +1354,65 @@ function startTextEdit(el) {
     sel.removeAllRanges();
     sel.addRange(range);
 
+    // ミニツールバーを表示
+    const toolbar = document.createElement('div');
+    toolbar.className = 'text-toolbar';
+    toolbar.style.cssText = `
+        position:absolute;bottom:-36px;left:0;
+        display:flex;align-items:center;gap:4px;
+        background:white;border:1px solid #d1d5db;border-radius:6px;
+        padding:4px 6px;z-index:20;box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    `;
+
+    const currentSize  = parseInt(inner.style.fontSize) || 14;
+    const currentColor = inner.style.color || '#374151';
+    const currentBold  = inner.style.fontWeight === '700' || inner.style.fontWeight === 'bold';
+
+    toolbar.innerHTML = `
+        <select class="tb-size" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;">
+            ${[10,12,14,16,18,20,24,28,32,40].map(s =>
+                `<option value="${s}" ${s === currentSize ? 'selected' : ''}>${s}px</option>`
+            ).join('')}
+        </select>
+        <input type="color" class="tb-color" value="${currentColor}"
+               style="width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;padding:0;cursor:pointer;">
+        <button class="tb-bold" style="
+            font-size:12px;font-weight:700;width:24px;height:24px;
+            border:1px solid ${currentBold ? '#374151' : '#e5e7eb'};
+            border-radius:4px;cursor:pointer;
+            background:${currentBold ? '#f3f4f6' : 'white'};
+            color:#374151;
+        ">B</button>
+    `;
+    el.appendChild(toolbar);
+
+    // イベント伝播を止める
+    toolbar.addEventListener('mousedown', e => e.stopPropagation());
+
+    // フォントサイズ変更
+    toolbar.querySelector('.tb-size').addEventListener('change', e => {
+        inner.style.fontSize = e.target.value + 'px';
+    });
+
+    // 色変更
+    toolbar.querySelector('.tb-color').addEventListener('input', e => {
+        inner.style.color = e.target.value;
+    });
+
+    // 太字切り替え
+    toolbar.querySelector('.tb-bold').addEventListener('click', e => {
+        const isBold = inner.style.fontWeight === '700';
+        inner.style.fontWeight = isBold ? '400' : '700';
+        e.target.style.borderColor = isBold ? '#e5e7eb' : '#374151';
+        e.target.style.background  = isBold ? 'white'   : '#f3f4f6';
+    });
+
     function saveText() {
         inner.contentEditable = 'false';
         inner.style.cursor    = 'default';
         inner.style.borderColor = '#d1d5db';
+        toolbar.remove();
+
         const newText = inner.textContent.trim();
 
         fetch('/org_chart/item', {
@@ -1370,19 +1426,34 @@ function startTextEdit(el) {
                 pos_x:         parseFloat(el.style.left) || 0,
                 pos_y:         parseFloat(el.style.top)  || 0,
                 meta: {
-                    text:      newText,
-                    font_size: parseInt(inner.style.fontSize) || 14,
-                    color:     inner.style.color || '#374151',
-                    width:     el.offsetWidth,
-                    height:    el.offsetHeight,
+                    text:        newText,
+                    font_size:   parseInt(inner.style.fontSize) || 14,
+                    color:       inner.style.color || '#374151',
+                    font_weight: inner.style.fontWeight || '400',
+                    width:       el.offsetWidth,
+                    height:      el.offsetHeight,
                 },
             }),
         });
     }
 
-    inner.addEventListener('blur', saveText, { once: true });
+    inner.addEventListener('blur', e => {
+        // ツールバー内のクリックではblurしない
+        if (toolbar.contains(e.relatedTarget)) {
+            inner.focus();
+            return;
+        }
+        saveText();
+    }, { once: false });
+
     inner.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { inner.textContent = current; inner.blur(); }
+        if (e.key === 'Escape') {
+            inner.textContent = current;
+            inner.contentEditable = 'false';
+            inner.style.cursor = 'default';
+            inner.style.borderColor = '#d1d5db';
+            toolbar.remove();
+        }
     });
 }
 
