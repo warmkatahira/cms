@@ -41,6 +41,13 @@ function staffChip(string $name, ?string $role, int $color, string $shape = 'rec
                 align-items:center;justify-content:center;
                 cursor:pointer;z-index:10;
             ">✏</div>
+            <div class="chip-copy-btn" style="
+                display:none;position:absolute;top:-7px;right:14px;
+                width:18px;height:18px;border-radius:50%;
+                background:#374151;color:white;font-size:10px;
+                align-items:center;justify-content:center;
+                cursor:pointer;z-index:10;
+            ">📋</div>
             <div class="chip-resize-handle" style="
                 display:none;position:absolute;bottom:-4px;right:-4px;
                 width:14px;height:14px;border-radius:2px;

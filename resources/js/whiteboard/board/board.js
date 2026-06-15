@@ -5,6 +5,9 @@ const CANVAS_W      = parseInt(board.dataset.canvasW);
 const CANVAS_H      = parseInt(board.dataset.canvasH);
 const CSRF          = document.querySelector('meta[name="csrf-token"]').content;
 
+let copyOffset = 0;
+let lastCopyEl  = null;
+
 const COLORS = [
     { bg:'#E6F1FB', border:'#378ADD', text:'#0C447C' },
     { bg:'#EAF3DE', border:'#639922', text:'#27500A' },
@@ -342,6 +345,13 @@ window.addStaff = function() {
                     align-items:center;justify-content:center;
                     cursor:pointer;z-index:10;
                 ">✏</div>
+                <div class="chip-copy-btn" style="
+                    display:none;position:absolute;top:-7px;right:14px;
+                    width:18px;height:18px;border-radius:50%;
+                    background:#374151;color:white;font-size:10px;
+                    align-items:center;justify-content:center;
+                    cursor:pointer;z-index:10;
+                ">📋</div>
                 <div class="chip-resize-handle" style="
                     display:none;position:absolute;bottom:-4px;right:-4px;
                     width:10px;height:10px;border-radius:2px;
@@ -516,21 +526,24 @@ function initMagnet(el) {
     el.addEventListener('mousedown',  e => startDrag(e, el));
     el.addEventListener('touchstart', e => startDrag(e, el), { passive: false });
 
-    // ホバーで編集・リサイズボタン表示
     el.addEventListener('mouseenter', () => {
         const btn = el.querySelector('.chip-edit-btn');
         if (btn) btn.style.display = 'flex';
+        const copyBtn = el.querySelector('.chip-copy-btn');
+        if (copyBtn) copyBtn.style.display = 'flex';
         const handle = el.querySelector('.chip-resize-handle');
         if (handle) handle.style.display = 'block';
     });
     el.addEventListener('mouseleave', () => {
         const btn = el.querySelector('.chip-edit-btn');
         if (btn) btn.style.display = 'none';
+        const copyBtn = el.querySelector('.chip-copy-btn');
+        if (copyBtn) copyBtn.style.display = 'none';
         const handle = el.querySelector('.chip-resize-handle');
         if (handle) handle.style.display = 'none';
     });
 
-    // 編集ボタンクリック
+    // 編集ボタン（既存）
     const editBtn = el.querySelector('.chip-edit-btn');
     if (editBtn) {
         editBtn.addEventListener('mousedown', e => e.stopPropagation());
@@ -540,7 +553,17 @@ function initMagnet(el) {
         });
     }
 
-    // リサイズハンドル
+    // 複製ボタン
+    const copyBtn = el.querySelector('.chip-copy-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('mousedown', e => e.stopPropagation());
+        copyBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            copyStaff(el);
+        });
+    }
+
+    // リサイズハンドル（既存）
     const resizeHandle = el.querySelector('.chip-resize-handle');
     if (resizeHandle) {
         resizeHandle.addEventListener('mousedown', e => startChipResize(e, el));
@@ -835,16 +858,20 @@ function initZone(el) {
     el.addEventListener('mousedown',  e => startZoneDrag(e, el));
     el.addEventListener('touchstart', e => startZoneDrag(e, el), { passive: false });
 
-    // ホバーで編集ボタン表示
+    // ホバー表示に追加
     el.addEventListener('mouseenter', () => {
         const btn = el.querySelector('.zone-edit-btn');
         if (btn) btn.style.display = 'flex';
+        const copyBtn = el.querySelector('.zone-copy-btn');
+        if (copyBtn) copyBtn.style.display = 'flex';
         const handle = el.querySelector('.zone-resize-handle');
         if (handle) handle.style.display = 'block';
     });
     el.addEventListener('mouseleave', () => {
         const btn = el.querySelector('.zone-edit-btn');
         if (btn) btn.style.display = 'none';
+        const copyBtn = el.querySelector('.zone-copy-btn');
+        if (copyBtn) copyBtn.style.display = 'none';
         const handle = el.querySelector('.zone-resize-handle');
         if (handle) handle.style.display = 'none';
     });
@@ -876,6 +903,16 @@ function initZone(el) {
     if (resizeHandle) {
         resizeHandle.addEventListener('mousedown', e => startZoneResize(e, el));
         resizeHandle.addEventListener('touchstart', e => startZoneResize(e, el), { passive: false });
+    }
+
+    // 複製ボタン
+    const copyBtn = el.querySelector('.zone-copy-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('mousedown', e => e.stopPropagation());
+        copyBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            copyZone(el);
+        });
     }
 }
 
@@ -1069,6 +1106,13 @@ window.addZone = function() {
                 align-items:center;justify-content:center;
                 cursor:pointer;z-index:10;
             ">✏</div>
+            <div class="zone-copy-btn" style="
+                display:none;position:absolute;top:-7px;right:14px;
+                width:18px;height:18px;border-radius:50%;
+                background:#374151;color:white;font-size:10px;
+                align-items:center;justify-content:center;
+                cursor:pointer;z-index:10;
+            ">📋</div>
             <div class="zone-resize-handle" style="
                 display:none;position:absolute;bottom:-4px;right:-4px;
                 width:14px;height:14px;border-radius:2px;
@@ -1171,6 +1215,13 @@ function handleStaffAdded(p) {
                 <div class="chip-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
                     width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                     align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
+                <div class="chip-copy-btn" style="
+                    display:none;position:absolute;top:-7px;right:14px;
+                    width:18px;height:18px;border-radius:50%;
+                    background:#374151;color:white;font-size:10px;
+                    align-items:center;justify-content:center;
+                    cursor:pointer;z-index:10;
+                ">📋</div>
                 <div class="chip-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
                     width:10px;height:10px;border-radius:2px;background:#374151;cursor:se-resize;z-index:10;"></div>
             </div>`;
@@ -1239,6 +1290,13 @@ function handleZoneAdded(p) {
         <div class="zone-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
             align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
+            <div class="zone-copy-btn" style="
+                display:none;position:absolute;top:-7px;right:14px;
+                width:18px;height:18px;border-radius:50%;
+                background:#374151;color:white;font-size:10px;
+                align-items:center;justify-content:center;
+                cursor:pointer;z-index:10;
+            ">📋</div>
         <div class="zone-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
             width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
             text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
@@ -1298,6 +1356,12 @@ function createTextEl(item) {
             align-items:center;justify-content:center;
             cursor:pointer;z-index:10;
         ">✏</div>
+        <div class="text-copy-btn" style="
+            display:none;position:absolute;top:-7px;right:14px;
+            width:18px;height:18px;border-radius:50%;
+            background:#374151;color:white;font-size:10px;line-height:18px;
+            text-align:center;cursor:pointer;z-index:10;
+        ">📋</div>
         <div class="text-delete-btn" style="
             display:none;position:absolute;top:-7px;left:-7px;
             width:18px;height:18px;border-radius:50%;
@@ -1321,21 +1385,23 @@ function initText(el) {
     el.addEventListener('mouseenter', () => {
         el.querySelector('.text-edit-btn').style.display   = 'flex';
         el.querySelector('.text-delete-btn').style.display = 'block';
+        el.querySelector('.text-copy-btn').style.display   = 'block';
         el.querySelector('.text-resize-handle').style.display = 'block';
     });
     el.addEventListener('mouseleave', () => {
         el.querySelector('.text-edit-btn').style.display   = 'none';
         el.querySelector('.text-delete-btn').style.display = 'none';
+        el.querySelector('.text-copy-btn').style.display   = 'none';
         el.querySelector('.text-resize-handle').style.display = 'none';
     });
 
-    // ダブルクリックで編集
+    // ダブルクリック（既存）
     el.querySelector('.text-box-inner').addEventListener('dblclick', e => {
         e.stopPropagation();
         startTextEdit(el);
     });
 
-    // 編集ボタン
+    // 編集ボタン（既存）
     const editBtn = el.querySelector('.text-edit-btn');
     editBtn.addEventListener('mousedown', e => e.stopPropagation());
     editBtn.addEventListener('click', e => {
@@ -1343,7 +1409,7 @@ function initText(el) {
         startTextEdit(el);
     });
 
-    // 削除ボタン
+    // 削除ボタン（既存）
     const deleteBtn = el.querySelector('.text-delete-btn');
     deleteBtn.addEventListener('mousedown', e => e.stopPropagation());
     deleteBtn.addEventListener('click', e => {
@@ -1357,7 +1423,15 @@ function initText(el) {
         .then(() => el.remove());
     });
 
-    // リサイズ
+    // 複製ボタン
+    const copyBtn = el.querySelector('.text-copy-btn');
+    copyBtn.addEventListener('mousedown', e => e.stopPropagation());
+    copyBtn.addEventListener('click', e => {
+        e.stopPropagation();
+        copyText(el);
+    });
+
+    // リサイズ（既存）
     const resizeHandle = el.querySelector('.text-resize-handle');
     resizeHandle.addEventListener('mousedown', e => startTextResize(e, el));
     resizeHandle.addEventListener('touchstart', e => startTextResize(e, el), { passive: false });
@@ -1576,6 +1650,7 @@ let pendingTextCx = 0, pendingTextCy = 0;
 function startTextDrag(e, el) {
     if (e.target.classList.contains('text-edit-btn'))   return;
     if (e.target.classList.contains('text-delete-btn')) return;
+    if (e.target.classList.contains('text-copy-btn'))   return;
     if (e.target.classList.contains('text-resize-handle')) return;
     if (e.target.contentEditable === 'true') return;
 
@@ -1754,3 +1829,168 @@ document.getElementById('board-canvas').addEventListener('mousedown', e => {
         editing.blur();
     }
 });
+
+function copyStaff(el) {
+    fetch('/board/staff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            staff_name:    el.dataset.name,
+            role_name:     el.dataset.role,
+            color: parseInt(el.dataset.color) || 0,
+        }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        const s = data.staff;
+        const c = COLORS[(s.color ?? 0) % COLORS.length];
+
+        // 元がボード上ならずらして配置、トレイならトレイに追加
+        const isOnBoard = document.getElementById('board-canvas').contains(el);
+
+        const newEl = document.createElement('div');
+        newEl.className  = 'magnet cursor-grab select-none';
+        newEl.dataset.id    = s.staff_id;
+        newEl.dataset.color = s.color;
+        newEl.dataset.name  = s.staff_name;
+        newEl.dataset.role  = s.role_name ?? '';
+        newEl.dataset.size  = el.dataset.size ?? 'M';
+        newEl.dataset.shape = el.dataset.shape ?? 'rect';
+        newEl.innerHTML = el.innerHTML;
+
+        newEl.querySelectorAll('.chip-edit-btn, .chip-copy-btn').forEach(b => b.style.display = 'none');
+        newEl.querySelectorAll('.chip-resize-handle').forEach(b => b.style.display = 'none');
+
+        // 新しいIDでDOM更新
+        initMagnet(newEl);
+
+        if (isOnBoard) {
+            if (lastCopyEl !== el) { copyOffset = 0; lastCopyEl = el; }
+            copyOffset += 20;
+            const px = (parseFloat(el.style.left) || 0) + copyOffset;
+            const py = (parseFloat(el.style.top)  || 0) + copyOffset;
+            newEl.style.position = 'absolute';
+            newEl.style.left = px + 'px';
+            newEl.style.top  = py + 'px';
+            document.getElementById('board-canvas').appendChild(newEl);
+            saveItem(s.staff_id, true, px, py);
+        } else {
+            tray.appendChild(newEl);
+        }
+    });
+}
+
+function copyText(el) {
+    const inner = el.querySelector('.text-box-inner');
+
+    fetch('/board/text', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            text:          inner.textContent.trim(),
+        }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        const item = data.item;
+        // 元のスタイルを引き継ぐ
+        item.meta = {
+            ...item.meta,
+            font_size:   parseInt(inner.style.fontSize) || 14,
+            color:       inner.style.color || '#374151',
+            font_weight: inner.style.fontWeight || '400',
+            bg_color:    inner.style.background || 'white',
+            width:       el.offsetWidth,
+            height:      el.offsetHeight,
+        };
+        if (lastCopyEl !== el) { copyOffset = 0; lastCopyEl = el; }
+        copyOffset += 20;
+        item.pos_x = (parseFloat(el.style.left) || 0) + copyOffset;
+        item.pos_y = (parseFloat(el.style.top)  || 0) + copyOffset;
+
+        const newEl = createTextEl(item);
+        document.getElementById('board-canvas').appendChild(newEl);
+
+        newEl.querySelectorAll('.text-edit-btn, .text-copy-btn, .text-delete-btn').forEach(b => b.style.display = 'none');
+        newEl.querySelectorAll('.text-resize-handle').forEach(b => b.style.display = 'none');
+
+        initText(newEl);
+
+        // スタイルも含めてDB保存
+        fetch('/board/item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+            body: JSON.stringify({
+                whiteboard_id: WHITEBOARD_ID,
+                item_type:     'text',
+                item_id:       parseInt(item.whiteboard_item_id),
+                on_board:      true,
+                pos_x:         item.pos_x,
+                pos_y:         item.pos_y,
+                meta:          item.meta,
+            }),
+        });
+    });
+}
+
+function copyZone(el) {
+    fetch('/board/zone', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            label:         el.dataset.label,
+            color_index:   parseInt(el.dataset.colorIndex ?? 0),
+        }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        const item = data.item;
+        if (lastCopyEl !== el) { copyOffset = 0; lastCopyEl = el; }
+        copyOffset += 20;
+        const px = (parseFloat(el.style.left) || 0) + copyOffset;
+        const py = (parseFloat(el.style.top)  || 0) + copyOffset;
+
+        // 元のサイズを引き継ぐ
+        item.pos_x = px;
+        item.pos_y = py;
+        item.meta.width  = el.offsetWidth;
+        item.meta.height = el.offsetHeight;
+
+        const newEl = document.createElement('div');
+        const c = ZONE_COLORS[item.meta.color_index ?? 0];
+        newEl.className = 'zone magnet-zone cursor-grab select-none absolute border-2 rounded-xl';
+        newEl.dataset.zoneId     = item.whiteboard_item_id;
+        newEl.dataset.colorIndex = item.meta.color_index ?? 0;
+        newEl.dataset.label      = item.meta.label;
+        newEl.style.cssText = `
+            left:${px}px;top:${py}px;
+            width:${el.offsetWidth}px;height:${el.offsetHeight}px;
+            border-color:${c.border};background:${c.bg};
+        `;
+        newEl.innerHTML = el.innerHTML;
+        document.getElementById('board-canvas').appendChild(newEl);
+
+        newEl.querySelectorAll('.zone-edit-btn, .zone-copy-btn').forEach(b => b.style.display = 'none');
+        newEl.querySelectorAll('.zone-resize-handle').forEach(b => b.style.display = 'none');
+
+        initZone(newEl);
+
+        // 位置・サイズをDB保存
+        fetch('/board/item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+            body: JSON.stringify({
+                whiteboard_id: WHITEBOARD_ID,
+                item_type:     'zone',
+                item_id:       parseInt(item.whiteboard_item_id),
+                on_board:      true,
+                pos_x:         px,
+                pos_y:         py,
+                meta:          item.meta,
+            }),
+        });
+    });
+}

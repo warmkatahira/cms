@@ -117,6 +117,13 @@
                                 align-items:center;justify-content:center;
                                 cursor:pointer;z-index:10;
                             ">✏</div>
+                            <div class="zone-copy-btn" style="
+                                display:none;position:absolute;top:-7px;right:14px;
+                                width:18px;height:18px;border-radius:50%;
+                                background:#374151;color:white;font-size:10px;
+                                align-items:center;justify-content:center;
+                                cursor:pointer;z-index:10;
+                            ">📋</div>
                             <div class="zone-resize-handle" style="
                                 display:none;position:absolute;bottom:-4px;right:-4px;
                                 width:14px;height:14px;border-radius:2px;
@@ -150,6 +157,9 @@
                             <div class="text-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                                 align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
+                            <div class="text-copy-btn" style="display:none;position:absolute;top:-7px;right:14px;
+                                width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
+                                line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
                             <div class="text-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
