@@ -144,7 +144,7 @@
                                 color:{{ $meta['color'] ?? '#374151' }};
                                 font-weight:{{ $meta['font_weight'] ?? '400' }};
                                 border:1.5px dashed #d1d5db;border-radius:6px;
-                                background:white;word-break:break-all;
+                                background:{{ $meta['bg_color'] ?? 'white' }};word-break:break-all;
                                 box-sizing:border-box;
                             ">{{ $meta['text'] ?? '' }}</div>
                             <div class="text-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;

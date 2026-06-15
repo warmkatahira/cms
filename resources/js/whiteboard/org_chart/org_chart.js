@@ -15,6 +15,25 @@ const COLORS = [
     { bg:'#FAECE7', border:'#D85A30', text:'#711B13' },
 ];
 
+const PALETTE = [
+    // 濃い色（既存19色）
+    '#374151', '#ffffff', '#dc2626', '#ea580c', '#ca8a04',
+    '#16a34a', '#2563eb', '#7c3aed', '#ec4899',
+    '#000000', '#6b7280', '#b91c1c', '#92400e', '#854d0e',
+    '#065f46', '#1e40af', '#5b21b6', '#9d174d', '#0891b2',
+    // 薄い色（追加10色）
+    '#fca5a5', '#fdba74', '#fde047', '#86efac', '#93c5fd',
+    '#c4b5fd', '#f9a8d4', '#67e8f9', '#9ca3af', '#e5e7eb',
+];
+
+function rgbToHex(color) {
+    if (!color || color === 'white') return '#ffffff';
+    if (color.startsWith('#')) return color;
+    const m = color.match(/\d+/g);
+    if (!m || m.length < 3) return '#ffffff';
+    return '#' + m.slice(0, 3).map(v => parseInt(v).toString(16).padStart(2, '0')).join('');
+}
+
 let dragging = null;
 let ghost    = null;
 let offX = 0, offY = 0;
@@ -659,8 +678,15 @@ board.addEventListener('mousedown', e => {
         e.target.closest('#board-canvas') === document.getElementById('board-canvas') &&
         !e.target.closest('.magnet') &&
         !e.target.closest('.magnet-zone') &&
-        !e.target.closest('.text-box')  // ← 追加
+        !e.target.closest('.text-box')
     ) {
+        // 編集中のテキストがあれば先に解除
+        const editing = document.querySelector('.text-box-inner[contenteditable="true"]');
+        if (editing) {
+            editing.blur();
+            return; // パンは開始しない
+        }
+
         isPanning  = true;
         panStartX  = e.clientX;
         panStartY  = e.clientY;
@@ -1262,7 +1288,7 @@ function createTextEl(item) {
             color:${meta.color ?? '#374151'};
             font-weight:${meta.font_weight ?? '400'};
             border:1.5px dashed #d1d5db;border-radius:6px;
-            background:white;word-break:break-all;
+            background:${meta.bg_color ?? 'white'};word-break:break-all;
             box-sizing:border-box;
         ">${meta.text ?? ''}</div>
         <div class="text-edit-btn" style="
@@ -1340,6 +1366,7 @@ function initText(el) {
 function startTextEdit(el) {
     const inner   = el.querySelector('.text-box-inner');
     const current = inner.textContent;
+    const currentBg = inner.style.background || 'white';
 
     inner.contentEditable = 'true';
     inner.style.cursor    = 'text';
@@ -1374,8 +1401,49 @@ function startTextEdit(el) {
                 `<option value="${s}" ${s === currentSize ? 'selected' : ''}>${s}px</option>`
             ).join('')}
         </select>
-        <input type="color" class="tb-color" value="${currentColor}"
-               style="width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;padding:0;cursor:pointer;">
+        <div class="tb-color-wrap" style="position:relative;">
+            <button class="tb-color-btn" title="文字色" style="
+                width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
+                cursor:pointer;font-size:14px;font-weight:700;line-height:24px;
+                text-align:center;background:white;color:${currentColor};
+            ">A</button>
+            <div class="tb-color-palette" style="
+                display:none;position:absolute;top:-112px;left:0;
+                background:white;border:1px solid #d1d5db;border-radius:6px;
+                padding:4px;box-shadow:0 2px 6px rgba(0,0,0,0.15);z-index:30;
+            ">
+                <div style="display:flex;flex-wrap:wrap;gap:3px;width:${10 * 23}px;">
+                    ${PALETTE.map(c => `
+                        <div class="tb-color-chip" data-color="${c}" style="
+                            width:20px;height:20px;border-radius:4px;cursor:pointer;
+                            background:${c};border:1.5px solid ${c === '#ffffff' ? '#d1d5db' : c};
+                        "></div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+        <div class="tb-bg-wrap" style="position:relative;">
+            <button class="tb-bg-btn" title="背景色" style="
+                width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
+                cursor:pointer;font-size:10px;line-height:24px;
+                text-align:center;color:#374151;
+                background:${currentBg === 'white' ? '#ffffff' : currentBg};
+            ">塗</button>
+            <div class="tb-bg-palette" style="
+                display:none;position:absolute;top:-112px;left:0;
+                background:white;border:1px solid #d1d5db;border-radius:6px;
+                padding:4px;box-shadow:0 2px 6px rgba(0,0,0,0.15);z-index:30;
+            ">
+                <div style="display:flex;flex-wrap:wrap;gap:3px;width:${10 * 23}px;">
+                    ${PALETTE.map(c => `
+                        <div class="tb-bg-chip" data-color="${c}" style="
+                            width:20px;height:20px;border-radius:4px;cursor:pointer;
+                            background:${c};border:1.5px solid ${c === '#ffffff' ? '#d1d5db' : c};
+                        "></div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
         <button class="tb-bold" style="
             font-size:12px;font-weight:700;width:24px;height:24px;
             border:1px solid ${currentBold ? '#374151' : '#e5e7eb'};
@@ -1383,20 +1451,23 @@ function startTextEdit(el) {
             background:${currentBold ? '#f3f4f6' : 'white'};
             color:#374151;
         ">B</button>
+        <button class="tb-bg-clear" title="背景なし" style="
+            font-size:10px;width:24px;height:24px;
+            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
+            background:white;color:#374151;
+        ">✕</button>
     `;
     el.appendChild(toolbar);
 
     // イベント伝播を止める
-    toolbar.addEventListener('mousedown', e => e.stopPropagation());
+    toolbar.addEventListener('mousedown', e => {
+        e.stopPropagation();
+        e.preventDefault();
+    });
 
     // フォントサイズ変更
     toolbar.querySelector('.tb-size').addEventListener('change', e => {
         inner.style.fontSize = e.target.value + 'px';
-    });
-
-    // 色変更
-    toolbar.querySelector('.tb-color').addEventListener('input', e => {
-        inner.style.color = e.target.value;
     });
 
     // 太字切り替え
@@ -1407,9 +1478,50 @@ function startTextEdit(el) {
         e.target.style.background  = isBold ? 'white'   : '#f3f4f6';
     });
 
+    // 文字色パレット開閉
+    const colorBtn     = toolbar.querySelector('.tb-color-btn');
+    const colorPalette = toolbar.querySelector('.tb-color-palette');
+    colorBtn.addEventListener('click', () => {
+        colorPalette.style.display = colorPalette.style.display === 'none' ? 'block' : 'none';
+        toolbar.querySelector('.tb-bg-palette').style.display = 'none';
+    });
+    toolbar.querySelectorAll('.tb-color-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const c = chip.dataset.color;
+            inner.style.color = c;
+            colorBtn.style.color = c;
+            colorPalette.style.display = 'none';
+            inner.focus();
+        });
+    });
+
+    // 背景色パレット開閉
+    const bgBtn     = toolbar.querySelector('.tb-bg-btn');
+    const bgPalette = toolbar.querySelector('.tb-bg-palette');
+    bgBtn.addEventListener('click', () => {
+        bgPalette.style.display = bgPalette.style.display === 'none' ? 'block' : 'none';
+        colorPalette.style.display = 'none';
+    });
+    toolbar.querySelectorAll('.tb-bg-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            const c = chip.dataset.color;
+            inner.style.background = c;
+            bgBtn.style.background = c;
+            bgPalette.style.display = 'none';
+            inner.focus();
+        });
+    });
+
+    // 背景なし
+    toolbar.querySelector('.tb-bg-clear').addEventListener('click', () => {
+        inner.style.background = 'white';
+        bgBtn.style.background = 'white';
+    });
+
     function saveText() {
+        inner.removeEventListener('blur', onBlur);
         inner.contentEditable = 'false';
-        inner.style.cursor    = 'default';
+        inner.style.cursor = 'inherit';
         inner.style.borderColor = '#d1d5db';
         toolbar.remove();
 
@@ -1430,27 +1542,35 @@ function startTextEdit(el) {
                     font_size:   parseInt(inner.style.fontSize) || 14,
                     color:       inner.style.color || '#374151',
                     font_weight: inner.style.fontWeight || '400',
+                    bg_color:    inner.style.background || 'white',
                     width:       el.offsetWidth,
                     height:      el.offsetHeight,
                 },
             }),
         });
     }
-
-    inner.addEventListener('blur', e => {
-        // ツールバー内のクリックではblurしない
+    
+    function onBlur(e) {
+        // ツールバー内のクリックでは保存しない
         if (toolbar.contains(e.relatedTarget)) {
             inner.focus();
             return;
         }
-        saveText();
-    }, { once: false });
+        // 少し待ってツールバー操作中でないか確認
+        setTimeout(() => {
+            if (inner.contentEditable !== 'true') return; // すでに解除済み
+            saveText();
+        }, 50);
+    }
+    inner.addEventListener('blur', onBlur);
+    
 
     inner.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
+            inner.removeEventListener('blur', onBlur);
             inner.textContent = current;
             inner.contentEditable = 'false';
-            inner.style.cursor = 'default';
+            inner.style.cursor = 'inherit';
             inner.style.borderColor = '#d1d5db';
             toolbar.remove();
         }
@@ -1547,11 +1667,13 @@ function onTextUp(e) {
             pos_x:         px,
             pos_y:         py,
             meta: {
-                text:      inner.textContent,
-                font_size: parseInt(inner.style.fontSize) || 14,
-                color:     inner.style.color || '#374151',
-                width:     textEl.offsetWidth,
-                height:    textEl.offsetHeight,
+                text:        inner.textContent,
+                font_size:   parseInt(inner.style.fontSize) || 14,
+                color:       inner.style.color || '#374151',
+                font_weight: inner.style.fontWeight || '400',
+                bg_color:    inner.style.background || 'white',
+                width:       textEl.offsetWidth,   // onTextUpの場合
+                height:      textEl.offsetHeight,
             },
         }),
     });
@@ -1602,11 +1724,13 @@ function onTextResizeEnd(e) {
             pos_x:         parseFloat(resizingText.style.left) || 0,
             pos_y:         parseFloat(resizingText.style.top)  || 0,
             meta: {
-                text:      inner.textContent,
-                font_size: parseInt(inner.style.fontSize) || 14,
-                color:     inner.style.color || '#374151',
-                width:     resizingText.offsetWidth,
-                height:    resizingText.offsetHeight,
+                text:        inner.textContent,
+                font_size:   parseInt(inner.style.fontSize) || 14,
+                color:       inner.style.color || '#374151',
+                font_weight: inner.style.fontWeight || '400',
+                bg_color:    inner.style.background || 'white',
+                width:       resizingText.offsetWidth,
+                height:      resizingText.offsetHeight,
             },
         }),
     });
@@ -1629,3 +1753,15 @@ function handleTextDeleted(p) {
 }
 
 document.querySelectorAll('.text-box').forEach(el => initText(el));
+
+// ボード空白クリックでテキスト編集を解除
+document.getElementById('board-canvas').addEventListener('mousedown', e => {
+    // テキストボックス内のクリックは無視
+    if (e.target.closest('.text-box')) return;
+
+    // 編集中のテキストボックスがあればblurさせる
+    const editing = document.querySelector('.text-box-inner[contenteditable="true"]');
+    if (editing) {
+        editing.blur();
+    }
+});
