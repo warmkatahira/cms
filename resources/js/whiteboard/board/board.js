@@ -1,5 +1,4 @@
 const board         = document.getElementById('board');
-const tray          = document.getElementById('tray');
 const WHITEBOARD_ID = parseInt(board.dataset.whiteboardId);
 const CANVAS_W      = parseInt(board.dataset.canvasW);
 const CANVAS_H      = parseInt(board.dataset.canvasH);
@@ -237,20 +236,15 @@ function endDrag(cx, cy) {
     ghost.remove();
     ghost = null;
 
-    const boardRect   = board.getBoundingClientRect();
-    const trayRect    = tray.getBoundingClientRect();
-    const staffId     = dragging.dataset.id;
+    const boardRect = board.getBoundingClientRect();
+    const staffId   = dragging.dataset.id;
 
     const onBoard = cx >= boardRect.left && cx <= boardRect.right
                  && cy >= boardRect.top  && cy <= boardRect.bottom;
-    const onTray  = cx >= trayRect.left  && cx <= trayRect.right
-                 && cy >= trayRect.top   && cy <= trayRect.bottom;
 
     if (onBoard) {
         let px = cx - boardRect.left + board.scrollLeft - offX;
         let py = cy - boardRect.top  + board.scrollTop  - offY;
-
-        // キャンバス内に収める
         px = Math.max(0, Math.min(px, CANVAS_W - 80));
         py = Math.max(0, Math.min(py, CANVAS_H - 50));
 
@@ -259,24 +253,8 @@ function endDrag(cx, cy) {
         dragging.style.left = px + 'px';
         dragging.style.top  = py + 'px';
         document.getElementById('board-canvas').appendChild(dragging);
-    } else if (onTray) {
-        saveItem(staffId, false, 0, 0);
-        dragging.style.position = '';
-        dragging.style.left = '';
-        dragging.style.top  = '';
-
-        // サイズ・形をリセット
-        const chip = dragging.querySelector('.staff-chip-wrap > div');
-        if (chip) {
-            chip.style.width        = '90px';
-            chip.style.height       = '';
-            chip.style.borderRadius = '8px';
-            chip.style.clipPath     = '';
-        }
-        dragging.dataset.shape = 'rect';
-
-        tray.appendChild(dragging);
     }
+    // ボード外 → 何もしない（元の位置に戻る）
 
     dragging.style.opacity = '1';
     dragging = null;
@@ -359,7 +337,11 @@ window.addStaff = function() {
                 "></div>
             </div>`;
         initMagnet(el);
-        tray.appendChild(el);
+        el.style.position = 'absolute';
+        el.style.left = '40px';
+        el.style.top  = '40px';
+        document.getElementById('board-canvas').appendChild(el);
+        saveItem(s.staff_id, true, 40, 40);
         document.getElementById('newName').value = '';
         document.getElementById('newRole').value = '';
     });
@@ -576,10 +558,8 @@ function openEditModal(e, el) {
     activeStaffId  = el.dataset.id;
     activeMagnetEl = el;
 
-    // トレイにいる場合は見た目タブを非表示
-    const isOnTray = tray.contains(el);
     const appearanceTab = modal.querySelector('.modal-tab[data-tab="appearance"]');
-    if (appearanceTab) appearanceTab.style.display = isOnTray ? 'none' : 'block';
+    if (appearanceTab) appearanceTab.style.display = 'block';
 
     document.getElementById('edit-name').value = el.dataset.name ?? '';
     document.getElementById('edit-role').value = el.dataset.role ?? '';
@@ -1168,11 +1148,6 @@ function handleItemUpdated(p) {
             if (p.meta?.width)  el.querySelector('.staff-chip-wrap > div').style.width  = p.meta.width  + 'px';
             if (p.meta?.height) el.querySelector('.staff-chip-wrap > div').style.height = p.meta.height + 'px';
             document.getElementById('board-canvas').appendChild(el);
-        } else {
-            el.style.position = '';
-            el.style.left     = '';
-            el.style.top      = '';
-            tray.appendChild(el);
         }
     } else if (p.itemType === 'zone') {
         const el = document.querySelector(`.magnet-zone[data-zone-id="${p.itemId}"]`);
@@ -1226,7 +1201,10 @@ function handleStaffAdded(p) {
                     width:10px;height:10px;border-radius:2px;background:#374151;cursor:se-resize;z-index:10;"></div>
             </div>`;
         initMagnet(el);
-        tray.appendChild(el);
+        el.style.position = 'absolute';
+        el.style.left = '40px';
+        el.style.top  = '40px';
+        document.getElementById('board-canvas').appendChild(el);
     }, 100); // 100ms待つ
 }
 
@@ -1865,19 +1843,15 @@ function copyStaff(el) {
         // 新しいIDでDOM更新
         initMagnet(newEl);
 
-        if (isOnBoard) {
-            if (lastCopyEl !== el) { copyOffset = 0; lastCopyEl = el; }
-            copyOffset += 20;
-            const px = (parseFloat(el.style.left) || 0) + copyOffset;
-            const py = (parseFloat(el.style.top)  || 0) + copyOffset;
-            newEl.style.position = 'absolute';
-            newEl.style.left = px + 'px';
-            newEl.style.top  = py + 'px';
-            document.getElementById('board-canvas').appendChild(newEl);
-            saveItem(s.staff_id, true, px, py);
-        } else {
-            tray.appendChild(newEl);
-        }
+        if (lastCopyEl !== el) { copyOffset = 0; lastCopyEl = el; }
+        copyOffset += 20;
+        const px = (parseFloat(el.style.left) || 40) + copyOffset;
+        const py = (parseFloat(el.style.top)  || 40) + copyOffset;
+        newEl.style.position = 'absolute';
+        newEl.style.left = px + 'px';
+        newEl.style.top  = py + 'px';
+        document.getElementById('board-canvas').appendChild(newEl);
+        saveItem(s.staff_id, true, px, py);
     });
 }
 

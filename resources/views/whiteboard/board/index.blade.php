@@ -43,27 +43,6 @@
         {{-- ボードエリア --}}
         <div class="flex gap-3">
 
-            {{-- トレイ --}}
-            <div id="tray"
-                class="w-36 bg-gray-50 overflow-y-auto border border-gray-200 rounded-xl p-2 flex flex-col gap-2 shrink-0"
-                style="height:{{ config('whiteboard.board_height') }}">
-                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">未配置</p>
-
-                @foreach($staffList as $s)
-                    @if(!isset($staffItems[$s->staff_id]) || !$staffItems[$s->staff_id]->on_board)
-                    <div class="magnet cursor-grab select-none"
-                        data-id="{{ $s->staff_id }}"
-                        data-color="{{ $s->color }}"
-                        data-size="{{ $s->size ?? 'M' }}"
-                        data-shape="{{ $s->shape ?? 'rect' }}"
-                        data-name="{{ $s->staff_name }}"
-                        data-role="{{ $s->role_name }}">
-                        {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->shape ?? 'rect') !!}
-                    </div>
-                    @endif
-                @endforeach
-            </div>
-
             {{-- ホワイトボード --}}
             <div id="board"
                 class="relative flex-1 rounded-xl border border-gray-300"
@@ -169,14 +148,15 @@
                         </div>
                     @endforeach
 
-                    {{-- ボード上の磁石 --}}
+                    {{-- ボード上の磁石（全スタッフ） --}}
                     @foreach($staffList as $s)
-                        @if(isset($staffItems[$s->staff_id]) && $staffItems[$s->staff_id]->on_board)
                         @php
-                            $item     = $staffItems[$s->staff_id];
-                            $chipMeta = $item->meta ?? [];
+                            $item     = $staffItems[$s->staff_id] ?? null;
+                            $chipMeta = $item ? ($item->meta ?? []) : [];
                             $chipW    = isset($chipMeta['width'])  ? $chipMeta['width']  . 'px' : null;
                             $chipH    = isset($chipMeta['height']) ? $chipMeta['height'] . 'px' : null;
+                            $posX     = $item ? $item->pos_x : 40;
+                            $posY     = $item ? $item->pos_y : 40;
                         @endphp
                         <div class="magnet absolute cursor-grab select-none"
                             data-id="{{ $s->staff_id }}"
@@ -186,12 +166,11 @@
                             data-name="{{ $s->staff_name }}"
                             data-role="{{ $s->role_name }}"
                             style="
-                                left:{{ $item->pos_x }}px;
-                                top:{{ $item->pos_y }}px;
+                                left:{{ $posX }}px;
+                                top:{{ $posY }}px;
                             ">
                             {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->shape ?? 'rect', $chipW, $chipH) !!}
                         </div>
-                        @endif
                     @endforeach
 
                 </div>
