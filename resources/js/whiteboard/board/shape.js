@@ -14,6 +14,10 @@ export function createShapeSVG(shapeType, fillColor, strokeColor, itemId) {
             return `<ellipse cx="50" cy="50" rx="48" ry="48"
                 fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"
                 vector-effect="non-scaling-stroke"/>`;
+        case 'triangle':
+            return `<polygon points="50,2 98,98 2,98"
+                fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"
+                vector-effect="non-scaling-stroke"/>`;
         case 'line':
             return `<line x1="0" y1="50" x2="100" y2="50"
                 stroke="${strokeColor}" stroke-width="3"
