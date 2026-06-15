@@ -14,7 +14,7 @@ class BoardController extends Controller
 {
     public function index(Request $request)
     {
-        session(['page_header' => '組織図']);
+        session(['page_header' => 'ホワイトボード編集']);
 
         $userNo = auth()->user()->user_no;
 
