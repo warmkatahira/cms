@@ -155,10 +155,10 @@
     "src": "resources/js/tippy.js",
     "isEntry": true
   },
-  "resources/js/whiteboard/org_chart/org_chart.js": {
-    "file": "assets/org_chart-B4OB5vNJ.js",
-    "name": "org_chart",
-    "src": "resources/js/whiteboard/org_chart/org_chart.js",
+  "resources/js/whiteboard/board/board.js": {
+    "file": "assets/board-B4OB5vNJ.js",
+    "name": "board",
+    "src": "resources/js/whiteboard/board/board.js",
     "isEntry": true
   },
   "resources/js/whiteboard/whiteboard/whiteboard.js": {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Whiteboard\OrgChart;
+namespace App\Http\Controllers\Whiteboard\Board;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

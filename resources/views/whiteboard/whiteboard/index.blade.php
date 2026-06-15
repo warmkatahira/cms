@@ -14,7 +14,7 @@
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             @forelse($whiteboards as $wb)
             <div class="bg-white border border-gray-200 rounded-xl p-4 flex flex-col gap-3 cursor-pointer hover:border-gray-300"
-                 onclick="location.href='{{ route('org_chart.index', ['whiteboard_id' => $wb->whiteboard_id]) }}'">
+                 onclick="location.href='{{ route('board.index', ['whiteboard_id' => $wb->whiteboard_id]) }}'">
 
                 {{-- タイトル行 --}}
                 <div class="flex items-start justify-between gap-2">

@@ -22,7 +22,7 @@ function submitCreate() {
     })
     .then(r => r.json())
     .then(data => {
-        location.href = '/org_chart?whiteboard_id=' + data.whiteboard_id;
+        location.href = '/board?whiteboard_id=' + data.whiteboard_id;
     });
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Whiteboard\OrgChart;
+namespace App\Http\Controllers\Whiteboard\Board;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use App\Models\Staff;
 // イベント
 use App\Events\WhiteboardUpdated;
 
-class OrgChartController extends Controller
+class BoardController extends Controller
 {
     public function index(Request $request)
     {
@@ -52,7 +52,7 @@ class OrgChartController extends Controller
                         ->where('item_type', 'text')
                         ->get();
 
-        return view('whiteboard.org_chart.index', compact(
+        return view('whiteboard.board.index', compact(
             'whiteboard', 'staffList', 'staffItems', 'zoneItems', 'textItems'
         ));
     }

@@ -190,5 +190,5 @@
     </div>
 </x-app-layout>
 @vite([
-    'resources/js/whiteboard/org_chart/org_chart.js',
+    'resources/js/whiteboard/board/board.js',
 ])

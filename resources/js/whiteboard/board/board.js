@@ -142,7 +142,7 @@ function endZoneDrag(cx, cy) {
     zoneEl.style.opacity = '1';
     draggingZone = null;
 
-    fetch('/org_chart/item', {
+    fetch('/board/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -284,7 +284,7 @@ function saveItem(staffId, onBoard, posX, posY) {
     const chip = el ? el.querySelector('.staff-chip-wrap > div') : null;
     const meta = chip ? { width: chip.offsetWidth, height: chip.offsetHeight } : null;
 
-    fetch('/org_chart/item', {
+    fetch('/board/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -304,7 +304,7 @@ window.addStaff = function() {
     const role = document.getElementById('newRole').value.trim();
     if (!name) return;
 
-    fetch('/org_chart/staff', {
+    fetch('/board/staff', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -608,7 +608,7 @@ document.getElementById('edit-save').addEventListener('click', () => {
     const name = document.getElementById('edit-name').value.trim();
     const role = document.getElementById('edit-role').value.trim();
     if (!name) return;
-    fetch('/org_chart/staff/' + activeStaffId, {
+    fetch('/board/staff/' + activeStaffId, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({ staff_name: name, role_name: role, color: selectedColor, shape: selectedShape }),
@@ -653,7 +653,7 @@ document.getElementById('edit-save').addEventListener('click', () => {
 
 document.getElementById('edit-delete').addEventListener('click', () => {
     if (!confirm('このスタッフを削除しますか？')) return;
-    fetch('/org_chart/staff/' + activeStaffId, {
+    fetch('/board/staff/' + activeStaffId, {
         method: 'DELETE',
         headers: { 'X-CSRF-TOKEN': CSRF },
     })
@@ -797,7 +797,7 @@ document.getElementById('zone-edit-save').addEventListener('click', () => {
     const c      = ZONE_COLORS[selectedZoneColor];
 
     // DB保存
-    fetch('/org_chart/item', {
+    fetch('/board/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -939,7 +939,7 @@ function endZoneResize(cx, cy) {
         height:      h,
     };
 
-    fetch('/org_chart/item', {
+    fetch('/board/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -1011,7 +1011,7 @@ function endChipResize() {
     const h = chip ? chip.offsetHeight : 40;
 
     // DBに保存（sizeの代わりにwidthとheightをmetaとして保存）
-    fetch('/org_chart/item', {
+    fetch('/board/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -1032,7 +1032,7 @@ window.addZone = function() {
     const label = document.getElementById('newZoneLabel').value.trim();
     if (!label) return;
 
-    fetch('/org_chart/zone', {
+    fetch('/board/zone', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -1088,7 +1088,7 @@ document.getElementById('zone-edit-delete').addEventListener('click', () => {
 
     const zoneId = activeZoneEl.dataset.zoneId;
 
-    fetch('/org_chart/zone/' + zoneId, {
+    fetch('/board/zone/' + zoneId, {
         method: 'DELETE',
         headers: { 'X-CSRF-TOKEN': CSRF },
     })
@@ -1254,7 +1254,7 @@ function handleZoneDeleted(p) {
 
 // テキスト追加
 window.addText = function() {
-    fetch('/org_chart/text', {
+    fetch('/board/text', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -1349,7 +1349,7 @@ function initText(el) {
     deleteBtn.addEventListener('click', e => {
         e.stopPropagation();
         if (!confirm('このテキストを削除しますか？')) return;
-        fetch('/org_chart/text/' + el.dataset.textId, {
+        fetch('/board/text/' + el.dataset.textId, {
             method: 'DELETE',
             headers: { 'X-CSRF-TOKEN': CSRF },
         })
@@ -1516,7 +1516,7 @@ function startTextEdit(el) {
 
         const newText = inner.textContent.trim();
 
-        fetch('/org_chart/item', {
+        fetch('/board/item', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
             body: JSON.stringify({
@@ -1645,7 +1645,7 @@ function onTextUp(e) {
     draggingText = null;
 
     const inner = textEl.querySelector('.text-box-inner');
-    fetch('/org_chart/item', {
+    fetch('/board/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
@@ -1702,7 +1702,7 @@ function onTextResizeEnd(e) {
     if (!resizingText) return;
 
     const inner = resizingText.querySelector('.text-box-inner');
-    fetch('/org_chart/item', {
+    fetch('/board/item', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
