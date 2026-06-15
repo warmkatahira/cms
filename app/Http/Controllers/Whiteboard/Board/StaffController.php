@@ -18,7 +18,7 @@ class StaffController extends Controller
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
             'staff_name'    => 'required|string|max:50',
             'role_name'     => 'nullable|string|max:50',
-            'color'         => 'nullable|integer|min:0|max:6',
+            'color'         => 'nullable|integer|min:0|max:9',
         ]);
 
         $staff = Staff::create($validated);
@@ -54,7 +54,7 @@ class StaffController extends Controller
         $validated = $request->validate([
             'staff_name' => 'required|string|max:50',
             'role_name'  => 'nullable|string|max:50',
-            'color'      => 'nullable|integer|min:0|max:6',
+            'color'      => 'nullable|integer|min:0|max:9',
             'size'       => 'nullable|in:XS,S,M,L,XL',
             'shape'      => 'nullable|in:rect,circle,sharp,rounded_bottom,tab',
         ]);
