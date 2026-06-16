@@ -21,7 +21,7 @@ export function createTextEl(item) {
             font-weight:${meta.font_weight ?? '400'};
             font-family:${(meta.font_family ?? "'Kosugi Maru', sans-serif").replace(/"/g, "'")};
             text-align:${meta.text_align ?? 'left'};
-            border:1.5px dashed #d1d5db;border-radius:6px;
+            border:1.5px dashed transparent;border-radius:6px;
             background-color:${meta.bg_color ?? 'transparent'};word-break:break-all;
             box-sizing:border-box;
         ">${(meta.text ?? '').replace(/\n/g, '<br>')}</div>
@@ -59,12 +59,16 @@ export function initText(el) {
         el.querySelector('.text-delete-btn').style.display = 'block';
         el.querySelector('.text-copy-btn').style.display   = 'block';
         el.querySelector('.text-resize-handle').style.display = 'block';
+        const inner = el.querySelector('.text-box-inner');
+        if (inner.contentEditable !== 'true') inner.style.borderColor = '#d1d5db';
     });
     el.addEventListener('mouseleave', () => {
         el.querySelector('.text-edit-btn').style.display   = 'none';
         el.querySelector('.text-delete-btn').style.display = 'none';
         el.querySelector('.text-copy-btn').style.display   = 'none';
         el.querySelector('.text-resize-handle').style.display = 'none';
+        const inner = el.querySelector('.text-box-inner');
+        if (inner.contentEditable !== 'true') inner.style.borderColor = 'transparent';
     });
 
     el.querySelector('.text-box-inner').addEventListener('dblclick', e => {
@@ -105,7 +109,7 @@ function startTextEdit(el) {
 
     inner.contentEditable = 'true';
     inner.style.cursor    = 'text';
-    inner.style.borderColor = '#374151';
+    inner.style.borderColor = 'transparent';
     inner.focus();
 
     const range = document.createRange();
@@ -277,7 +281,7 @@ function startTextEdit(el) {
         inner.removeEventListener('blur', onBlur);
         inner.contentEditable = 'false';
         inner.style.cursor    = 'inherit';
-        inner.style.borderColor = '#d1d5db';
+        inner.style.borderColor = 'transparent';
         toolbar.remove();
 
         fetch('/board/item', {
@@ -307,6 +311,7 @@ function startTextEdit(el) {
 
     function onBlur(e) {
         if (toolbar.contains(e.relatedTarget)) { inner.focus(); return; }
+        inner.style.borderColor = 'transparent';
         setTimeout(() => {
             if (inner.contentEditable !== 'true') return;
             saveText();
@@ -320,7 +325,7 @@ function startTextEdit(el) {
             inner.textContent   = current;
             inner.contentEditable = 'false';
             inner.style.cursor  = 'inherit';
-            inner.style.borderColor = '#d1d5db';
+            inner.style.borderColor = 'transparent';
             toolbar.remove();
         }
     });
