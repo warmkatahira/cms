@@ -58,6 +58,9 @@
         <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Oleo+Script:wght@400;700&family=Zen+Maru+Gothic:wght@900&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
 
+        <!-- Google Fonts(ホワイトボード用) -->
+        <link href="https://fonts.googleapis.com/css2?family=Hachi+Maru+Pop&family=Kiwi+Maru&family=Kosugi+Maru&family=Potta+One&family=Sawarabi+Mincho&family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
+
         <!-- Lordicon -->
         <script src="https://cdn.lordicon.com/pzdvqjsp.js"></script>
 

@@ -19,6 +19,7 @@ export function createTextEl(item) {
             font-size:${meta.font_size ?? 14}px;
             color:${meta.color ?? '#374151'};
             font-weight:${meta.font_weight ?? '400'};
+            font-family:${meta.font_family ?? "'Kosugi Maru', sans-serif"};
             text-align:${meta.text_align ?? 'left'};
             border:1.5px dashed #d1d5db;border-radius:6px;
             background:${meta.bg_color ?? 'white'};word-break:break-all;
@@ -126,8 +127,17 @@ function startTextEdit(el) {
     const currentSize  = parseInt(inner.style.fontSize) || 14;
     const currentColor = inner.style.color || '#374151';
     const currentBold  = inner.style.fontWeight === '700' || inner.style.fontWeight === 'bold';
+    const currentFont  = inner.style.fontFamily || "'Kosugi Maru', sans-serif";
 
     toolbar.innerHTML = `
+        <select class="tb-font" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;width:110px;">
+            <option value="'Kosugi Maru', sans-serif" ${currentFont.includes('Kosugi Maru') ? 'selected' : ''}>丸ゴシック</option>
+            <option value="'Sawarabi Mincho', serif" ${currentFont.includes('Sawarabi Mincho') ? 'selected' : ''}>明朝</option>
+            <option value="'Zen Maru Gothic', sans-serif" ${currentFont.includes('Zen Maru Gothic') ? 'selected' : ''}>丸ゴシック太</option>
+            <option value="'Kiwi Maru', serif" ${currentFont.includes('Kiwi Maru') ? 'selected' : ''}>丸明朝</option>
+            <option value="'Hachi Maru Pop', cursive" ${currentFont.includes('Hachi Maru Pop') ? 'selected' : ''}>手書き</option>
+            <option value="'Potta One', cursive" ${currentFont.includes('Potta One') ? 'selected' : ''}>ポップ</option>
+        </select>
         <select class="tb-size" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;">
             ${[10,12,14,16,18,20,24,28,32,40].map(s =>
                 `<option value="${s}" ${s === currentSize ? 'selected' : ''}>${s}px</option>`
@@ -196,7 +206,14 @@ function startTextEdit(el) {
     `;
     el.appendChild(toolbar);
 
-    toolbar.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); });
+    toolbar.addEventListener('mousedown', e => {
+        e.stopPropagation();
+        if (!e.target.closest('select')) e.preventDefault();
+    });
+
+    toolbar.querySelector('.tb-font').addEventListener('change', e => {
+        inner.style.fontFamily = e.target.value;
+    });
 
     toolbar.querySelector('.tb-size').addEventListener('change', e => {
         inner.style.fontSize = e.target.value + 'px';
@@ -208,6 +225,7 @@ function startTextEdit(el) {
         e.target.style.borderColor = isBold ? '#e5e7eb' : '#374151';
         e.target.style.background  = isBold ? 'white'   : '#f3f4f6';
     });
+
     toolbar.querySelectorAll('.tb-align').forEach(btn => {
         if (btn.dataset.align === (inner.style.textAlign || 'left')) {
             btn.style.borderColor = '#374151';
@@ -276,10 +294,11 @@ function startTextEdit(el) {
                     font_size:   parseInt(inner.style.fontSize) || 14,
                     color:       inner.style.color || '#374151',
                     font_weight: inner.style.fontWeight || '400',
+                    font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+                    text_align:  inner.style.textAlign || 'left',
                     bg_color:    inner.style.background || 'white',
                     width:       el.offsetWidth,
                     height:      el.offsetHeight,
-                    text_align:  inner.style.textAlign || 'left',
                 },
             }),
         });
@@ -401,6 +420,8 @@ function onTextUp(e) {
                 font_size:   parseInt(inner.style.fontSize) || 14,
                 color:       inner.style.color || '#374151',
                 font_weight: inner.style.fontWeight || '400',
+                font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+                text_align:  inner.style.textAlign || 'left',
                 bg_color:    inner.style.background || 'white',
                 width:       textEl.offsetWidth,
                 height:      textEl.offsetHeight,
@@ -455,6 +476,8 @@ function onTextResizeEnd() {
                 font_size:   parseInt(inner.style.fontSize) || 14,
                 color:       inner.style.color || '#374151',
                 font_weight: inner.style.fontWeight || '400',
+                font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+                text_align:  inner.style.textAlign || 'left',
                 bg_color:    inner.style.background || 'white',
                 width:       resizingText.offsetWidth,
                 height:      resizingText.offsetHeight,
@@ -495,6 +518,8 @@ function copyText(el) {
             font_size:   parseInt(inner.style.fontSize) || 14,
             color:       inner.style.color || '#374151',
             font_weight: inner.style.fontWeight || '400',
+            font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+            text_align:  inner.style.textAlign || 'left',
             bg_color:    inner.style.background || 'white',
             width:       el.offsetWidth,
             height:      el.offsetHeight,

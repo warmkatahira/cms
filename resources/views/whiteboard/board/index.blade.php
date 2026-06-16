@@ -149,6 +149,7 @@
                                 font-size:{{ $meta['font_size'] ?? 14 }}px;
                                 color:{{ $meta['color'] ?? '#374151' }};
                                 font-weight:{{ $meta['font_weight'] ?? '400' }};
+                                font-family:{{ $meta['font_family'] ?? "'Kosugi Maru', sans-serif" }};
                                 text-align:{{ $meta['text_align'] ?? 'left' }};
                                 border:1.5px dashed #d1d5db;border-radius:6px;
                                 background:{{ $meta['bg_color'] ?? 'white' }};word-break:break-all;
