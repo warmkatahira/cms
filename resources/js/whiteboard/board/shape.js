@@ -1,6 +1,6 @@
 import {
     board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H,
-    copyOffset, lastCopyEl, setCopyOffset, setLastCopyEl,
+    PALETTE, copyOffset, lastCopyEl, setCopyOffset, setLastCopyEl,
 } from './constants.js';
 
 // SVG生成
@@ -339,13 +339,25 @@ colorModal.innerHTML = `
         <p style="font-size:15px;font-weight:500;margin-bottom:16px;">色を変更</p>
         <div style="margin-bottom:16px;">
             <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:6px;">塗りつぶし色</label>
-            <input type="color" id="shape-fill-color"
-                   style="width:100%;height:36px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;">
+            <div id="shape-fill-palette" style="display:flex;flex-wrap:wrap;gap:3px;width:${10 * 23}px;">
+                ${PALETTE.map(c => `
+                    <div class="fill-chip" data-color="${c}" style="
+                        width:20px;height:20px;border-radius:4px;cursor:pointer;
+                        background:${c};border:1.5px solid ${c === '#ffffff' ? '#d1d5db' : c};
+                    "></div>
+                `).join('')}
+            </div>
         </div>
         <div style="margin-bottom:20px;">
             <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:6px;">枠線の色</label>
-            <input type="color" id="shape-stroke-color"
-                   style="width:100%;height:36px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;">
+            <div id="shape-stroke-palette" style="display:flex;flex-wrap:wrap;gap:3px;width:${10 * 23}px;">
+                ${PALETTE.map(c => `
+                    <div class="stroke-chip" data-color="${c}" style="
+                        width:20px;height:20px;border-radius:4px;cursor:pointer;
+                        background:${c};border:1.5px solid ${c === '#ffffff' ? '#d1d5db' : c};
+                    "></div>
+                `).join('')}
+            </div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
             <button id="shape-color-cancel"
@@ -369,18 +381,44 @@ document.getElementById('shape-color-cancel').addEventListener('click', () => {
     colorModal.style.display = 'none';
 });
 
-document.getElementById('shape-color-save').addEventListener('click', () => {
-    const fillColor   = document.getElementById('shape-fill-color').value;
-    const strokeColor = document.getElementById('shape-stroke-color').value;
+let selectedFillColor   = '#93c5fd';
+let selectedStrokeColor = '#2563eb';
 
-    activeShapeEl.dataset.fillColor   = fillColor;
-    activeShapeEl.dataset.strokeColor = strokeColor;
+colorModal.querySelectorAll('.fill-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        selectedFillColor = chip.dataset.color;
+        colorModal.querySelectorAll('.fill-chip').forEach(c => {
+            c.style.outline = 'none';
+            c.style.transform = 'scale(1)';
+        });
+        chip.style.outline      = '2px solid #374151';
+        chip.style.outlineOffset = '2px';
+        chip.style.transform    = 'scale(1.2)';
+    });
+});
+
+colorModal.querySelectorAll('.stroke-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        selectedStrokeColor = chip.dataset.color;
+        colorModal.querySelectorAll('.stroke-chip').forEach(c => {
+            c.style.outline = 'none';
+            c.style.transform = 'scale(1)';
+        });
+        chip.style.outline      = '2px solid #374151';
+        chip.style.outlineOffset = '2px';
+        chip.style.transform    = 'scale(1.2)';
+    });
+});
+
+document.getElementById('shape-color-save').addEventListener('click', () => {
+    activeShapeEl.dataset.fillColor   = selectedFillColor;
+    activeShapeEl.dataset.strokeColor = selectedStrokeColor;
 
     const svg = activeShapeEl.querySelector('svg');
     svg.innerHTML = createShapeSVG(
         activeShapeEl.dataset.shapeType,
-        fillColor,
-        strokeColor,
+        selectedFillColor,
+        selectedStrokeColor,
         activeShapeEl.dataset.shapeId,
     );
 
@@ -394,9 +432,23 @@ document.getElementById('shape-color-save').addEventListener('click', () => {
 });
 
 function openColorModal(el) {
-    activeShapeEl = el;
-    document.getElementById('shape-fill-color').value   = el.dataset.fillColor   || '#93c5fd';
-    document.getElementById('shape-stroke-color').value = el.dataset.strokeColor || '#2563eb';
+    activeShapeEl       = el;
+    selectedFillColor   = el.dataset.fillColor   || '#93c5fd';
+    selectedStrokeColor = el.dataset.strokeColor || '#2563eb';
+
+    colorModal.querySelectorAll('.fill-chip').forEach(c => {
+        const active = c.dataset.color === selectedFillColor;
+        c.style.outline      = active ? '2px solid #374151' : 'none';
+        c.style.outlineOffset = '2px';
+        c.style.transform    = active ? 'scale(1.2)' : 'scale(1)';
+    });
+    colorModal.querySelectorAll('.stroke-chip').forEach(c => {
+        const active = c.dataset.color === selectedStrokeColor;
+        c.style.outline      = active ? '2px solid #374151' : 'none';
+        c.style.outlineOffset = '2px';
+        c.style.transform    = active ? 'scale(1.2)' : 'scale(1)';
+    });
+
     colorModal.style.display = 'flex';
 }
 
