@@ -1,39 +1,54 @@
 <x-app-layout>
     <div class="p-0">
         {{-- ツールバー --}}
-        <div class="flex items-center gap-2 mb-4 p-2 bg-white border border-gray-200 rounded-xl flex-wrap">
+        <div class="flex items-center gap-1.5 p-2 mb-4 bg-white border border-gray-200 rounded-xl">
 
             {{-- 一覧に戻る --}}
             <a href="{{ route('whiteboard.index') }}"
-            class="flex items-center gap-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm text-gray-500 hover:bg-gray-50">
+            class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
             </a>
 
-            <div class="w-px h-5 bg-gray-200 mx-1"></div>
+            <div class="w-px h-5 bg-gray-200 mx-0.5"></div>
 
             {{-- スタッフ追加 --}}
-            <div class="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-200 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
-                <input id="newName" type="text" placeholder="氏名"
-                    class="text-sm outline-none w-20 bg-transparent text-gray-800 placeholder-gray-400 border-none">
-                <input id="newRole" type="text" placeholder="役割"
-                    class="text-sm outline-none w-16 bg-transparent text-gray-800 placeholder-gray-400 border-none">
-                <button onclick="addStaff()"
-                        class="text-sm px-2 py-0.5 border border-gray-200 rounded-md hover:bg-gray-50 text-gray-600">+</button>
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open"
+                        class="flex items-center gap-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+                </button>
+                <div x-show="open" @click.away="open = false"
+                    class="absolute top-10 left-0 flex items-center gap-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 px-3 py-2 whitespace-nowrap">
+                    <span class="text-xs text-gray-500 shrink-0 bg-gray-200 px-1.5 py-0.5 rounded">氏名</span>
+                    <input id="newName" type="text" placeholder="入力..."
+                        class="text-sm outline-none w-36 bg-transparent text-gray-800 placeholder-gray-400 border-gray-300 rounded">
+                    <span class="text-xs text-gray-500 shrink-0 bg-gray-200 px-1.5 py-0.5 rounded">役割</span>
+                    <input id="newRole" type="text" placeholder="入力..."
+                        class="text-sm outline-none w-20 bg-transparent text-gray-800 placeholder-gray-400 border-gray-300 rounded">
+                    <button onclick="addStaff()"
+                            class="text-sm px-2.5 py-0.5 border border-gray-200 rounded-md hover:bg-gray-50 text-gray-600 shrink-0">追加</button>
+                </div>
             </div>
-
-            <div class="w-px h-5 bg-gray-200 mx-1"></div>
 
             {{-- グループ追加 --}}
-            <div class="flex items-center gap-1.5 px-2.5 py-1.5 border border-gray-200 rounded-lg">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
-                <input id="newZoneLabel" type="text" placeholder="グループ名"
-                    class="text-sm outline-none w-24 bg-transparent text-gray-800 placeholder-gray-400 border-none">
-                <button onclick="addZone()"
-                        class="text-sm px-2 py-0.5 border border-gray-200 rounded-md hover:bg-gray-50 text-gray-600">+</button>
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open"
+                        class="flex items-center gap-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
+                </button>
+                <div x-show="open" @click.away="open = false"
+                    class="absolute top-10 left-0 flex items-center gap-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 px-3 py-2 whitespace-nowrap">
+                    <span class="text-xs text-gray-500 shrink-0 bg-gray-200 px-1.5 py-0.5 rounded">名称</span>
+                    <input id="newZoneLabel" type="text" placeholder="入力..."
+                        class="text-sm outline-none w-32 bg-transparent text-gray-800 placeholder-gray-400 border-gray-300 rounded">
+                    <button onclick="addZone()"
+                            class="text-sm px-2.5 py-0.5 border border-gray-200 rounded-md hover:bg-gray-50 text-gray-600 shrink-0">追加</button>
+                </div>
             </div>
 
-            <div class="w-px h-5 bg-gray-200 mx-1"></div>
+            <div class="w-px h-5 bg-gray-200 mx-0.5"></div>
 
             {{-- テキスト追加 --}}
             <button onclick="addText()" title="テキスト追加"
@@ -48,7 +63,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"/></svg>
                 </button>
                 <div x-show="open" @click.away="open = false"
-                    class="absolute top-9 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+                    class="absolute top-10 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
                     style="min-width:110px;">
                     <button onclick="addShape('rect')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">■ 四角</button>
                     <button onclick="addShape('circle')"   class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">● 丸</button>
@@ -64,7 +79,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V5.25a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
             </button>
 
-            <div class="w-px h-5 bg-gray-200 mx-1"></div>
+            <div class="w-px h-5 bg-gray-200 mx-0.5"></div>
 
             {{-- ボードクリア --}}
             <button onclick="clearBoard()" title="全てクリア"
