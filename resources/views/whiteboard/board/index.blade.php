@@ -144,7 +144,7 @@
                                 height:{{ $meta['height'] ?? 100 }}px;
                                 position:absolute;
                             ">
-                            <div class="text-box-inner" style="
+                            <div class="text-box-inner" data-bg-color="{{ $meta['bg_color'] ?? 'transparent' }}" style="
                                 width:100%;min-height:100%;padding:8px;
                                 font-size:{{ $meta['font_size'] ?? 14 }}px;
                                 color:{{ $meta['color'] ?? '#374151' }};
@@ -152,7 +152,7 @@
                                 font-family:{{ $meta['font_family'] ?? "'Kosugi Maru', sans-serif" }};
                                 text-align:{{ $meta['text_align'] ?? 'left' }};
                                 border:1.5px dashed #d1d5db;border-radius:6px;
-                                background:{{ $meta['bg_color'] ?? 'white' }};word-break:break-all;
+                                background-color:{{ $meta['bg_color'] ?? 'transparent' }};word-break:break-all;
                                 box-sizing:border-box;
                             ">{!! nl2br(e($meta['text'] ?? '')) !!}</div>
                             <div class="text-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;

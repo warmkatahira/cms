@@ -14,7 +14,7 @@ export function createTextEl(item) {
         position:absolute;
     `;
     el.innerHTML = `
-        <div class="text-box-inner" style="
+        <div class="text-box-inner" data-bg-color="${meta.bg_color ?? 'transparent'}" style="
             width:100%;min-height:100%;padding:8px;
             font-size:${meta.font_size ?? 14}px;
             color:${meta.color ?? '#374151'};
@@ -22,7 +22,7 @@ export function createTextEl(item) {
             font-family:${meta.font_family ?? "'Kosugi Maru', sans-serif"};
             text-align:${meta.text_align ?? 'left'};
             border:1.5px dashed #d1d5db;border-radius:6px;
-            background:${meta.bg_color ?? 'white'};word-break:break-all;
+            background-color:${meta.bg_color ?? 'transparent'};word-break:break-all;
             box-sizing:border-box;
         ">${(meta.text ?? '').replace(/\n/g, '<br>')}</div>
         <div class="text-edit-btn" style="
@@ -101,7 +101,7 @@ export function initText(el) {
 function startTextEdit(el) {
     const inner     = el.querySelector('.text-box-inner');
     const current   = inner.textContent;
-    const currentBg = inner.style.background || 'white';
+    const currentBg = inner.style.backgroundColor || 'transparent';
 
     inner.contentEditable = 'true';
     inner.style.cursor    = 'text';
@@ -167,7 +167,7 @@ function startTextEdit(el) {
                 width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
                 cursor:pointer;font-size:10px;line-height:24px;
                 text-align:center;color:#374151;
-                background:${currentBg === 'white' ? '#ffffff' : currentBg};">塗</button>
+                background-color:${currentBg === 'transparent' ? '#ffffff' : currentBg};">塗</button>
             <div class="tb-bg-palette" style="
                 display:none;position:absolute;top:-112px;left:0;
                 background:white;border:1px solid #d1d5db;border-radius:6px;
@@ -186,7 +186,7 @@ function startTextEdit(el) {
             font-size:12px;font-weight:700;width:24px;height:24px;
             border:1px solid ${currentBold ? '#374151' : '#e5e7eb'};
             border-radius:4px;cursor:pointer;
-            background:${currentBold ? '#f3f4f6' : 'white'};
+            background:${currentBold ? '#f3f4f6' : 'transparent'};
             color:#374151;">B</button>
         <button class="tb-align" data-align="left" title="左寄せ" style="
             font-size:12px;width:24px;height:24px;
@@ -223,7 +223,7 @@ function startTextEdit(el) {
         const isBold = inner.style.fontWeight === '700';
         inner.style.fontWeight     = isBold ? '400' : '700';
         e.target.style.borderColor = isBold ? '#e5e7eb' : '#374151';
-        e.target.style.background  = isBold ? 'white'   : '#f3f4f6';
+        e.target.style.background  = isBold ? 'transparent'   : '#f3f4f6';
     });
 
     toolbar.querySelectorAll('.tb-align').forEach(btn => {
@@ -235,7 +235,7 @@ function startTextEdit(el) {
             inner.style.textAlign = btn.dataset.align;
             toolbar.querySelectorAll('.tb-align').forEach(b => {
                 b.style.borderColor = '#e5e7eb';
-                b.style.background  = 'white';
+                b.style.background  = 'transparent';
             });
             btn.style.borderColor = '#374151';
             btn.style.background  = '#f3f4f6';
@@ -265,8 +265,9 @@ function startTextEdit(el) {
     });
     toolbar.querySelectorAll('.tb-bg-chip').forEach(chip => {
         chip.addEventListener('click', () => {
-            inner.style.background = chip.dataset.color;
-            bgBtn.style.background = chip.dataset.color;
+            inner.style.backgroundColor = chip.dataset.color;
+            inner.dataset.bgColor = chip.dataset.color;
+            bgBtn.style.backgroundColor = chip.dataset.color;
             bgPalette.style.display = 'none';
             inner.focus();
         });
@@ -296,7 +297,7 @@ function startTextEdit(el) {
                     font_weight: inner.style.fontWeight || '400',
                     font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
                     text_align:  inner.style.textAlign || 'left',
-                    bg_color:    inner.style.background || 'white',
+                    bg_color: inner.dataset.bgColor || 'transparent',
                     width:       el.offsetWidth,
                     height:      el.offsetHeight,
                 },
@@ -422,7 +423,7 @@ function onTextUp(e) {
                 font_weight: inner.style.fontWeight || '400',
                 font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
                 text_align:  inner.style.textAlign || 'left',
-                bg_color:    inner.style.background || 'white',
+                bg_color: inner.dataset.bgColor || 'transparent',
                 width:       textEl.offsetWidth,
                 height:      textEl.offsetHeight,
             },
@@ -478,7 +479,7 @@ function onTextResizeEnd() {
                 font_weight: inner.style.fontWeight || '400',
                 font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
                 text_align:  inner.style.textAlign || 'left',
-                bg_color:    inner.style.background || 'white',
+                bg_color: inner.dataset.bgColor || 'transparent',
                 width:       resizingText.offsetWidth,
                 height:      resizingText.offsetHeight,
             },
@@ -520,7 +521,7 @@ function copyText(el) {
             font_weight: inner.style.fontWeight || '400',
             font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
             text_align:  inner.style.textAlign || 'left',
-            bg_color:    inner.style.background || 'white',
+            bg_color: inner.dataset.bgColor || 'transparent',
             width:       el.offsetWidth,
             height:      el.offsetHeight,
         };
