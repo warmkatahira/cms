@@ -24,7 +24,7 @@ export function createTextEl(item) {
             border:1.5px dashed #d1d5db;border-radius:6px;
             background:${meta.bg_color ?? 'white'};word-break:break-all;
             box-sizing:border-box;
-        ">${meta.text ?? ''}</div>
+        ">${(meta.text ?? '').replace(/\n/g, '<br>')}</div>
         <div class="text-edit-btn" style="
             display:none;position:absolute;top:-7px;right:-7px;
             width:18px;height:18px;border-radius:50%;
@@ -290,7 +290,7 @@ function startTextEdit(el) {
                 pos_x:         parseFloat(el.style.left) || 0,
                 pos_y:         parseFloat(el.style.top)  || 0,
                 meta: {
-                    text:        inner.textContent.trim(),
+                    text:        inner.innerText.trim(),
                     font_size:   parseInt(inner.style.fontSize) || 14,
                     color:       inner.style.color || '#374151',
                     font_weight: inner.style.fontWeight || '400',
@@ -416,7 +416,7 @@ function onTextUp(e) {
             pos_x:         px,
             pos_y:         py,
             meta: {
-                text:        inner.textContent,
+                text:        inner.innerText,
                 font_size:   parseInt(inner.style.fontSize) || 14,
                 color:       inner.style.color || '#374151',
                 font_weight: inner.style.fontWeight || '400',
@@ -472,7 +472,7 @@ function onTextResizeEnd() {
             pos_x:         parseFloat(resizingText.style.left) || 0,
             pos_y:         parseFloat(resizingText.style.top)  || 0,
             meta: {
-                text:        inner.textContent,
+                text:        inner.innerText,
                 font_size:   parseInt(inner.style.fontSize) || 14,
                 color:       inner.style.color || '#374151',
                 font_weight: inner.style.fontWeight || '400',
@@ -508,7 +508,7 @@ function copyText(el) {
     fetch('/board/text', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-        body: JSON.stringify({ whiteboard_id: WHITEBOARD_ID, text: inner.textContent.trim() }),
+        body: JSON.stringify({ whiteboard_id: WHITEBOARD_ID, text: inner.innerText.trim() }),
     })
     .then(r => r.json())
     .then(data => {

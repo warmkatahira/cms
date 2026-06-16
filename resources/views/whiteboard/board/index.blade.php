@@ -154,7 +154,7 @@
                                 border:1.5px dashed #d1d5db;border-radius:6px;
                                 background:{{ $meta['bg_color'] ?? 'white' }};word-break:break-all;
                                 box-sizing:border-box;
-                            ">{{ $meta['text'] ?? '' }}</div>
+                            ">{!! nl2br(e($meta['text'] ?? '')) !!}</div>
                             <div class="text-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                                 align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
