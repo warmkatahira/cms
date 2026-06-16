@@ -19,7 +19,7 @@ export function createTextEl(item) {
             font-size:${meta.font_size ?? 14}px;
             color:${meta.color ?? '#374151'};
             font-weight:${meta.font_weight ?? '400'};
-            font-family:${meta.font_family ?? "'Kosugi Maru', sans-serif"};
+            font-family:${(meta.font_family ?? "'Kosugi Maru', sans-serif").replace(/"/g, "'")};
             text-align:${meta.text_align ?? 'left'};
             border:1.5px dashed #d1d5db;border-radius:6px;
             background-color:${meta.bg_color ?? 'transparent'};word-break:break-all;
@@ -295,7 +295,7 @@ function startTextEdit(el) {
                     font_size:   parseInt(inner.style.fontSize) || 14,
                     color:       inner.style.color || '#374151',
                     font_weight: inner.style.fontWeight || '400',
-                    font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+                    font_family: (inner.style.fontFamily || "'Kosugi Maru', sans-serif").replace(/"/g, "'"),
                     text_align:  inner.style.textAlign || 'left',
                     bg_color: inner.dataset.bgColor || 'transparent',
                     width:       el.offsetWidth,
@@ -421,7 +421,7 @@ function onTextUp(e) {
                 font_size:   parseInt(inner.style.fontSize) || 14,
                 color:       inner.style.color || '#374151',
                 font_weight: inner.style.fontWeight || '400',
-                font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+                font_family: (inner.style.fontFamily || "'Kosugi Maru', sans-serif").replace(/"/g, "'"),
                 text_align:  inner.style.textAlign || 'left',
                 bg_color: inner.dataset.bgColor || 'transparent',
                 width:       textEl.offsetWidth,
@@ -477,7 +477,7 @@ function onTextResizeEnd() {
                 font_size:   parseInt(inner.style.fontSize) || 14,
                 color:       inner.style.color || '#374151',
                 font_weight: inner.style.fontWeight || '400',
-                font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+                font_family: (inner.style.fontFamily || "'Kosugi Maru', sans-serif").replace(/"/g, "'"),
                 text_align:  inner.style.textAlign || 'left',
                 bg_color: inner.dataset.bgColor || 'transparent',
                 width:       resizingText.offsetWidth,
@@ -519,7 +519,7 @@ function copyText(el) {
             font_size:   parseInt(inner.style.fontSize) || 14,
             color:       inner.style.color || '#374151',
             font_weight: inner.style.fontWeight || '400',
-            font_family: inner.style.fontFamily || "'Kosugi Maru', sans-serif",
+            font_family: (inner.style.fontFamily || "'Kosugi Maru', sans-serif").replace(/"/g, "'"),
             text_align:  inner.style.textAlign || 'left',
             bg_color: inner.dataset.bgColor || 'transparent',
             width:       el.offsetWidth,
