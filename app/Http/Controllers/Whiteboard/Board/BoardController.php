@@ -60,4 +60,21 @@ class BoardController extends Controller
             'whiteboard', 'staffList', 'staffItems', 'zoneItems', 'textItems', 'shapeItems'
         ));
     }
+
+    public function clear(Request $request)
+    {
+        $validated = $request->validate([
+            'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
+        ]);
+
+        $whiteboardId = $validated['whiteboard_id'];
+
+        // スタッフ削除
+        \App\Models\Staff::where('whiteboard_id', $whiteboardId)->delete();
+
+        // アイテム全削除（ゾーン・テキスト・図形）
+        \App\Models\WhiteboardItem::where('whiteboard_id', $whiteboardId)->delete();
+
+        return response()->json(['status' => 'ok']);
+    }
 }

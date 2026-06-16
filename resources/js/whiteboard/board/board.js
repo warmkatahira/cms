@@ -1,4 +1,4 @@
-import { board, WHITEBOARD_ID } from './constants.js';
+import { board, WHITEBOARD_ID, CSRF } from './constants.js';
 import {
     initMagnet, addStaff,
     handleStaffAdded, handleStaffDeleted, handleStaffUpdated, handleItemUpdatedStaff,
@@ -21,6 +21,7 @@ window.addStaff = addStaff;
 window.addZone  = addZone;
 window.addText  = addText;
 window.addShape = addShape;
+window.clearBoard = clearBoard;
 
 // 既存要素の初期化
 document.querySelectorAll('.magnet').forEach(el => initMagnet(el));
@@ -101,3 +102,20 @@ window.Echo.channel('whiteboard.' + WHITEBOARD_ID)
             case 'shape.deleted': handleShapeDeleted(e.payload); break;
         }
     });
+
+function clearBoard() {
+    if (!confirm('ボード上の全ての要素を削除しますか？\nこの操作は元に戻せません。')) return;
+
+    fetch('/board/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
+        body: JSON.stringify({ whiteboard_id: WHITEBOARD_ID }),
+    })
+    .then(r => r.json())
+    .then(() => {
+        document.querySelectorAll('.magnet').forEach(el => el.remove());
+        document.querySelectorAll('.magnet-zone').forEach(el => el.remove());
+        document.querySelectorAll('.text-box').forEach(el => el.remove());
+        document.querySelectorAll('.shape-box').forEach(el => el.remove());
+    });
+}

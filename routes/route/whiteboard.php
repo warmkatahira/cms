@@ -19,9 +19,10 @@ Route::middleware('common')->group(function () {
         Route::patch('{whiteboard}/users','updateUsers')->name('update_users');
         Route::delete('{whiteboard}', 'destroy')->name('destroy');
     });
-    // 組織図
+    // ホワイトボード編集
     Route::controller(BoardController::class)->prefix('board')->name('board.')->group(function () {
         Route::get('', 'index')->name('index');
+        Route::post('clear', 'clear')->name('clear');
     });
     // アイテム座標保存
     Route::controller(ItemController::class)->prefix('board')->name('board.')->group(function () {
