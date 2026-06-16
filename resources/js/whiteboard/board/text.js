@@ -19,6 +19,7 @@ export function createTextEl(item) {
             font-size:${meta.font_size ?? 14}px;
             color:${meta.color ?? '#374151'};
             font-weight:${meta.font_weight ?? '400'};
+            text-align:${meta.text_align ?? 'left'};
             border:1.5px dashed #d1d5db;border-radius:6px;
             background:${meta.bg_color ?? 'white'};word-break:break-all;
             box-sizing:border-box;
@@ -177,6 +178,21 @@ function startTextEdit(el) {
             border-radius:4px;cursor:pointer;
             background:${currentBold ? '#f3f4f6' : 'white'};
             color:#374151;">B</button>
+        <button class="tb-align" data-align="left" title="左寄せ" style="
+            font-size:12px;width:24px;height:24px;
+            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
+            background:white;color:#374151;text-align:center;line-height:24px;
+        ">≡</button>
+        <button class="tb-align" data-align="center" title="中央" style="
+            font-size:12px;width:24px;height:24px;
+            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
+            background:white;color:#374151;text-align:center;line-height:24px;
+        ">☰</button>
+        <button class="tb-align" data-align="right" title="右寄せ" style="
+            font-size:12px;width:24px;height:24px;
+            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
+            background:white;color:#374151;text-align:center;line-height:24px;
+        ">≣</button>
     `;
     el.appendChild(toolbar);
 
@@ -191,6 +207,21 @@ function startTextEdit(el) {
         inner.style.fontWeight     = isBold ? '400' : '700';
         e.target.style.borderColor = isBold ? '#e5e7eb' : '#374151';
         e.target.style.background  = isBold ? 'white'   : '#f3f4f6';
+    });
+    toolbar.querySelectorAll('.tb-align').forEach(btn => {
+        if (btn.dataset.align === (inner.style.textAlign || 'left')) {
+            btn.style.borderColor = '#374151';
+            btn.style.background  = '#f3f4f6';
+        }
+        btn.addEventListener('click', () => {
+            inner.style.textAlign = btn.dataset.align;
+            toolbar.querySelectorAll('.tb-align').forEach(b => {
+                b.style.borderColor = '#e5e7eb';
+                b.style.background  = 'white';
+            });
+            btn.style.borderColor = '#374151';
+            btn.style.background  = '#f3f4f6';
+        });
     });
 
     const colorBtn     = toolbar.querySelector('.tb-color-btn');
@@ -248,6 +279,7 @@ function startTextEdit(el) {
                     bg_color:    inner.style.background || 'white',
                     width:       el.offsetWidth,
                     height:      el.offsetHeight,
+                    text_align:  inner.style.textAlign || 'left',
                 },
             }),
         });
