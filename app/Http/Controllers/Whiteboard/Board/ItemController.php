@@ -16,7 +16,7 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
-            'item_type'     => 'nullable|string|in:staff,zone,text,shape',
+            'item_type'     => 'nullable|string|in:staff,zone,text,shape,image',
             'item_id'       => 'required|integer',
             'pos_x'         => 'required|numeric',
             'pos_y'         => 'required|numeric',

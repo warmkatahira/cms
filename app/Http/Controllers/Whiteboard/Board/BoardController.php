@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // モデル
 use App\Models\Whiteboard;
+use App\Models\WhiteboardItem;
 use App\Models\Staff;
 // イベント
 use App\Events\WhiteboardUpdated;
@@ -52,12 +53,18 @@ class BoardController extends Controller
                         ->where('item_type', 'text')
                         ->get();
 
+        // hape の座標
         $shapeItems = $whiteboard->items()
                 ->where('item_type', 'shape')
                 ->get();
 
+        // image の座標
+        $imageItems = $whiteboard->items()
+                ->where('item_type', 'image')
+                ->get();
+
         return view('whiteboard.board.index', compact(
-            'whiteboard', 'staffList', 'staffItems', 'zoneItems', 'textItems', 'shapeItems'
+            'whiteboard', 'staffList', 'staffItems', 'zoneItems', 'textItems', 'shapeItems', 'imageItems'
         ));
     }
 
@@ -69,11 +76,18 @@ class BoardController extends Controller
 
         $whiteboardId = $validated['whiteboard_id'];
 
-        // スタッフ削除
-        \App\Models\Staff::where('whiteboard_id', $whiteboardId)->delete();
+        // 画像ファイル削除
+        $imageItems = \App\Models\WhiteboardItem::where('whiteboard_id', $whiteboardId)
+            ->where('item_type', 'image')
+            ->get();
+        foreach ($imageItems as $img) {
+            $src = $img->meta['src'] ?? '';
+            $disk = str_replace('/storage/', '', $src);
+            \Storage::disk('public')->delete($disk);
+        }
 
-        // アイテム全削除（ゾーン・テキスト・図形）
-        \App\Models\WhiteboardItem::where('whiteboard_id', $whiteboardId)->delete();
+        Staff::where('whiteboard_id', $whiteboardId)->delete();
+        WhiteboardItem::where('whiteboard_id', $whiteboardId)->delete();
 
         return response()->json(['status' => 'ok']);
     }

@@ -58,6 +58,12 @@
                 </div>
             </div>
 
+            {{-- 画像追加 --}}
+            <button onclick="addImage()" title="画像追加"
+                    class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V5.25a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
+            </button>
+
             <div class="w-px h-5 bg-gray-200 mx-1"></div>
 
             {{-- ボードクリア --}}
@@ -250,6 +256,34 @@
                             <div class="shape-rotate-handle" style="display:none;position:absolute;top:-7px;right:35px;
                                 width:14px;height:14px;border-radius:50%;background:#374151;
                                 cursor:grab;z-index:10;user-select:none;">↻</div>
+                        </div>
+                    @endforeach
+
+                    {{-- 画像 --}}
+                    @foreach($imageItems as $image)
+                        @php $meta = $image->meta ?? []; @endphp
+                        <div class="image-box absolute cursor-grab select-none"
+                            data-image-id="{{ $image->whiteboard_item_id }}"
+                            style="
+                                left:{{ $image->pos_x }}px;
+                                top:{{ $image->pos_y }}px;
+                                width:{{ $meta['width'] ?? 200 }}px;
+                                height:{{ $meta['height'] ?? 200 }}px;
+                                position:absolute;
+                            ">
+                            <img src="{{ $meta['src'] ?? '' }}" draggable="false" style="
+                                width:100%;height:100%;object-fit:contain;
+                                border-radius:4px;pointer-events:none;
+                            ">
+                            <div class="image-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+                                width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
+                                line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
+                            <div class="image-copy-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+                                width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
+                                line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
+                            <div class="image-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+                                width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
+                                text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
                         </div>
                     @endforeach
 

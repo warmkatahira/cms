@@ -15,6 +15,10 @@ import {
     createShapeEl, createShapeSVG, initShape, addShape,
     handleShapeAdded, handleShapeDeleted, handleItemUpdatedShape,
 } from './shape.js';
+import {
+    createImageEl, initImage, addImage,
+    handleImageAdded, handleImageDeleted, handleItemUpdatedImage,
+} from './image.js';
 
 // グローバル公開
 window.addStaff = addStaff;
@@ -22,12 +26,14 @@ window.addZone  = addZone;
 window.addText  = addText;
 window.addShape = addShape;
 window.clearBoard = clearBoard;
+window.addImage = addImage;
 
 // 既存要素の初期化
 document.querySelectorAll('.magnet').forEach(el => initMagnet(el));
 document.querySelectorAll('.magnet-zone').forEach(el => initZone(el));
 document.querySelectorAll('.text-box').forEach(el => initText(el));
 document.querySelectorAll('.shape-box').forEach(el => initShape(el));
+document.querySelectorAll('.image-box').forEach(el => initImage(el));
 
 // パン処理
 let isPanning  = false;
@@ -44,7 +50,8 @@ board.addEventListener('mousedown', e => {
         !e.target.closest('.magnet') &&
         !e.target.closest('.magnet-zone') &&
         !e.target.closest('.text-box') &&
-        !e.target.closest('.shape-box')
+        !e.target.closest('.shape-box') &&
+        !e.target.closest('.image-box')
     ) {
         const editing = document.querySelector('.text-box-inner[contenteditable="true"]');
         if (editing) {
@@ -90,6 +97,7 @@ window.Echo.channel('whiteboard.' + WHITEBOARD_ID)
                 if (e.payload.itemType === 'zone')  handleItemUpdatedZone(e.payload);
                 if (e.payload.itemType === 'text')  handleItemUpdatedText(e.payload);
                 if (e.payload.itemType === 'shape') handleItemUpdatedShape(e.payload);
+                if (e.payload.itemType === 'image') handleItemUpdatedImage(e.payload);
                 break;
             case 'staff.added':   handleStaffAdded(e.payload);   break;
             case 'staff.deleted': handleStaffDeleted(e.payload); break;
@@ -100,6 +108,8 @@ window.Echo.channel('whiteboard.' + WHITEBOARD_ID)
             case 'text.deleted':  handleTextDeleted(e.payload);  break;
             case 'shape.added':   handleShapeAdded(e.payload);   break;
             case 'shape.deleted': handleShapeDeleted(e.payload); break;
+            case 'image.added':   handleImageAdded(e.payload);   break;
+            case 'image.deleted': handleImageDeleted(e.payload); break;
         }
     });
 
@@ -117,5 +127,6 @@ function clearBoard() {
         document.querySelectorAll('.magnet-zone').forEach(el => el.remove());
         document.querySelectorAll('.text-box').forEach(el => el.remove());
         document.querySelectorAll('.shape-box').forEach(el => el.remove());
+        document.querySelectorAll('.image-box').forEach(el => el.remove());
     });
 }
