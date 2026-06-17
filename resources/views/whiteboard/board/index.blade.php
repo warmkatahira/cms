@@ -36,8 +36,8 @@
         <div class="flex items-center gap-1.5 p-2 mb-2 bg-white border border-gray-200 rounded-xl">
 
             {{-- 一覧に戻る --}}
-            <a href="{{ route('whiteboard.index') }}"
-            class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
+            <a href="{{ route('whiteboard.index') }}" data-tippy-content="一覧へ戻る"
+                class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
             </a>
 
@@ -45,7 +45,7 @@
 
             {{-- スタッフ追加 --}}
             <div class="relative" x-data="{ open: false }">
-                <button @click="open = !open"
+                <button @click="open = !open" data-tippy-content="スタッフ追加"
                         class="flex items-center gap-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z"/></svg>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
@@ -65,7 +65,7 @@
 
             {{-- グループ追加 --}}
             <div class="relative" x-data="{ open: false }">
-                <button @click="open = !open"
+                <button @click="open = !open" data-tippy-content="グループ追加"
                         class="flex items-center gap-1 p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/></svg>
@@ -83,14 +83,14 @@
             <div class="w-px h-5 bg-gray-200 mx-0.5"></div>
 
             {{-- テキスト追加 --}}
-            <button onclick="addText()" title="テキスト追加"
+            <button onclick="addText()" data-tippy-content="テキスト追加"
                     class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"/></svg>
             </button>
 
             {{-- 図形追加 --}}
             <div class="relative" x-data="{ open: false }">
-                <button @click="open = !open" title="図形追加"
+                <button @click="open = !open" data-tippy-content="図形追加"
                         class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"/></svg>
                 </button>
@@ -106,7 +106,7 @@
             </div>
 
             {{-- 画像追加 --}}
-            <button onclick="addImage()" title="画像追加"
+            <button onclick="addImage()" data-tippy-content="画像追加"
                     class="flex items-center justify-center p-1.5 border border-gray-200 rounded-lg hover:bg-gray-50 text-gray-500">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V5.25a2.25 2.25 0 00-2.25-2.25H3.75a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 003.75 21z"/></svg>
             </button>
@@ -114,7 +114,7 @@
             <div class="w-px h-5 bg-gray-200 mx-0.5"></div>
 
             {{-- ボードクリア --}}
-            <button onclick="clearBoard()" title="全てクリア"
+            <button onclick="clearBoard()" data-tippy-content="全てクリア"
                     class="flex items-center justify-center p-1.5 border border-red-200 rounded-lg hover:bg-red-50 text-red-400">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
             </button>
