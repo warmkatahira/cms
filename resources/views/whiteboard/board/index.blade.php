@@ -100,8 +100,10 @@
                     <button onclick="addShape('rect')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">■ 四角</button>
                     <button onclick="addShape('circle')"   class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">● 丸</button>
                     <button onclick="addShape('triangle')" class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">▲ 三角</button>
+                    <button onclick="addShape('star')"         class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">★ 星</button>
                     <button onclick="addShape('line')"     class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">― 線</button>
                     <button onclick="addShape('arrow')"    class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">→ 矢印</button>
+                    <button onclick="addShape('double-arrow')" class="block w-full text-left text-sm px-3 py-1.5 hover:bg-gray-50">↔ 両矢印</button>
                 </div>
             </div>
 
@@ -279,23 +281,28 @@
                                             stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
                                             stroke-width="2" vector-effect="non-scaling-stroke"/>
                                         @break
+                                    @case('star')
+                                        <polygon points="50,2 63,38 100,38 70,60 82,98 50,75 18,98 30,60 0,38 37,38"
+                                            fill="{{ $meta['fill_color'] ?? '#93c5fd' }}"
+                                            stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                                            stroke-width="2" vector-effect="non-scaling-stroke"/>
+                                        @break
                                     @case('line')
                                         <line x1="0" y1="50" x2="100" y2="50"
                                             stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
                                             stroke-width="3" vector-effect="non-scaling-stroke"/>
                                         @break
                                     @case('arrow')
-                                        <defs>
-                                            <marker id="arrow-{{ $shape->whiteboard_item_id }}" markerWidth="10" markerHeight="7"
-                                                    refX="10" refY="3.5" orient="auto">
-                                                <polygon points="0 0, 10 3.5, 0 7"
-                                                    fill="{{ $meta['stroke_color'] ?? '#2563eb' }}"/>
-                                            </marker>
-                                        </defs>
-                                        <line x1="0" y1="50" x2="90" y2="50"
+                                        <polygon points="0,38 70,38 70,25 100,50 70,75 70,62 0,62"
+                                            fill="{{ $meta['fill_color'] ?? '#93c5fd' }}"
                                             stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
-                                            stroke-width="3" vector-effect="non-scaling-stroke"
-                                            marker-end="url(#arrow-{{ $shape->whiteboard_item_id }})"/>
+                                            stroke-width="2" vector-effect="non-scaling-stroke"/>
+                                        @break
+                                    @case('double-arrow')
+                                        <polygon points="0,50 30,25 30,38 70,38 70,25 100,50 70,75 70,62 30,62 30,75"
+                                            fill="{{ $meta['fill_color'] ?? '#93c5fd' }}"
+                                            stroke="{{ $meta['stroke_color'] ?? '#2563eb' }}"
+                                            stroke-width="2" vector-effect="non-scaling-stroke"/>
                                         @break
                                 @endswitch
                             </svg>

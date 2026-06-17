@@ -18,22 +18,24 @@ export function createShapeSVG(shapeType, fillColor, strokeColor, itemId) {
             return `<polygon points="50,2 98,98 2,98"
                 fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"
                 vector-effect="non-scaling-stroke"/>`;
+        case 'star':
+            return `<polygon points="50,2 63,38 100,38 70,60 82,98 50,75 18,98 30,60 0,38 37,38"
+                fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"
+                vector-effect="non-scaling-stroke"/>`;
         case 'line':
             return `<line x1="0" y1="50" x2="100" y2="50"
                 stroke="${strokeColor}" stroke-width="3"
                 vector-effect="non-scaling-stroke"/>`;
         case 'arrow':
             return `
-                <defs>
-                    <marker id="arrow-${itemId}" markerWidth="10" markerHeight="7"
-                            refX="10" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="${strokeColor}"/>
-                    </marker>
-                </defs>
-                <line x1="0" y1="50" x2="90" y2="50"
-                    stroke="${strokeColor}" stroke-width="3"
-                    vector-effect="non-scaling-stroke"
-                    marker-end="url(#arrow-${itemId})"/>`;
+                <polygon points="0,38 70,38 70,25 100,50 70,75 70,62 0,62"
+                    fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"
+                    vector-effect="non-scaling-stroke"/>`;
+        case 'double-arrow':
+            return `
+                <polygon points="0,50 30,25 30,38 70,38 70,25 100,50 70,75 70,62 30,62 30,75"
+                    fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"
+                    vector-effect="non-scaling-stroke"/>`;
         default:
             return '';
             }

@@ -15,7 +15,7 @@ class ShapeController extends Controller
     {
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
-            'shape_type'    => 'required|string|in:rect,circle,triangle,line,arrow',
+            'shape_type'    => 'required|string|in:rect,circle,triangle,line,arrow,star,double-arrow',
         ]);
 
         $item = WhiteboardItem::create([
