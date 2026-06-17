@@ -231,7 +231,7 @@ zoneModal.style.cssText = `
     align-items:center;justify-content:center;
 `;
 zoneModal.innerHTML = `
-    <div style="background:white;border-radius:12px;padding:24px;width:320px;">
+    <div style="background:white;border-radius:12px;padding:24px;width:400px;">
         <p style="font-size:15px;font-weight:500;margin-bottom:16px;">グループを編集</p>
         <div style="margin-bottom:16px;">
             <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px;">名称</label>
@@ -240,10 +240,10 @@ zoneModal.innerHTML = `
         </div>
         <div style="margin-bottom:20px;">
             <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:8px;">色</label>
-            <div style="display:flex;gap:8px;">
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
                 ${ZONE_COLORS.map((c, i) => `
                     <div class="zone-color-chip" data-color-index="${i}"
-                         style="width:28px;height:28px;border-radius:50%;cursor:pointer;
+                         style="width:28px;height:28px;min-width:28px;min-height:28px;border-radius:50%;cursor:pointer;
                                 background:${c.border};border:2px solid ${c.border};">
                     </div>
                 `).join('')}
