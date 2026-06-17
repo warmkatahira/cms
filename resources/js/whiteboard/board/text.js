@@ -134,7 +134,7 @@ function startTextEdit(el) {
     const currentFont  = inner.style.fontFamily || "'Kosugi Maru', sans-serif";
 
     toolbar.innerHTML = `
-        <select class="tb-font" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;width:140px;">
+        <select class="tb-font" data-tippy-content="フォント" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;width:140px;">
             <option value="'Kosugi Maru', sans-serif" style="font-family:'Kosugi Maru',sans-serif" ${currentFont.includes('Kosugi Maru') ? 'selected' : ''}>Kosugi Maru</option>
             <option value="'Sawarabi Mincho', serif" style="font-family:'Sawarabi Mincho',serif" ${currentFont.includes('Sawarabi Mincho') ? 'selected' : ''}>Sawarabi Mincho</option>
             <option value="'Zen Maru Gothic', sans-serif" style="font-family:'Zen Maru Gothic',sans-serif" ${currentFont.includes('Zen Maru Gothic') ? 'selected' : ''}>Zen Maru Gothic</option>
@@ -142,13 +142,13 @@ function startTextEdit(el) {
             <option value="'Hachi Maru Pop', cursive" style="font-family:'Hachi Maru Pop',cursive" ${currentFont.includes('Hachi Maru Pop') ? 'selected' : ''}>Hachi Maru Pop</option>
             <option value="'Potta One', cursive" style="font-family:'Potta One',cursive" ${currentFont.includes('Potta One') ? 'selected' : ''}>Potta One</option>
         </select>
-        <select class="tb-size" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;">
+        <select class="tb-size" data-tippy-content="フォントサイズ" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;">
             ${[10,12,14,16,18,20,24,28,32,40].map(s =>
                 `<option value="${s}" ${s === currentSize ? 'selected' : ''}>${s}px</option>`
             ).join('')}
         </select>
         <div class="tb-color-wrap" style="position:relative;">
-            <button class="tb-color-btn" title="文字色" style="
+            <button class="tb-color-btn" data-tippy-content="文字色" style="
                 width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
                 cursor:pointer;font-size:14px;font-weight:700;line-height:24px;
                 text-align:center;background:white;color:${currentColor};">A</button>
@@ -167,7 +167,7 @@ function startTextEdit(el) {
             </div>
         </div>
         <div class="tb-bg-wrap" style="position:relative;">
-            <button class="tb-bg-btn" title="背景色" style="
+            <button class="tb-bg-btn" data-tippy-content="背景色" style="
                 width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
                 cursor:pointer;display:flex;align-items:center;justify-content:center;
                 background-color:${currentBg === 'transparent' ? '#ffffff' : currentBg};
@@ -190,25 +190,25 @@ function startTextEdit(el) {
                 </div>
             </div>
         </div>
-        <button class="tb-bold" style="
+        <button class="tb-bold" data-tippy-content="太字" style="
             font-size:12px;font-weight:700;width:24px;height:24px;
             border:1px solid ${currentBold ? '#374151' : '#e5e7eb'};
             border-radius:4px;cursor:pointer;
             background:${currentBold ? '#f3f4f6' : 'transparent'};
             color:#374151;">B</button>
-        <button class="tb-align" data-align="left" title="左寄せ" style="
+        <button class="tb-align" data-align="left" data-tippy-content="左寄せ" style="
             width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
             cursor:pointer;background:white;display:flex;align-items:center;justify-content:center;
         "><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round">
             <line x1="1" y1="3" x2="13" y2="3"/><line x1="1" y1="7" x2="9" y2="7"/><line x1="1" y1="11" x2="11" y2="11"/>
         </svg></button>
-        <button class="tb-align" data-align="center" title="中央" style="
+        <button class="tb-align" data-align="center" data-tippy-content="中央" style="
             width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
             cursor:pointer;background:white;display:flex;align-items:center;justify-content:center;
         "><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round">
             <line x1="1" y1="3" x2="13" y2="3"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="2" y1="11" x2="12" y2="11"/>
         </svg></button>
-        <button class="tb-align" data-align="right" title="右寄せ" style="
+        <button class="tb-align" data-align="right" data-tippy-content="右寄せ" style="
             width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
             cursor:pointer;background:white;display:flex;align-items:center;justify-content:center;
         "><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round">
@@ -216,6 +216,14 @@ function startTextEdit(el) {
         </svg></button>
     `;
     el.appendChild(toolbar);
+
+    tippy(toolbar.querySelectorAll('[data-tippy-content]'), {
+        duration: 500,
+        maxWidth: 'none',
+        allowHTML: true,
+        placement: 'top',
+        theme: 'tippy_main_theme',
+    });
 
     toolbar.addEventListener('mousedown', e => {
         e.stopPropagation();
