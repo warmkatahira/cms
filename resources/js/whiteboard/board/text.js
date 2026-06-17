@@ -134,13 +134,13 @@ function startTextEdit(el) {
     const currentFont  = inner.style.fontFamily || "'Kosugi Maru', sans-serif";
 
     toolbar.innerHTML = `
-        <select class="tb-font" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;width:110px;">
-            <option value="'Kosugi Maru', sans-serif" ${currentFont.includes('Kosugi Maru') ? 'selected' : ''}>丸ゴシック</option>
-            <option value="'Sawarabi Mincho', serif" ${currentFont.includes('Sawarabi Mincho') ? 'selected' : ''}>明朝</option>
-            <option value="'Zen Maru Gothic', sans-serif" ${currentFont.includes('Zen Maru Gothic') ? 'selected' : ''}>丸ゴシック太</option>
-            <option value="'Kiwi Maru', serif" ${currentFont.includes('Kiwi Maru') ? 'selected' : ''}>丸明朝</option>
-            <option value="'Hachi Maru Pop', cursive" ${currentFont.includes('Hachi Maru Pop') ? 'selected' : ''}>手書き</option>
-            <option value="'Potta One', cursive" ${currentFont.includes('Potta One') ? 'selected' : ''}>ポップ</option>
+        <select class="tb-font" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;width:140px;">
+            <option value="'Kosugi Maru', sans-serif" style="font-family:'Kosugi Maru',sans-serif" ${currentFont.includes('Kosugi Maru') ? 'selected' : ''}>Kosugi Maru</option>
+            <option value="'Sawarabi Mincho', serif" style="font-family:'Sawarabi Mincho',serif" ${currentFont.includes('Sawarabi Mincho') ? 'selected' : ''}>Sawarabi Mincho</option>
+            <option value="'Zen Maru Gothic', sans-serif" style="font-family:'Zen Maru Gothic',sans-serif" ${currentFont.includes('Zen Maru Gothic') ? 'selected' : ''}>Zen Maru Gothic</option>
+            <option value="'Kiwi Maru', serif" style="font-family:'Kiwi Maru',serif" ${currentFont.includes('Kiwi Maru') ? 'selected' : ''}>Kiwi Maru</option>
+            <option value="'Hachi Maru Pop', cursive" style="font-family:'Hachi Maru Pop',cursive" ${currentFont.includes('Hachi Maru Pop') ? 'selected' : ''}>Hachi Maru Pop</option>
+            <option value="'Potta One', cursive" style="font-family:'Potta One',cursive" ${currentFont.includes('Potta One') ? 'selected' : ''}>Potta One</option>
         </select>
         <select class="tb-size" style="font-size:11px;border:1px solid #e5e7eb;border-radius:4px;padding:2px 4px;">
             ${[10,12,14,16,18,20,24,28,32,40].map(s =>
@@ -169,9 +169,13 @@ function startTextEdit(el) {
         <div class="tb-bg-wrap" style="position:relative;">
             <button class="tb-bg-btn" title="背景色" style="
                 width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
-                cursor:pointer;font-size:10px;line-height:24px;
-                text-align:center;color:#374151;
-                background-color:${currentBg === 'transparent' ? '#ffffff' : currentBg};">塗</button>
+                cursor:pointer;display:flex;align-items:center;justify-content:center;
+                background-color:${currentBg === 'transparent' ? '#ffffff' : currentBg};
+            "><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#374151" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 10l5-5 3 3-5 5H1v-3z" fill="${currentBg === 'transparent' ? 'none' : currentBg}"/>
+                <path d="M6 5l2-2"/>
+                <path d="M11.5 9.5c0 1.1-.7 2-1.5 2s-1.5-.9-1.5-2c0-1.5 1.5-3 1.5-3s1.5 1.5 1.5 3z" fill="#374151"/>
+            </svg></button>
             <div class="tb-bg-palette" style="
                 display:none;position:absolute;top:-112px;left:0;
                 background:white;border:1px solid #d1d5db;border-radius:6px;
@@ -193,20 +197,23 @@ function startTextEdit(el) {
             background:${currentBold ? '#f3f4f6' : 'transparent'};
             color:#374151;">B</button>
         <button class="tb-align" data-align="left" title="左寄せ" style="
-            font-size:12px;width:24px;height:24px;
-            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
-            background:white;color:#374151;text-align:center;line-height:24px;
-        ">≡</button>
+            width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
+            cursor:pointer;background:white;display:flex;align-items:center;justify-content:center;
+        "><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round">
+            <line x1="1" y1="3" x2="13" y2="3"/><line x1="1" y1="7" x2="9" y2="7"/><line x1="1" y1="11" x2="11" y2="11"/>
+        </svg></button>
         <button class="tb-align" data-align="center" title="中央" style="
-            font-size:12px;width:24px;height:24px;
-            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
-            background:white;color:#374151;text-align:center;line-height:24px;
-        ">☰</button>
+            width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
+            cursor:pointer;background:white;display:flex;align-items:center;justify-content:center;
+        "><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round">
+            <line x1="1" y1="3" x2="13" y2="3"/><line x1="3" y1="7" x2="11" y2="7"/><line x1="2" y1="11" x2="12" y2="11"/>
+        </svg></button>
         <button class="tb-align" data-align="right" title="右寄せ" style="
-            font-size:12px;width:24px;height:24px;
-            border:1px solid #e5e7eb;border-radius:4px;cursor:pointer;
-            background:white;color:#374151;text-align:center;line-height:24px;
-        ">≣</button>
+            width:24px;height:24px;border:1px solid #e5e7eb;border-radius:4px;
+            cursor:pointer;background:white;display:flex;align-items:center;justify-content:center;
+        "><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#374151" stroke-width="1.5" stroke-linecap="round">
+            <line x1="1" y1="3" x2="13" y2="3"/><line x1="5" y1="7" x2="13" y2="7"/><line x1="3" y1="11" x2="13" y2="11"/>
+        </svg></button>
     `;
     el.appendChild(toolbar);
 
