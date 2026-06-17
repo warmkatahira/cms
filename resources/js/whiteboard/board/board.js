@@ -133,7 +133,7 @@ if (rulerTopInner && rulerLeftInner) {
             const label = document.createElement('div');
             label.style.cssText = `position:absolute;left:${i + 2}px;top:3px;
                 font-size:9px;color:#9ca3af;`;
-            label.textContent = i;
+            label.textContent = i / RULER_STEP;
             rulerTopInner.appendChild(label);
         }
     }
@@ -150,7 +150,7 @@ if (rulerTopInner && rulerLeftInner) {
             const label = document.createElement('div');
             label.style.cssText = `position:absolute;top:${j + 2}px;left:1px;
                 font-size:9px;color:#9ca3af;`;
-            label.textContent = j;
+            label.textContent = j / RULER_STEP;
             rulerLeftInner.appendChild(label);
         }
     }
