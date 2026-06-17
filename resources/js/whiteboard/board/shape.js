@@ -76,8 +76,9 @@ export function createShapeEl(item) {
             width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
             text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
         <div class="shape-rotate-handle" style="display:none;position:absolute;top:-7px;right:35px;
-            width:14px;height:14px;border-radius:50%;background:#374151;
-            cursor:pointer;z-index:10;user-select:none;">↻</div>
+            width:18px;height:18px;border-radius:50%;background:#374151;color:white;
+            font-size:12px;line-height:18px;text-align:center;
+            cursor:crosshair;z-index:10;user-select:none;">↻</div>
     `;
     return el;
 }
