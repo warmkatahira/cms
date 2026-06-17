@@ -22,7 +22,7 @@
                 <div class="text-xs flex items-center gap-1 flex-wrap">
                     <span class="text-gray-400 shrink-0">参加者（{{ $whiteboard->users->count() }}人）：</span>
                     @foreach($whiteboard->users as $u)
-                        <div class="flex items-center gap-1 px-1 py-0 rounded-md hover:bg-gray-100" title="{{ $u->user_name }}">
+                        <div class="flex items-center gap-1 px-1 py-0 rounded-md hover:bg-gray-100">
                             <img src="{{ asset('storage/profile_images/'.$u->profile_image_file_name) }}"
                                 class="w-4 h-4 rounded-full object-cover"
                                 alt="{{ $u->user_name }}">
