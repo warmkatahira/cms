@@ -54,5 +54,45 @@ class UserSeeder extends Seeder
             'base_id'                       => 'honsha',
             'is_password_change_required'   => false,
         ]);
+        User::create([
+            'user_id'                       => 'ddd',
+            'user_name'                     => 'テストD',
+            'email'                         => null,
+            'password'                      => bcrypt('katahira134'),
+            'is_active'                     => true,
+            'role_id'                       => 'user',
+            'base_id'                       => 'honsha',
+            'is_password_change_required'   => false,
+        ]);
+        User::create([
+            'user_id'                       => 'eee',
+            'user_name'                     => 'テストE',
+            'email'                         => null,
+            'password'                      => bcrypt('katahira134'),
+            'is_active'                     => true,
+            'role_id'                       => 'user',
+            'base_id'                       => 'honsha',
+            'is_password_change_required'   => false,
+        ]);
+        User::create([
+            'user_id'                       => 'fff',
+            'user_name'                     => 'テストF',
+            'email'                         => null,
+            'password'                      => bcrypt('katahira134'),
+            'is_active'                     => true,
+            'role_id'                       => 'user',
+            'base_id'                       => 'honsha',
+            'is_password_change_required'   => false,
+        ]);
+        User::create([
+            'user_id'                       => 'ggg',
+            'user_name'                     => 'テストG',
+            'email'                         => null,
+            'password'                      => bcrypt('katahira134'),
+            'is_active'                     => true,
+            'role_id'                       => 'user',
+            'base_id'                       => 'honsha',
+            'is_password_change_required'   => false,
+        ]);
     }
 }

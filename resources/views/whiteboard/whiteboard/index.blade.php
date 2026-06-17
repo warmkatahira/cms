@@ -48,27 +48,6 @@
                                 class="text-xs text-gray-400 hover:text-gray-600 underline">
                             編集
                         </button>
-                        {{-- アバター --}}
-                        <div class="flex">
-                            @foreach($wb->users->take(5) as $u)
-                            <div class="w-6 h-6 rounded-full border-2 border-white -ml-1 first:ml-0 overflow-hidden bg-blue-50 flex items-center justify-center"
-                                 style="font-size:9px;font-weight:500;color:#185FA5;">
-                                @if($u->profile_image_file_name)
-                                    <img src="{{ asset('storage/profile_images/'.$u->profile_image_file_name) }}"
-                                         class="w-full h-full object-cover"
-                                         alt="{{ $u->user_name }}">
-                                @else
-                                    {{ mb_substr($u->user_name, 0, 1) }}
-                                @endif
-                            </div>
-                            @endforeach
-                            @if($wb->users->count() > 5)
-                            <div class="w-6 h-6 rounded-full border-2 border-white -ml-1 bg-gray-100 flex items-center justify-center"
-                                 style="font-size:9px;color:#888;">
-                                +{{ $wb->users->count() - 5 }}
-                            </div>
-                            @endif
-                        </div>
                     </div>
                 </div>
 

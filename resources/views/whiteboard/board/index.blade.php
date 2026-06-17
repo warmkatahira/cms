@@ -1,7 +1,39 @@
 <x-app-layout>
-    <div class="p-0">
+    <div class="p-0 flex flex-col" style="height:calc(100vh - 80px);">
+        {{-- ボードタイトル + 参加者 --}}
+        <div class="mb-2 border border-gray-200" x-data="{ open: false }">
+            <div class="flex items-center justify-between px-4 py-1.5 cursor-pointer bg-theme-main select-none"
+                :class="open ? 'rounded-t-xl' : 'rounded-xl'"
+                @click="open = !open">
+                <span class="text-sm font-medium text-white">{{ $whiteboard->title }}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white transition-transform"
+                    :class="open && 'rotate-180'"
+                    fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                </svg>
+            </div>
+            <div x-show="open" class="bg-white border-t border-gray-100 px-4 py-2 flex flex-col gap-1">
+                <div class="text-xs text-gray-400 flex items-center gap-1">
+                    <span class="shrink-0">作成者：</span>
+                    <img src="{{ asset('storage/profile_images/'.$whiteboard->createdBy->profile_image_file_name) }}"
+                        class="w-4 h-4 rounded-full object-cover">
+                    <span class="text-gray-500">{{ $whiteboard->createdBy->user_name }}</span>
+                </div>
+                <div class="text-xs flex items-center gap-1 flex-wrap">
+                    <span class="text-gray-400 shrink-0">参加者（{{ $whiteboard->users->count() }}人）：</span>
+                    @foreach($whiteboard->users as $u)
+                        <div class="flex items-center gap-1 px-1 py-0 rounded-md hover:bg-gray-100" title="{{ $u->user_name }}">
+                            <img src="{{ asset('storage/profile_images/'.$u->profile_image_file_name) }}"
+                                class="w-4 h-4 rounded-full object-cover"
+                                alt="{{ $u->user_name }}">
+                            <span class="text-xs text-gray-500">{{ $u->user_name }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </div>
         {{-- ツールバー --}}
-        <div class="flex items-center gap-1.5 p-2 mb-4 bg-white border border-gray-200 rounded-xl">
+        <div class="flex items-center gap-1.5 p-2 mb-2 bg-white border border-gray-200 rounded-xl">
 
             {{-- 一覧に戻る --}}
             <a href="{{ route('whiteboard.index') }}"
@@ -90,12 +122,12 @@
         </div>
 
         {{-- ボードエリア --}}
-        <div class="flex gap-3">
+        <div class="flex gap-3 flex-1 min-h-0">
 
             {{-- ホワイトボード --}}
             <div id="board"
                 class="relative flex-1 rounded-xl border border-gray-300"
-                style="background:#f7f6f0; overflow:auto; cursor:default; height:{{ config('whiteboard.board_height') }}"
+                style="background:#f7f6f0; overflow:auto; cursor:default; height:100%;"
                 data-whiteboard-id="{{ $whiteboard->whiteboard_id }}"
                 data-canvas-w="{{ $whiteboard->canvas_w }}"
                 data-canvas-h="{{ $whiteboard->canvas_h }}">
@@ -109,12 +141,6 @@
                         background-image: radial-gradient(circle, #c8c6be 1px, transparent 1px);
                         background-size: 24px 24px;
                     ">
-
-                    {{-- ボードタイトル --}}
-                    <p class="absolute top-2 left-3 text-xs text-gray-400 uppercase tracking-wide pointer-events-none select-none">
-                        {{ $whiteboard->title }}
-                    </p>
-
                     {{-- ゾーン --}}
                     @foreach($zoneItems as $i => $zone)
                         @php

@@ -4,7 +4,7 @@
     "name": "chartjs-plugin-datalabels.esm"
   },
   "resources/css/app.css": {
-    "file": "assets/app-CAxL_McL.css",
+    "file": "assets/app-Ctm5wpii.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -18,7 +18,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-ySsdpchF.js",
+    "file": "assets/app-aCkrBJv9.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
@@ -156,13 +156,13 @@
     "isEntry": true
   },
   "resources/js/whiteboard/board/board.js": {
-    "file": "assets/board-B4OB5vNJ.js",
+    "file": "assets/board-DTVNl0Gt.js",
     "name": "board",
     "src": "resources/js/whiteboard/board/board.js",
     "isEntry": true
   },
   "resources/js/whiteboard/whiteboard/whiteboard.js": {
-    "file": "assets/whiteboard-EBBj0vND.js",
+    "file": "assets/whiteboard-5kaqgjsu.js",
     "name": "whiteboard",
     "src": "resources/js/whiteboard/whiteboard/whiteboard.js",
     "isEntry": true
