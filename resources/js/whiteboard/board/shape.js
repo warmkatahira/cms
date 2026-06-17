@@ -77,7 +77,7 @@ export function createShapeEl(item) {
             text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
         <div class="shape-rotate-handle" style="display:none;position:absolute;top:-7px;right:35px;
             width:14px;height:14px;border-radius:50%;background:#374151;
-            cursor:grab;z-index:10;user-select:none;">↻</div>
+            cursor:pointer;z-index:10;user-select:none;">↻</div>
     `;
     return el;
 }

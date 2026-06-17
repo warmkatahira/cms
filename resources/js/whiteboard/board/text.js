@@ -181,8 +181,12 @@ function startTextEdit(el) {
                 background:white;border:1px solid #d1d5db;border-radius:6px;
                 padding:4px;box-shadow:0 2px 6px rgba(0,0,0,0.15);z-index:30;">
                 <div style="display:flex;flex-wrap:wrap;gap:3px;width:${10 * 23}px;">
-                    ${PALETTE.map(c => `
-                        <div class="tb-bg-chip" data-color="${c}" style="
+                    <div class="tb-bg-chip" data-color="transparent" style="
+                            width:20px;height:20px;border-radius:4px;cursor:pointer;
+                            background:white;border:1.5px solid #d1d5db;position:relative;overflow:hidden;
+                        "><div style="position:absolute;top:50%;left:-2px;width:28px;height:1.5px;background:#ef4444;transform:rotate(-45deg);"></div></div>
+                        ${PALETTE.map(c => `
+                            <div class="tb-bg-chip" data-color="${c}" style="
                             width:20px;height:20px;border-radius:4px;cursor:pointer;
                             background:${c};border:1.5px solid ${c === '#ffffff' ? '#d1d5db' : c};
                         "></div>
