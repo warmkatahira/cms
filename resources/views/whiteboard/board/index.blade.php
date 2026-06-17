@@ -123,24 +123,41 @@
 
         {{-- ボードエリア --}}
         <div class="flex gap-3 flex-1 min-h-0">
-
-            {{-- ホワイトボード --}}
+        <div class="relative flex-1 rounded-xl border border-gray-300 overflow-hidden" style="height:100%;">
+            {{-- ルーラー左上の角 --}}
+            <div style="position:absolute;top:0;left:0;width:24px;height:20px;background:#eae9e3;border-bottom:1px solid #d1d5db;border-right:1px solid #d1d5db;z-index:3;"></div>
+            {{-- ルーラー上 --}}
+            <div id="ruler-top" style="position:absolute;top:0;left:24px;right:0;height:20px;background:#eae9e3;border-bottom:1px solid #d1d5db;z-index:2;overflow:hidden;">
+                <div id="ruler-top-inner" style="position:relative;height:100%;"></div>
+            </div>
+            {{-- ルーラー左 --}}
+            <div id="ruler-left" style="position:absolute;top:20px;left:0;bottom:0;width:24px;background:#eae9e3;border-right:1px solid #d1d5db;z-index:2;overflow:hidden;">
+                <div id="ruler-left-inner" style="position:relative;width:100%;"></div>
+            </div>
+            {{-- ボード本体 --}}
             <div id="board"
-                class="relative flex-1 rounded-xl border border-gray-300"
-                style="background:#f7f6f0; overflow:auto; cursor:default; height:100%;"
+                class="relative"
+                style="position:absolute;top:20px;left:24px;right:0;bottom:0;background:#f7f6f0;overflow:auto;cursor:default;"
                 data-whiteboard-id="{{ $whiteboard->whiteboard_id }}"
                 data-canvas-w="{{ $whiteboard->canvas_w }}"
                 data-canvas-h="{{ $whiteboard->canvas_h }}">
-
-                {{-- 仮想キャンバス --}}
                 <div id="board-canvas"
                     style="
                         position:relative;
                         width:{{ $whiteboard->canvas_w }}px;
                         height:{{ $whiteboard->canvas_h }}px;
-                        background-image: radial-gradient(circle, #c8c6be 1px, transparent 1px);
-                        background-size: 24px 24px;
+                        background-image:
+                            linear-gradient(to right, rgba(200,198,190,0.3) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(200,198,190,0.3) 1px, transparent 1px);
+                        background-size: 120px 120px;
                     ">
+                    {{-- 細かいグリッド線（24px刻み） --}}
+                    <div style="position:absolute;inset:0;pointer-events:none;
+                        background-image:
+                            linear-gradient(to right, rgba(200,198,190,0.12) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(200,198,190,0.12) 1px, transparent 1px);
+                        background-size: 24px 24px;
+                    "></div>
                     {{-- ゾーン --}}
                     @foreach($zoneItems as $i => $zone)
                         @php

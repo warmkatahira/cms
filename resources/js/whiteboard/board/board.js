@@ -1,4 +1,4 @@
-import { board, WHITEBOARD_ID, CSRF } from './constants.js';
+import { board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H } from './constants.js';
 import {
     initMagnet, addStaff,
     handleStaffAdded, handleStaffDeleted, handleStaffUpdated, handleItemUpdatedStaff,
@@ -112,6 +112,55 @@ window.Echo.channel('whiteboard.' + WHITEBOARD_ID)
             case 'image.deleted': handleImageDeleted(e.payload); break;
         }
     });
+
+// ルーラー生成
+const RULER_STEP = 24;
+const RULER_MAJOR = 120;
+
+const rulerTopInner  = document.getElementById('ruler-top-inner');
+const rulerLeftInner = document.getElementById('ruler-left-inner');
+
+if (rulerTopInner && rulerLeftInner) {
+    // 上ルーラー
+    for (let i = 0; i <= CANVAS_W; i += RULER_STEP) {
+        const isMajor = i % RULER_MAJOR === 0;
+        const tick = document.createElement('div');
+        tick.style.cssText = `position:absolute;left:${i}px;bottom:0;width:1px;
+            height:${isMajor ? 6 : 3}px;background:${isMajor ? '#9ca3af' : '#c8c6be'};`;
+        rulerTopInner.appendChild(tick);
+
+        if (isMajor) {
+            const label = document.createElement('div');
+            label.style.cssText = `position:absolute;left:${i + 2}px;top:3px;
+                font-size:9px;color:#9ca3af;`;
+            label.textContent = i;
+            rulerTopInner.appendChild(label);
+        }
+    }
+
+    // 左ルーラー
+    for (let j = 0; j <= CANVAS_H; j += RULER_STEP) {
+        const isMajor = j % RULER_MAJOR === 0;
+        const tick = document.createElement('div');
+        tick.style.cssText = `position:absolute;top:${j}px;right:0;height:1px;
+            width:${isMajor ? 6 : 3}px;background:${isMajor ? '#9ca3af' : '#c8c6be'};`;
+        rulerLeftInner.appendChild(tick);
+
+        if (isMajor) {
+            const label = document.createElement('div');
+            label.style.cssText = `position:absolute;top:${j + 2}px;left:1px;
+                font-size:9px;color:#9ca3af;`;
+            label.textContent = j;
+            rulerLeftInner.appendChild(label);
+        }
+    }
+
+    // スクロール同期
+    board.addEventListener('scroll', () => {
+        rulerTopInner.style.transform  = `translateX(-${board.scrollLeft}px)`;
+        rulerLeftInner.style.transform = `translateY(-${board.scrollTop}px)`;
+    });
+}
 
 function clearBoard() {
     if (!confirm('ボード上の全ての要素を削除しますか？\nこの操作は元に戻せません。')) return;
