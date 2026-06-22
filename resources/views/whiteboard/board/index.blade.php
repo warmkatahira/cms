@@ -33,7 +33,7 @@
             </div>
         </div>
         {{-- ツールバー --}}
-        <div class="flex items-center gap-1.5 p-2 mb-2 bg-white border border-gray-200 rounded-xl">
+        <div id="wb-toolbar" class="flex items-center gap-1.5 p-2 mb-2 bg-white border border-gray-200 rounded-xl" style="display:none;">
 
             {{-- 一覧に戻る --}}
             <a href="{{ route('whiteboard.index') }}" data-tippy-content="一覧へ戻る"

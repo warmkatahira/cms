@@ -179,3 +179,10 @@ function clearBoard() {
         document.querySelectorAll('.image-box').forEach(el => el.remove());
     });
 }
+
+// ツールバーちらつき防止のため、ローディングが終わってから5ms後に表示
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('wb-toolbar').style.display = 'flex';
+    }, 505);
+});
