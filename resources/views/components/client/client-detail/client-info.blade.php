@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm flex-1 min-w-0">
+<div class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm w-1/2 flex-1 min-w-0">
     {{-- ヘッダー：ロゴ＋会社名＋ステータス --}}
     <div class="flex items-center gap-4 mb-[18px]">
         <img class="image_fade_in_modal_open w-16 h-16 rounded-lg object-contain bg-gray-50 border border-gray-100"

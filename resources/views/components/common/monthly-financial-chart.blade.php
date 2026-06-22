@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl border border-gray-200 shadow-sm w-7/12 min-w-0">
+<div class="bg-white rounded-2xl border border-gray-200 shadow-sm w-1/2 min-w-0">
     <button id="toggle_monthly_chart" class="w-full flex items-center justify-between p-6 text-left">
         <p id="label_chart_title" class="text-sm font-semibold text-gray-600">月次収支グラフ</p>
         <i id="toggle_monthly_chart_icon" class="las la-angle-down text-gray-400 transition-transform"></i>

@@ -1,4 +1,4 @@
-<div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm flex-1 min-w-0">
+<div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm w-1/2 flex-1 min-w-0">
     <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
             <p id="label_summary_title" class="text-sm font-semibold text-gray-600">収支サマリー</p>
