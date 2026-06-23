@@ -29,10 +29,12 @@
                                 {{ $wb->title }}
                         </p>
                     </div>
-                    <button onclick="event.stopPropagation(); deleteWhiteboard({{ $wb->whiteboard_id }})"
-                            class="text-xs text-red-400 hover:text-red-600 shrink-0 px-1">
-                        削除
-                    </button>
+                    @if($wb->created_by === auth()->user()->user_no)
+                        <button onclick="event.stopPropagation(); deleteWhiteboard({{ $wb->whiteboard_id }})"
+                                class="text-xs text-red-400 hover:text-red-600 shrink-0 px-1">
+                            削除
+                        </button>
+                    @endif
                 </div>
 
                 {{-- メタ情報 --}}
@@ -68,49 +70,67 @@
     </div>
 
     {{-- 作成モーダル --}}
-    <div id="create-modal" style="display:none;position:fixed;inset:0;z-index:99999;
-         background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
-        <div style="background:white;border-radius:12px;padding:24px;width:400px;">
-            <p style="font-size:15px;font-weight:500;margin-bottom:16px;">ホワイトボードを作成</p>
+    <div id="create-modal" class="hidden fixed inset-0 z-[99999] bg-black/40 items-center justify-center">
+        <div class="bg-white rounded-2xl p-6 w-[400px]" style="animation:modalIn .15s ease;">
 
-            <div style="margin-bottom:12px;">
-                <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px;">名前</label>
-                <input id="wb-title" type="text" autocomplete="off"
-                       style="width:100%;font-size:14px;border:1px solid #d1d5db;border-radius:6px;padding:6px 10px;">
-            </div>
-
-            <div style="margin-bottom:20px;">
-                <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:4px;">参加ユーザー</label>
-                <div style="max-height:200px;overflow-y:auto;border:1px solid #d1d5db;border-radius:6px;padding:8px;">
-                    @foreach($users as $user)
-                    <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer;">
-                        <input type="checkbox" name="user_nos[]" value="{{ $user->user_no }}"
-                               {{ $user->user_no == auth()->user()->user_no ? 'checked disabled' : '' }}>
-                        @if($user->profile_image_file_name)
-                            <img src="{{ asset('storage/profile_images/'.$user->profile_image_file_name) }}"
-                                 class="w-6 h-6 rounded-full object-cover">
-                        @else
-                            <div style="width:24px;height:24px;border-radius:50%;background:#E6F1FB;
-                                        display:flex;align-items:center;justify-content:center;
-                                        font-size:10px;font-weight:500;color:#185FA5;flex-shrink:0;">
-                                {{ mb_substr($user->user_name, 0, 1) }}
-                            </div>
-                        @endif
-                        {{ $user->user_name }}
-                    </label>
-                    @endforeach
-                </div>
-            </div>
-
-            <div style="display:flex;justify-content:flex-end;gap:8px;">
+            {{-- ヘッダー --}}
+            <div class="flex items-center justify-between mb-5">
+                <p class="text-[15px] font-medium text-gray-800">ホワイトボードを作成</p>
                 <button onclick="closeCreateModal()"
-                        style="font-size:13px;padding:6px 16px;border:1px solid #d1d5db;
-                               border-radius:6px;cursor:pointer;background:white;">
+                        class="w-7 h-7 rounded-md border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50">
+                    <i class="ti ti-x text-sm" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            {{-- 名前 --}}
+            <label class="text-xs text-gray-500 block mb-1">名前</label>
+            <input id="wb-title" type="text" autocomplete="off"
+                   class="w-full h-9 text-sm border border-gray-200 rounded-lg px-3 mb-4 focus:outline-none focus:border-gray-400">
+
+            {{-- 参加ユーザーラベル＋バッジ --}}
+            <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs text-gray-500">参加ユーザー</label>
+                <span id="create-selected-count"
+                      class="text-[11px] font-medium bg-gray-700 text-white rounded-full px-2 py-0.5">0人</span>
+            </div>
+
+            {{-- 検索 --}}
+            <div class="relative mb-2">
+                <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
+                <input id="create-user-search" type="text" placeholder="名前で絞り込み..." autocomplete="off"
+                       class="w-full h-[34px] border border-gray-200 rounded-lg pl-8 pr-3 text-sm focus:outline-none focus:border-gray-400">
+            </div>
+
+            {{-- ユーザーリスト --}}
+            <div id="create-user-list" class="max-h-60 overflow-y-auto rounded-lg border border-gray-100 p-1">
+                @foreach($users as $user)
+                <label class="user-item flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer hover:bg-gray-50"
+                       data-name="{{ $user->user_name }}">
+                    <input type="checkbox" name="user_nos[]" value="{{ $user->user_no }}"
+                           class="hidden"
+                           {{ $user->user_no == auth()->user()->user_no ? 'checked disabled' : '' }}>
+                    @if($user->profile_image_file_name)
+                        <img src="{{ asset('storage/profile_images/'.$user->profile_image_file_name) }}"
+                             class="w-7 h-7 rounded-full object-cover shrink-0">
+                    @else
+                        <div class="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0 text-[11px] font-medium text-blue-700">
+                            {{ mb_substr($user->user_name, 0, 1) }}
+                        </div>
+                    @endif
+                    <span class="text-sm text-gray-700 flex-1">{{ $user->user_name }}</span>
+                    <span class="check-icon w-4 h-4 rounded border border-gray-300 flex items-center justify-center shrink-0"></span>
+                </label>
+                @endforeach
+            </div>
+
+            {{-- フッター --}}
+            <div class="flex justify-end gap-2 mt-5">
+                <button onclick="closeCreateModal()"
+                        class="text-sm px-4 py-1.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">
                     キャンセル
                 </button>
                 <button onclick="submitCreate()"
-                        style="font-size:13px;padding:6px 16px;border:none;
-                               border-radius:6px;cursor:pointer;background:#374151;color:white;">
+                        class="text-sm px-4 py-1.5 bg-gray-700 text-white rounded-lg hover:bg-gray-800">
                     作成
                 </button>
             </div>
@@ -118,47 +138,74 @@
     </div>
 
     {{-- 参加者編集モーダル --}}
-    <div id="edit-users-modal" style="display:none;position:fixed;inset:0;z-index:99999;
-        background:rgba(0,0,0,0.4);align-items:center;justify-content:center;">
-        <div style="background:white;border-radius:12px;padding:24px;width:400px;">
-            <p style="font-size:15px;font-weight:500;margin-bottom:16px;">参加者を編集</p>
+    <div id="edit-users-modal" class="hidden fixed inset-0 z-[99999] bg-black/40 items-center justify-center">
+        <div class="bg-white rounded-2xl p-6 w-[400px]" style="animation:modalIn .15s ease;">
 
-            <div style="margin-bottom:20px;">
-                <div style="max-height:200px;overflow-y:auto;border:1px solid #d1d5db;border-radius:6px;padding:8px;">
-                    @foreach($users as $user)
-                    <label style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;cursor:pointer;">
-                        <input type="checkbox" name="edit_user_nos[]" value="{{ $user->user_no }}"
-                            id="edit_user_{{ $user->user_no }}">
-                        @if($user->profile_image_file_name)
-                            <img src="{{ asset('storage/profile_images/'.$user->profile_image_file_name) }}"
-                                class="w-6 h-6 rounded-full object-cover">
-                        @else
-                            <div style="width:24px;height:24px;border-radius:50%;background:#E6F1FB;
-                                        display:flex;align-items:center;justify-content:center;
-                                        font-size:10px;font-weight:500;color:#185FA5;flex-shrink:0;">
-                                {{ mb_substr($user->user_name, 0, 1) }}
-                            </div>
-                        @endif
-                        {{ $user->user_name }}
-                    </label>
-                    @endforeach
-                </div>
+            {{-- ヘッダー --}}
+            <div class="flex items-center justify-between mb-5">
+                <p class="text-[15px] font-medium text-gray-800">参加者を編集</p>
+                <button onclick="closeEditUsers()"
+                        class="w-7 h-7 rounded-md border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-gray-50">
+                    <i class="ti ti-x text-sm" aria-hidden="true"></i>
+                </button>
             </div>
 
-            <div style="display:flex;justify-content:flex-end;gap:8px;">
+            {{-- 参加ユーザーラベル＋バッジ --}}
+            <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs text-gray-500">参加ユーザー</label>
+                <span id="edit-selected-count"
+                      class="text-[11px] font-medium bg-gray-700 text-white rounded-full px-2 py-0.5">0人</span>
+            </div>
+
+            {{-- 検索 --}}
+            <div class="relative mb-2">
+                <i class="ti ti-search absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm" aria-hidden="true"></i>
+                <input id="edit-user-search" type="text" placeholder="名前で絞り込み..." autocomplete="off"
+                       class="w-full h-[34px] border border-gray-200 rounded-lg pl-8 pr-3 text-sm focus:outline-none focus:border-gray-400">
+            </div>
+
+            {{-- ユーザーリスト --}}
+            <div id="edit-user-list" class="max-h-60 overflow-y-auto rounded-lg border border-gray-100 p-1">
+                @foreach($users as $user)
+                <label class="user-item flex items-center gap-2.5 px-2 py-1.5 rounded-md cursor-pointer hover:bg-gray-50"
+                       data-name="{{ $user->user_name }}">
+                    <input type="checkbox" name="edit_user_nos[]" value="{{ $user->user_no }}"
+                           id="edit_user_{{ $user->user_no }}" class="hidden">
+                    @if($user->profile_image_file_name)
+                        <img src="{{ asset('storage/profile_images/'.$user->profile_image_file_name) }}"
+                             class="w-7 h-7 rounded-full object-cover shrink-0">
+                    @else
+                        <div class="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center shrink-0 text-[11px] font-medium text-blue-700">
+                            {{ mb_substr($user->user_name, 0, 1) }}
+                        </div>
+                    @endif
+                    <span class="text-sm text-gray-700 flex-1">{{ $user->user_name }}</span>
+                    <span class="check-icon w-4 h-4 rounded border border-gray-300 flex items-center justify-center shrink-0"></span>
+                </label>
+                @endforeach
+            </div>
+
+            {{-- フッター --}}
+            <div class="flex justify-end gap-2 mt-5">
                 <button onclick="closeEditUsers()"
-                        style="font-size:13px;padding:6px 16px;border:1px solid #d1d5db;
-                            border-radius:6px;cursor:pointer;background:white;">
+                        class="text-sm px-4 py-1.5 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-50">
                     キャンセル
                 </button>
                 <button onclick="submitEditUsers()"
-                        style="font-size:13px;padding:6px 16px;border:none;
-                            border-radius:6px;cursor:pointer;background:#374151;color:white;">
+                        class="text-sm px-4 py-1.5 bg-gray-700 text-white rounded-lg hover:bg-gray-800">
                     保存
                 </button>
             </div>
         </div>
     </div>
+
+    {{-- フェードインアニメーション --}}
+    <style>
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(6px) scale(0.98); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+    </style>
 </x-app-layout>
 @vite([
     'resources/js/whiteboard/whiteboard/whiteboard.js',

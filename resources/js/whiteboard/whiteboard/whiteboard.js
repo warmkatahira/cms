@@ -1,7 +1,95 @@
 const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 
+// チェックUIの更新
+function updateCheckUI(label) {
+    const cb      = label.querySelector('input[type="checkbox"]');
+    const icon    = label.querySelector('.check-icon');
+    const checked = cb.checked;
+
+    if (checked) {
+        icon.style.background  = '#374151';
+        icon.style.borderColor = '#374151';
+        icon.innerHTML         = '<svg width="9" height="7" viewBox="0 0 9 7" fill="none"><polyline points="1,3.5 3.5,6 8,1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        label.style.background = 'var(--color-background-secondary)';
+    } else {
+        icon.style.background  = 'transparent';
+        icon.style.borderColor = 'var(--color-border-secondary)';
+        icon.innerHTML         = '';
+        label.style.background = 'transparent';
+    }
+}
+
+// ユーザーリスト初期化（検索・ソート・カウント）
+function initUserSearch(searchId, listId, countId) {
+    const search = document.getElementById(searchId);
+    const list   = document.getElementById(listId);
+    const count  = document.getElementById(countId);
+
+    // 初期チェックUI反映
+    list.querySelectorAll('.user-item').forEach(label => updateCheckUI(label));
+
+    function updateCount() {
+        const n = list.querySelectorAll('input[type="checkbox"]:checked').length;
+        count.textContent = n + '人';
+    }
+
+    function sortAndFilter() {
+        const q     = search.value.trim().toLowerCase();
+        const items = [...list.querySelectorAll('.user-item')];
+
+        // 絞り込み
+        items.forEach(item => {
+            item.style.display = item.dataset.name.toLowerCase().includes(q) ? '' : 'none';
+        });
+    }
+
+    // ラベルクリックでチェック切り替え
+    list.querySelectorAll('.user-item').forEach(label => {
+        label.addEventListener('click', e => {
+            e.preventDefault();
+            const cb = label.querySelector('input[type="checkbox"]');
+            if (cb.disabled) return;
+            cb.checked = !cb.checked;
+            updateCheckUI(label);
+            updateCount();
+            sortAndFilter();
+        });
+    });
+
+    search.addEventListener('input', sortAndFilter);
+    updateCount();
+
+    return {
+        reset() {
+            search.value = '';
+            sortAndFilter();
+            updateCount();
+        },
+        syncChecked(userNos, disabledNo = null) {
+            list.querySelectorAll('.user-item').forEach(label => {
+                const cb    = label.querySelector('input[type="checkbox"]');
+                cb.checked  = userNos.includes(parseInt(cb.value));
+                cb.disabled = disabledNo !== null && parseInt(cb.value) === disabledNo;
+                updateCheckUI(label);
+            });
+            updateCount();
+            sortAndFilter();
+        }
+    };
+}
+
+// モーダル管理
+let createSearch        = null;
+let editSearch          = null;
+let editingWhiteboardId = null;
+
 function openCreateModal() {
     document.getElementById('create-modal').style.display = 'flex';
+    if (!createSearch) {
+        createSearch = initUserSearch('create-user-search', 'create-user-list', 'create-selected-count');
+    }
+    createSearch.reset();
+    document.getElementById('wb-title').focus();
 }
 
 function closeCreateModal() {
@@ -45,7 +133,7 @@ function startEditTitle(el) {
     input.value = title;
     input.style.cssText = 'font-size:14px;font-weight:500;border:1px solid #d1d5db;border-radius:6px;padding:2px 6px;width:100%;';
 
-    // ← 追加：inputのクリックがカードに伝播しないようにする
+    // inputのクリックがカードに伝播しないようにする
     input.addEventListener('click',     e => e.stopPropagation());
     input.addEventListener('mousedown', e => e.stopPropagation());
 
@@ -56,11 +144,9 @@ function startEditTitle(el) {
     function save() {
         const newTitle = input.value.trim();
 
-        // ← 追加：50文字チェック
+        // 50文字チェック
         if (newTitle.length > 50) {
             input.style.borderColor = '#ef4444';
-            input.title = '50文字以内で入力してください';
-            // エラーメッセージを表示
             let errEl = input.parentNode.querySelector('.title-error');
             if (!errEl) {
                 errEl = document.createElement('p');
@@ -104,7 +190,7 @@ function startEditTitle(el) {
         }
     });
 
-    // ← リアルタイムチェック
+    // リアルタイムチェック
     input.addEventListener('input', () => {
         const len = input.value.trim().length;
         if (len > 50) {
@@ -125,18 +211,13 @@ function startEditTitle(el) {
     });
 }
 
-// 参加者編集モーダル
-let editingWhiteboardId = null;
-
 function openEditUsers(whiteboardId, currentUserNos, createdBy) {
     editingWhiteboardId = whiteboardId;
-
-    document.querySelectorAll('input[name="edit_user_nos[]"]').forEach(cb => {
-        cb.checked   = currentUserNos.includes(parseInt(cb.value));
-        cb.disabled  = parseInt(cb.value) === createdBy; // 作成者は変更不可
-    });
-
     document.getElementById('edit-users-modal').style.display = 'flex';
+    if (!editSearch) {
+        editSearch = initUserSearch('edit-user-search', 'edit-user-list', 'edit-selected-count');
+    }
+    editSearch.syncChecked(currentUserNos, createdBy);
 }
 
 function closeEditUsers() {

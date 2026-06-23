@@ -23,6 +23,7 @@ export default {
                     'sub'           : "#b5735c",
                     'body'          : "#ebe6e6",
                     'nav-active'    : "#d4a898",
+                    'modal'         : '#f0e8e2',
                 },
                 btn: {
                     'enter'         : "#3b82f6",
