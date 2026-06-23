@@ -150,10 +150,18 @@ function saveItem(staffId, posX, posY) {
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
             whiteboard_id: WHITEBOARD_ID,
+            item_type:     'staff',
             item_id:       parseInt(staffId),
             pos_x:         posX,
             pos_y:         posY,
-            meta:          meta,
+            meta: {
+                staff_name: el?.dataset.name ?? '',
+                role_name:  el?.dataset.role ?? '',
+                color:      parseInt(el?.dataset.color ?? 0),
+                shape:      el?.dataset.shape ?? 'rect',
+                width:      chip ? chip.offsetWidth  : 90,
+                height:     chip ? chip.offsetHeight : 40,
+            },
         }),
     });
 }
@@ -208,10 +216,18 @@ function endChipResize() {
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
         body: JSON.stringify({
             whiteboard_id: WHITEBOARD_ID,
+            item_type:     'staff',
             item_id:       parseInt(staffId),
             pos_x:         parseFloat(resizingChip.style.left) || 0,
             pos_y:         parseFloat(resizingChip.style.top)  || 0,
-            meta: { width: chip ? chip.offsetWidth : 90, height: chip ? chip.offsetHeight : 40 },
+            meta: {
+                staff_name: resizingChip.dataset.name ?? '',
+                role_name:  resizingChip.dataset.role ?? '',
+                color:      parseInt(resizingChip.dataset.color ?? 0),
+                shape:      resizingChip.dataset.shape ?? 'rect',
+                width:      chip ? chip.offsetWidth  : 90,
+                height:     chip ? chip.offsetHeight : 40,
+            },
         }),
     });
 
@@ -414,17 +430,30 @@ document.getElementById('edit-save').addEventListener('click', () => {
     const name = document.getElementById('edit-name').value.trim();
     const role = document.getElementById('edit-role').value.trim();
     if (!name) return;
-
-    fetch('/board/staff/' + activeStaffId, {
-        method: 'PATCH',
+    const wrap = activeMagnetEl.querySelector('.staff-chip-wrap');
+    const chip = wrap.querySelector('div');
+    fetch('/board/item', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-        body: JSON.stringify({ staff_name: name, role_name: role, color: selectedColor, shape: selectedShape }),
+        body: JSON.stringify({
+            whiteboard_id: WHITEBOARD_ID,
+            item_type:     'staff',
+            item_id:       parseInt(activeStaffId),
+            pos_x:         parseFloat(activeMagnetEl.style.left) || 0,
+            pos_y:         parseFloat(activeMagnetEl.style.top)  || 0,
+            meta: {
+                staff_name: name,
+                role_name:  role,
+                color:      selectedColor,
+                shape:      selectedShape,
+                width:      chip ? chip.offsetWidth  : 90,
+                height:     chip ? chip.offsetHeight : 40,
+            },
+        }),
     })
     .then(r => r.json())
     .then(() => {
         const c = COLORS[selectedColor];
-        const wrap = activeMagnetEl.querySelector('.staff-chip-wrap');
-        const chip = wrap.querySelector('div');
         const SHAPES = {
             rect:           'border-radius:8px;clip-path:none;',
             circle:         'border-radius:50%;clip-path:none;',
@@ -480,22 +509,21 @@ export function addStaff() {
     })
     .then(r => r.json())
     .then(data => {
-        const s  = data.staff;
-        const c  = COLORS[(s.color ?? 0) % COLORS.length];
+        const s  = data.item;
+        const c  = COLORS[(s.meta?.color ?? 0) % COLORS.length];
         const el = document.createElement('div');
         el.className     = 'magnet absolute cursor-grab select-none';
-        el.dataset.id    = s.staff_id;
-        el.dataset.color = s.color;
-        el.dataset.name  = s.staff_name;
-        el.dataset.role  = s.role_name ?? '';
-        el.dataset.size  = s.size ?? 'M';
-        el.dataset.shape = s.shape ?? 'rect';
+        el.dataset.id    = s.whiteboard_item_id;
+        el.dataset.color = s.meta?.color ?? 0;
+        el.dataset.name  = s.meta?.staff_name ?? '';
+        el.dataset.role  = s.meta?.role_name ?? '';
+        el.dataset.shape = s.meta?.shape ?? 'rect';
         el.style.left = '40px';
         el.style.top  = '40px';
-        el.innerHTML = staffChipHTML(s.staff_name, s.role_name ?? '', c);
+        el.innerHTML = staffChipHTML(s.meta?.staff_name ?? '', s.meta?.role_name ?? '', c);
         initMagnet(el);
         document.getElementById('board-canvas').appendChild(el);
-        saveItem(s.staff_id, 40, 40);
+        saveItem(s.whiteboard_item_id, 40, 40);
         document.getElementById('newName').value = '';
         document.getElementById('newRole').value = '';
     });
@@ -534,13 +562,13 @@ function copyStaff(el) {
     })
     .then(r => r.json())
     .then(data => {
-        const s    = data.staff;
+        const s    = data.item;
         const newEl = document.createElement('div');
         newEl.className  = 'magnet absolute cursor-grab select-none';
-        newEl.dataset.id    = s.staff_id;
-        newEl.dataset.color = s.color;
-        newEl.dataset.name  = s.staff_name;
-        newEl.dataset.role  = s.role_name ?? '';
+        newEl.dataset.id    = s.whiteboard_item_id;
+        newEl.dataset.color = s.meta?.color ?? 0;
+        newEl.dataset.name  = s.meta?.staff_name ?? '';
+        newEl.dataset.role  = s.meta?.role_name ?? '';
         newEl.dataset.size  = el.dataset.size ?? 'M';
         newEl.dataset.shape = el.dataset.shape ?? 'rect';
         newEl.innerHTML = el.innerHTML;
@@ -556,25 +584,25 @@ function copyStaff(el) {
         newEl.style.left = px + 'px';
         newEl.style.top  = py + 'px';
         document.getElementById('board-canvas').appendChild(newEl);
-        saveItem(s.staff_id, px, py);
+        saveItem(s.whiteboard_item_id, px, py);
     });
 }
 
 // リアルタイム受信
 export function handleStaffAdded(p) {
     setTimeout(() => {
-        if (document.querySelector(`.magnet[data-id="${p.staff_id}"]`)) return;
-        const c  = COLORS[(p.color ?? 0) % COLORS.length];
+        if (document.querySelector(`.magnet[data-id="${p.whiteboard_item_id}"]`)) return;
+        const c  = COLORS[(p.meta?.color ?? 0) % COLORS.length];
         const el = document.createElement('div');
         el.className     = 'magnet absolute cursor-grab select-none';
-        el.dataset.id    = p.staff_id;
-        el.dataset.color = p.color ?? 0;
-        el.dataset.name  = p.staff_name;
-        el.dataset.role  = p.role_name ?? '';
-        el.dataset.shape = p.shape ?? 'rect';
+        el.dataset.id    = p.whiteboard_item_id;
+        el.dataset.color = p.meta?.color ?? 0;
+        el.dataset.name  = p.meta?.staff_name ?? '';
+        el.dataset.role  = p.meta?.role_name ?? '';
+        el.dataset.shape = p.meta?.shape ?? 'rect';
         el.style.left = '40px';
         el.style.top  = '40px';
-        el.innerHTML = staffChipHTML(p.staff_name, p.role_name ?? '', c);
+        el.innerHTML = staffChipHTML(p.meta?.staff_name ?? '', p.meta?.role_name ?? '', c);
         initMagnet(el);
         document.getElementById('board-canvas').appendChild(el);
     }, 100);
@@ -585,39 +613,6 @@ export function handleStaffDeleted(p) {
     if (el) el.remove();
 }
 
-export function handleStaffUpdated(p) {
-    const el = document.querySelector(`.magnet[data-id="${p.staff_id}"]`);
-    if (!el) return;
-    const c    = COLORS[(p.color ?? 0) % COLORS.length];
-    const wrap = el.querySelector('.staff-chip-wrap');
-    const chip = wrap?.querySelector('div');
-    if (!chip) return;
-
-    const currentW = chip.style.width  || chip.offsetWidth  + 'px';
-    const currentH = chip.style.height || chip.offsetHeight + 'px';
-    const SHAPES = {
-        rect:           'border-radius:8px;',
-        circle:         'border-radius:50%;',
-        sharp:          'border-radius:0;',
-        rounded_bottom: 'border-radius:0 0 50% 50%;',
-        tab:            'border-radius:0 0 8px 8px;',
-    };
-    chip.style.cssText = `
-        background:${c.bg};border:2px solid ${c.border};
-        width:${currentW};height:${currentH};
-        padding:6px;text-align:center;
-        ${SHAPES[p.shape] ?? SHAPES['rect']}
-    `;
-    el.dataset.name  = p.staff_name;
-    el.dataset.role  = p.role_name ?? '';
-    el.dataset.color = p.color ?? 0;
-    el.dataset.shape = p.shape ?? 'rect';
-    const nameEl = wrap.querySelector('[data-field="name"]');
-    const roleEl = wrap.querySelector('[data-field="role"]');
-    if (nameEl) { nameEl.textContent = p.staff_name; nameEl.style.color = c.text; }
-    if (roleEl) { roleEl.textContent = p.role_name ?? ''; roleEl.style.color = c.text; }
-}
-
 export function handleItemUpdatedStaff(p) {
     const el = document.querySelector(`.magnet[data-id="${p.itemId}"]`);
     if (!el) return;
@@ -626,5 +621,35 @@ export function handleItemUpdatedStaff(p) {
     el.style.top      = p.posY + 'px';
     if (p.meta?.width)  el.querySelector('.staff-chip-wrap > div').style.width  = p.meta.width  + 'px';
     if (p.meta?.height) el.querySelector('.staff-chip-wrap > div').style.height = p.meta.height + 'px';
+    // 名前・色・形の更新
+    if (p.meta?.staff_name || p.meta?.color !== undefined || p.meta?.shape) {
+        const c    = COLORS[(p.meta.color ?? 0) % COLORS.length];
+        const wrap = el.querySelector('.staff-chip-wrap');
+        const chip = wrap?.querySelector('div');
+        const SHAPES = {
+            rect:           'border-radius:8px;',
+            circle:         'border-radius:50%;',
+            sharp:          'border-radius:0;',
+            rounded_bottom: 'border-radius:0 0 50% 50%;',
+            tab:            'border-radius:0 0 8px 8px;',
+        };
+        if (chip) {
+            chip.style.cssText = `
+                background:${c.bg};border:2px solid ${c.border};
+                width:${chip.style.width || chip.offsetWidth + 'px'};
+                height:${chip.style.height || chip.offsetHeight + 'px'};
+                padding:6px;text-align:center;
+                ${SHAPES[p.meta.shape] ?? SHAPES['rect']}
+            `;
+        }
+        el.dataset.name  = p.meta.staff_name ?? '';
+        el.dataset.role  = p.meta.role_name  ?? '';
+        el.dataset.color = p.meta.color ?? 0;
+        el.dataset.shape = p.meta.shape ?? 'rect';
+        const nameEl = wrap?.querySelector('[data-field="name"]');
+        const roleEl = wrap?.querySelector('[data-field="role"]');
+        if (nameEl) { nameEl.textContent = p.meta.staff_name ?? ''; nameEl.style.color = c.text; }
+        if (roleEl) { roleEl.textContent = p.meta.role_name  ?? ''; roleEl.style.color = c.text; }
+    }
     document.getElementById('board-canvas').appendChild(el);
 }

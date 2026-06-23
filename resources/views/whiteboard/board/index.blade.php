@@ -354,27 +354,20 @@
                     @endforeach
 
                     {{-- ボード上の磁石（全スタッフ） --}}
-                    @foreach($staffList as $s)
+                    @foreach($staffItems as $s)
                         @php
-                            $item     = $staffItems[$s->staff_id] ?? null;
-                            $chipMeta = $item ? ($item->meta ?? []) : [];
-                            $chipW    = isset($chipMeta['width'])  ? $chipMeta['width']  . 'px' : null;
-                            $chipH    = isset($chipMeta['height']) ? $chipMeta['height'] . 'px' : null;
-                            $posX     = $item ? $item->pos_x : 40;
-                            $posY     = $item ? $item->pos_y : 40;
+                            $meta  = $s->meta ?? [];
+                            $chipW = isset($meta['width'])  ? $meta['width']  . 'px' : null;
+                            $chipH = isset($meta['height']) ? $meta['height'] . 'px' : null;
                         @endphp
                         <div class="magnet absolute cursor-grab select-none"
-                            data-id="{{ $s->staff_id }}"
-                            data-color="{{ $s->color }}"
-                            data-size="{{ $s->size ?? 'M' }}"
-                            data-shape="{{ $s->shape ?? 'rect' }}"
-                            data-name="{{ $s->staff_name }}"
-                            data-role="{{ $s->role_name }}"
-                            style="
-                                left:{{ $posX }}px;
-                                top:{{ $posY }}px;
-                            ">
-                            {!! staffChip($s->staff_name, $s->role_name, $s->color, $s->shape ?? 'rect', $chipW, $chipH) !!}
+                            data-id="{{ $s->whiteboard_item_id }}"
+                            data-color="{{ $meta['color'] ?? 0 }}"
+                            data-shape="{{ $meta['shape'] ?? 'rect' }}"
+                            data-name="{{ $meta['staff_name'] ?? '' }}"
+                            data-role="{{ $meta['role_name'] ?? '' }}"
+                            style="left:{{ $s->pos_x }}px;top:{{ $s->pos_y }}px;">
+                            {!! staffChip($meta['staff_name'] ?? '', $meta['role_name'] ?? '', $meta['color'] ?? 0, $meta['shape'] ?? 'rect', $chipW, $chipH) !!}
                         </div>
                     @endforeach
 

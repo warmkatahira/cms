@@ -32,8 +32,7 @@ Route::middleware('common')->group(function () {
     // スタッフ
     Route::controller(StaffController::class)->prefix('board')->name('board.')->group(function () {
         Route::post('staff', 'store')->name('store_staff');
-        Route::patch('staff/{staff}', 'update')->name('update_staff');
-        Route::delete('staff/{staff}', 'destroy')->name('delete_staff');
+        Route::delete('staff/{item}', 'destroy')->name('delete_staff');
     });
     // グループ
     Route::controller(ZoneController::class)->prefix('board')->name('board.')->group(function () {

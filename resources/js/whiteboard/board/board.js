@@ -1,7 +1,7 @@
 import { board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H } from './constants.js';
 import {
     initMagnet, addStaff,
-    handleStaffAdded, handleStaffDeleted, handleStaffUpdated, handleItemUpdatedStaff,
+    handleStaffAdded, handleStaffDeleted, handleItemUpdatedStaff,
 } from './staff.js';
 import {
     initZone, addZone,
@@ -101,7 +101,6 @@ window.Echo.channel('whiteboard.' + WHITEBOARD_ID)
                 break;
             case 'staff.added':   handleStaffAdded(e.payload);   break;
             case 'staff.deleted': handleStaffDeleted(e.payload); break;
-            case 'staff.updated': handleStaffUpdated(e.payload); break;
             case 'zone.added':    handleZoneAdded(e.payload);    break;
             case 'zone.deleted':  handleZoneDeleted(e.payload);  break;
             case 'text.added':    handleTextAdded(e.payload);    break;

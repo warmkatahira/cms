@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 // モデル
 use App\Models\Whiteboard;
 use App\Models\WhiteboardItem;
-use App\Models\Staff;
 // イベント
 use App\Events\WhiteboardUpdated;
 
@@ -32,14 +31,8 @@ class BoardController extends Controller
                         })
                         ->findOrFail($whiteboardId);
 
-        $staffList = Staff::where('whiteboard_id', $whiteboard->whiteboard_id)
-                        ->get();
-
-        // staff の座標
-        $staffItems = $whiteboard->items()
-                                ->where('item_type', 'staff')
-                                ->get()
-                                ->keyBy('item_id');
+        // スタッフの座標
+        $staffItems = $whiteboard->items()->where('item_type', 'staff')->get();
 
         // zone の座標
         $zoneItems = $whiteboard->items()
@@ -63,7 +56,7 @@ class BoardController extends Controller
                 ->get();
 
         return view('whiteboard.board.index', compact(
-            'whiteboard', 'staffList', 'staffItems', 'zoneItems', 'textItems', 'shapeItems', 'imageItems'
+            'whiteboard', 'staffItems', 'zoneItems', 'textItems', 'shapeItems', 'imageItems'
         ));
     }
 
