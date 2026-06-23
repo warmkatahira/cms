@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\WhiteboardItem;
 // イベント
 use App\Events\WhiteboardUpdated;
+// その他
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -59,7 +61,7 @@ class ImageController extends Controller
 
         if (!$otherExists && $src) {
             $disk = str_replace('/storage/', '', $src);
-            \Storage::disk('public')->delete($disk);
+            Storage::disk('public')->delete($disk);
         }
 
         broadcast(new WhiteboardUpdated(

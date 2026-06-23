@@ -9,6 +9,8 @@ use App\Models\Whiteboard;
 use App\Models\WhiteboardItem;
 // イベント
 use App\Events\WhiteboardUpdated;
+// その他
+use Illuminate\Support\Facades\Storage;
 
 class BoardController extends Controller
 {
@@ -75,10 +77,9 @@ class BoardController extends Controller
         foreach ($imageItems as $img) {
             $src = $img->meta['src'] ?? '';
             $disk = str_replace('/storage/', '', $src);
-            \Storage::disk('public')->delete($disk);
+            Storage::disk('public')->delete($disk);
         }
 
-        Staff::where('whiteboard_id', $whiteboardId)->delete();
         WhiteboardItem::where('whiteboard_id', $whiteboardId)->delete();
 
         return response()->json(['status' => 'ok']);
