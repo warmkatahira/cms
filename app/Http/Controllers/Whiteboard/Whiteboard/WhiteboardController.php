@@ -10,22 +10,21 @@ use App\Models\Whiteboard;
 
 class WhiteboardController extends Controller
 {
-    // 一覧
+    // ホワイトボード一覧
     public function index()
     {
         session(['page_header' => 'ホワイトボード']);
-
+        // 自分のユーザーNoを取得
         $userNo = auth()->user()->user_no;
-
+        // 自分が参加者になっているホワイトボードを取得
         $whiteboards = Whiteboard::whereHas('users', function ($q) use ($userNo) {
                                 $q->where('user_whiteboard.user_no', $userNo);
                             })
                             ->with(['users', 'createdBy'])
                             ->latest()
                             ->get();
-
+        // 有効なユーザーを取得
         $users = User::where('is_active', true)->ordered()->get();
-
         return view('whiteboard.whiteboard.index', compact('whiteboards', 'users'));
     }
 
