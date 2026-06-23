@@ -15,12 +15,10 @@ class WhiteboardItem extends Model
         'item_id',
         'pos_x',
         'pos_y',
-        'on_board',
         'meta',
     ];
     // キャスト
     protected $casts = [
-        'on_board' => 'boolean',
         'meta'     => 'array',
         'pos_x'    => 'float',
         'pos_y'    => 'float',

@@ -160,7 +160,6 @@ function saveImageItem(el, px, py) {
             whiteboard_id: WHITEBOARD_ID,
             item_type:     'image',
             item_id:       parseInt(el.dataset.imageId),
-            on_board:      true,
             pos_x:         px,
             pos_y:         py,
             meta: {
@@ -272,7 +271,6 @@ function copyImage(el) {
                 whiteboard_id: WHITEBOARD_ID,
                 item_type:     'image',
                 item_id:       parseInt(item.whiteboard_item_id),
-                on_board:      true,
                 pos_x:         item.pos_x,
                 pos_y:         item.pos_y,
                 meta:          item.meta,

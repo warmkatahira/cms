@@ -24,7 +24,7 @@ class Whiteboard extends Model
     }
     public function users()
     {
-        return $this->belongsToMany(User::class, 'whiteboard_users', 'whiteboard_id', 'user_no', 'whiteboard_id', 'user_no')
+        return $this->belongsToMany(User::class, 'user_whiteboard', 'whiteboard_id', 'user_no', 'whiteboard_id', 'user_no')
                     ->withTimestamps();
     }
     // リレーション追加
@@ -38,7 +38,7 @@ class Whiteboard extends Model
         $dates = collect([
             $this->updated_at,
             $this->items()->max('updated_at'),
-            \DB::table('whiteboard_users')->where('whiteboard_id', $this->whiteboard_id)->max('updated_at'),
+            \DB::table('user_whiteboard')->where('whiteboard_id', $this->whiteboard_id)->max('updated_at'),
         ])->filter()->map(fn($d) => CarbonImmutable::parse($d));
 
         $latest = $dates->max();

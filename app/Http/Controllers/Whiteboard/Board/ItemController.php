@@ -20,7 +20,6 @@ class ItemController extends Controller
             'item_id'       => 'required|integer',
             'pos_x'         => 'required|numeric',
             'pos_y'         => 'required|numeric',
-            'on_board'      => 'required|boolean',
             'meta'          => 'nullable|array',
         ]);
 
@@ -33,7 +32,6 @@ class ItemController extends Controller
             [
                 'pos_x'    => $validated['pos_x'],
                 'pos_y'    => $validated['pos_y'],
-                'on_board' => $validated['on_board'],
                 'meta'     => $validated['meta'] ?? null,
             ]
         );
@@ -46,7 +44,6 @@ class ItemController extends Controller
                 'itemId'   => $validated['item_id'],
                 'posX'     => $validated['pos_x'],
                 'posY'     => $validated['pos_y'],
-                'onBoard'  => $validated['on_board'],
                 'meta'     => $validated['meta'] ?? null,
             ],
         ));

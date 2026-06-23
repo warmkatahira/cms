@@ -26,7 +26,6 @@ class ImageController extends Controller
             'item_id'       => 0,
             'pos_x'         => 40,
             'pos_y'         => 40,
-            'on_board'      => true,
             'meta'          => [
                 'src'    => '/storage/' . $path,
                 'width'  => 200,
@@ -87,7 +86,6 @@ class ImageController extends Controller
             'item_id'       => 0,
             'pos_x'         => 40,
             'pos_y'         => 40,
-            'on_board'      => true,
             'meta'          => [
                 'src'    => $validated['src'],
                 'width'  => $validated['width'] ?? 200,

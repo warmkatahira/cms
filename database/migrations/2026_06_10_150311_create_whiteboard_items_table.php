@@ -15,14 +15,15 @@ return new class extends Migration
             $table->increments('whiteboard_item_id');
             $table->unsignedInteger('whiteboard_id');
             $table->string('item_type', 30)->default('staff');
-            $table->unsignedBigInteger('item_id')->nullable();
-            $table->decimal('pos_x', 8, 4)->default(0);
-            $table->decimal('pos_y', 8, 4)->default(0);
-            $table->boolean('on_board')->default(false);
+            $table->unsignedInteger('item_id')->nullable();
+            $table->integer('pos_x')->default(0);
+            $table->integer('pos_y')->default(0);
             $table->json('meta')->nullable();
             $table->timestamps();
             // 外部キー
             $table->foreign('whiteboard_id')->references('whiteboard_id')->on('whiteboards')->cascadeOnUpdate();
+            // ユニーク
+            $table->unique(['item_type', 'item_id'], 'whiteboard_items_type_id_unique');
         });
     }
 

@@ -310,7 +310,6 @@ function startTextEdit(el) {
                 whiteboard_id: WHITEBOARD_ID,
                 item_type:     'text',
                 item_id:       parseInt(el.dataset.textId),
-                on_board:      true,
                 pos_x:         parseFloat(el.style.left) || 0,
                 pos_y:         parseFloat(el.style.top)  || 0,
                 meta: {
@@ -437,7 +436,6 @@ function onTextUp(e) {
             whiteboard_id: WHITEBOARD_ID,
             item_type:     'text',
             item_id:       parseInt(textEl.dataset.textId),
-            on_board:      true,
             pos_x:         px,
             pos_y:         py,
             meta: {
@@ -493,7 +491,6 @@ function onTextResizeEnd() {
             whiteboard_id: WHITEBOARD_ID,
             item_type:     'text',
             item_id:       parseInt(resizingText.dataset.textId),
-            on_board:      true,
             pos_x:         parseFloat(resizingText.style.left) || 0,
             pos_y:         parseFloat(resizingText.style.top)  || 0,
             meta: {
@@ -567,7 +564,6 @@ function copyText(el) {
                 whiteboard_id: WHITEBOARD_ID,
                 item_type:     'text',
                 item_id:       parseInt(item.whiteboard_item_id),
-                on_board:      true,
                 pos_x:         item.pos_x,
                 pos_y:         item.pos_y,
                 meta:          item.meta,

@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('whiteboard_users', function (Blueprint $table) {
-            $table->increments('whiteboard_user_id');
-            $table->unsignedInteger('whiteboard_id');
+        Schema::create('user_whiteboard', function (Blueprint $table) {
             $table->unsignedInteger('user_no');
+            $table->unsignedInteger('whiteboard_id');
             $table->timestamps();
             // 外部キー
-            $table->foreign('whiteboard_id')->references('whiteboard_id')->on('whiteboards')->onDelete('cascade');
             $table->foreign('user_no')->references('user_no')->on('users')->onDelete('cascade');
-            // ユニーク
-            $table->unique(['whiteboard_id', 'user_no']);
+            $table->foreign('whiteboard_id')->references('whiteboard_id')->on('whiteboards')->onDelete('cascade');
+            // 複合主キー
+            $table->primary(['user_no', 'whiteboard_id']);
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('whiteboard_users');
+        Schema::dropIfExists('user_whiteboard');
     }
 };

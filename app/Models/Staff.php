@@ -16,6 +16,5 @@ class Staff extends Model
         'color',
         'size',
         'shape',
-        'is_active',
     ];
 }

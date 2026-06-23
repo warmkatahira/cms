@@ -146,7 +146,6 @@ function endZoneDrag(cx, cy) {
             whiteboard_id: WHITEBOARD_ID,
             item_type:     'zone',
             item_id:       parseInt(zoneId),
-            on_board:      true,
             pos_x:         px,
             pos_y:         py,
             meta: {
@@ -204,7 +203,6 @@ function endZoneResize() {
             whiteboard_id: WHITEBOARD_ID,
             item_type:     'zone',
             item_id:       parseInt(resizingZone.dataset.zoneId),
-            on_board:      true,
             pos_x:         parseFloat(resizingZone.style.left) || 0,
             pos_y:         parseFloat(resizingZone.style.top)  || 0,
             meta: {
@@ -302,7 +300,6 @@ document.getElementById('zone-edit-save').addEventListener('click', () => {
             whiteboard_id: WHITEBOARD_ID,
             item_type:     'zone',
             item_id:       parseInt(activeZoneEl.dataset.zoneId),
-            on_board:      true,
             pos_x:         parseFloat(activeZoneEl.style.left) || 0,
             pos_y:         parseFloat(activeZoneEl.style.top)  || 0,
             meta: {
@@ -440,7 +437,6 @@ function copyZone(el) {
                 whiteboard_id: WHITEBOARD_ID,
                 item_type:     'zone',
                 item_id:       parseInt(item.whiteboard_item_id),
-                on_board:      true,
                 pos_x:         px,
                 pos_y:         py,
                 meta:          item.meta,

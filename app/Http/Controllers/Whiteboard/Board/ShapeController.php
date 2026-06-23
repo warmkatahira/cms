@@ -24,7 +24,6 @@ class ShapeController extends Controller
             'item_id'       => 0,
             'pos_x'         => 40,
             'pos_y'         => 40,
-            'on_board'      => true,
             'meta' => [
                 'shape_type'   => $validated['shape_type'],
                 'fill_color'   => '#93c5fd',

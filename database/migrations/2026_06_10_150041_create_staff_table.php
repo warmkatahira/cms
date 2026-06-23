@@ -16,10 +16,9 @@ return new class extends Migration
             $table->unsignedInteger('whiteboard_id');
             $table->string('staff_name', 50);
             $table->string('role_name', 50)->nullable();
-            $table->unsignedtinyInteger('color')->default(0);
+            $table->unsignedTinyInteger('color')->default(0);
             $table->string('size', 3)->default('M');
             $table->string('shape', 15)->default('rect');
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
             // 外部キー
             $table->foreign('whiteboard_id')->references('whiteboard_id')->on('whiteboards')->cascadeOnUpdate();

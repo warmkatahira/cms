@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('whiteboards', function (Blueprint $table) {
             $table->increments('whiteboard_id');
             $table->string('title', 50);
-            $table->integer('canvas_w')->default(1200);
-            $table->integer('canvas_h')->default(800);
+            $table->unsignedInteger('canvas_w')->default(1200);
+            $table->unsignedInteger('canvas_h')->default(800);
             $table->unsignedInteger('created_by');
             $table->timestamps();
             // 外部キー

@@ -241,7 +241,6 @@ function saveShapeItem(el, px, py) {
             whiteboard_id: WHITEBOARD_ID,
             item_type:     'shape',
             item_id:       parseInt(el.dataset.shapeId),
-            on_board:      true,
             pos_x:         px,
             pos_y:         py,
             meta: {
@@ -497,7 +496,6 @@ function copyShape(el) {
                 whiteboard_id: WHITEBOARD_ID,
                 item_type:     'shape',
                 item_id:       parseInt(item.whiteboard_item_id),
-                on_board:      true,
                 pos_x:         px,
                 pos_y:         py,
                 meta:          item.meta,

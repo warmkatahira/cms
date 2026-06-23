@@ -125,26 +125,22 @@ function endDrag(cx, cy) {
 
     const boardRect = board.getBoundingClientRect();
     const staffId   = dragging.dataset.id;
-    const onBoard   = cx >= boardRect.left && cx <= boardRect.right
-                   && cy >= boardRect.top  && cy <= boardRect.bottom;
-
-    if (onBoard) {
-        let px = cx - boardRect.left + board.scrollLeft - offX;
-        let py = cy - boardRect.top  + board.scrollTop  - offY;
-        px = Math.max(0, Math.min(px, CANVAS_W - 80));
-        py = Math.max(0, Math.min(py, CANVAS_H - 50));
-        saveItem(staffId, true, px, py);
-        dragging.style.position = 'absolute';
-        dragging.style.left = px + 'px';
-        dragging.style.top  = py + 'px';
-        document.getElementById('board-canvas').appendChild(dragging);
-    }
+    
+    let px = cx - boardRect.left + board.scrollLeft - offX;
+    let py = cy - boardRect.top  + board.scrollTop  - offY;
+    px = Math.max(0, Math.min(px, CANVAS_W - 80));
+    py = Math.max(0, Math.min(py, CANVAS_H - 50));
+    saveItem(staffId, px, py);
+    dragging.style.position = 'absolute';
+    dragging.style.left = px + 'px';
+    dragging.style.top  = py + 'px';
+    document.getElementById('board-canvas').appendChild(dragging);
 
     dragging.style.opacity = '1';
     dragging = null;
 }
 
-function saveItem(staffId, onBoard, posX, posY) {
+function saveItem(staffId, posX, posY) {
     const el   = document.querySelector(`.magnet[data-id="${staffId}"]`);
     const chip = el ? el.querySelector('.staff-chip-wrap > div') : null;
     const meta = chip ? { width: chip.offsetWidth, height: chip.offsetHeight } : null;
@@ -155,7 +151,6 @@ function saveItem(staffId, onBoard, posX, posY) {
         body: JSON.stringify({
             whiteboard_id: WHITEBOARD_ID,
             item_id:       parseInt(staffId),
-            on_board:      onBoard,
             pos_x:         posX,
             pos_y:         posY,
             meta:          meta,
@@ -214,7 +209,6 @@ function endChipResize() {
         body: JSON.stringify({
             whiteboard_id: WHITEBOARD_ID,
             item_id:       parseInt(staffId),
-            on_board:      true,
             pos_x:         parseFloat(resizingChip.style.left) || 0,
             pos_y:         parseFloat(resizingChip.style.top)  || 0,
             meta: { width: chip ? chip.offsetWidth : 90, height: chip ? chip.offsetHeight : 40 },
@@ -501,7 +495,7 @@ export function addStaff() {
         el.innerHTML = staffChipHTML(s.staff_name, s.role_name ?? '', c);
         initMagnet(el);
         document.getElementById('board-canvas').appendChild(el);
-        saveItem(s.staff_id, true, 40, 40);
+        saveItem(s.staff_id, 40, 40);
         document.getElementById('newName').value = '';
         document.getElementById('newRole').value = '';
     });
@@ -562,7 +556,7 @@ function copyStaff(el) {
         newEl.style.left = px + 'px';
         newEl.style.top  = py + 'px';
         document.getElementById('board-canvas').appendChild(newEl);
-        saveItem(s.staff_id, true, px, py);
+        saveItem(s.staff_id, px, py);
     });
 }
 
@@ -627,12 +621,10 @@ export function handleStaffUpdated(p) {
 export function handleItemUpdatedStaff(p) {
     const el = document.querySelector(`.magnet[data-id="${p.itemId}"]`);
     if (!el) return;
-    if (p.onBoard) {
-        el.style.position = 'absolute';
-        el.style.left     = p.posX + 'px';
-        el.style.top      = p.posY + 'px';
-        if (p.meta?.width)  el.querySelector('.staff-chip-wrap > div').style.width  = p.meta.width  + 'px';
-        if (p.meta?.height) el.querySelector('.staff-chip-wrap > div').style.height = p.meta.height + 'px';
-        document.getElementById('board-canvas').appendChild(el);
-    }
+    el.style.position = 'absolute';
+    el.style.left     = p.posX + 'px';
+    el.style.top      = p.posY + 'px';
+    if (p.meta?.width)  el.querySelector('.staff-chip-wrap > div').style.width  = p.meta.width  + 'px';
+    if (p.meta?.height) el.querySelector('.staff-chip-wrap > div').style.height = p.meta.height + 'px';
+    document.getElementById('board-canvas').appendChild(el);
 }

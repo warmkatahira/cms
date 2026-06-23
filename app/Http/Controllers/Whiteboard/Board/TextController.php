@@ -24,7 +24,6 @@ class TextController extends Controller
             'item_id'       => 0,
             'pos_x'         => 40,
             'pos_y'         => 40,
-            'on_board'      => true,
             'meta'          => [
                 'text'      => $validated['text'],
                 'font_size' => 14,

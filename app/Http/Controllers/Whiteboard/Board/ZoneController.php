@@ -26,7 +26,6 @@ class ZoneController extends Controller
             'item_id'       => 0,
             'pos_x'         => 40,
             'pos_y'         => 40,
-            'on_board'      => true,
             'meta'          => [
                 'color_index' => $validated['color_index'] ?? 0,
                 'label'       => $validated['label'],

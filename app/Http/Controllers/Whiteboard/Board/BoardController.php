@@ -28,12 +28,11 @@ class BoardController extends Controller
 
         // 参加者のみアクセス可能
         $whiteboard = Whiteboard::whereHas('users', function ($q) use ($userNo) {
-                            $q->where('whiteboard_users.user_no', $userNo);
+                            $q->where('user_whiteboard.user_no', $userNo);
                         })
                         ->findOrFail($whiteboardId);
 
         $staffList = Staff::where('whiteboard_id', $whiteboard->whiteboard_id)
-                        ->where('is_active', true)
                         ->get();
 
         // staff の座標

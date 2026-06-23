@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 // モデル
 use App\Models\User;
 use App\Models\Whiteboard;
-use App\Models\WhiteboardUser;
 
 class WhiteboardController extends Controller
 {
@@ -19,7 +18,7 @@ class WhiteboardController extends Controller
         $userNo = auth()->user()->user_no;
 
         $whiteboards = Whiteboard::whereHas('users', function ($q) use ($userNo) {
-                                $q->where('whiteboard_users.user_no', $userNo);
+                                $q->where('user_whiteboard.user_no', $userNo);
                             })
                             ->with(['users', 'createdBy'])
                             ->latest()
@@ -51,12 +50,7 @@ class WhiteboardController extends Controller
             $userNos->push(auth()->user()->user_no);
         }
 
-        foreach ($userNos as $userNo) {
-            WhiteboardUser::create([
-                'whiteboard_id' => $whiteboard->whiteboard_id,
-                'user_no'       => $userNo,
-            ]);
-        }
+        $whiteboard->users()->attach($userNos->toArray());
 
         return response()->json(['status' => 'ok', 'whiteboard_id' => $whiteboard->whiteboard_id]);
     }
@@ -76,7 +70,7 @@ class WhiteboardController extends Controller
     public function update(Request $request, Whiteboard $whiteboard)
     {
         $userNo = auth()->user()->user_no;
-        if (!$whiteboard->users()->where('whiteboard_users.user_no', $userNo)->exists()) {
+        if (!$whiteboard->users()->where('user_whiteboard.user_no', $userNo)->exists()) {
             abort(403);
         }
 
@@ -91,7 +85,7 @@ class WhiteboardController extends Controller
     public function updateUsers(Request $request, Whiteboard $whiteboard)
     {
         $userNo = auth()->user()->user_no;
-        if (!$whiteboard->users()->where('whiteboard_users.user_no', $userNo)->exists()) {
+        if (!$whiteboard->users()->where('user_whiteboard.user_no', $userNo)->exists()) {
             abort(403);
         }
 
