@@ -82,7 +82,7 @@ function startEditTitle(el) {
             return;
         }
 
-        fetch('/whiteboard/' + id, {
+        fetch('/whiteboard/' + id + '/title', {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
             body: JSON.stringify({ title: newTitle }),

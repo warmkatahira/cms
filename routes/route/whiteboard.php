@@ -12,11 +12,11 @@ use App\Http\Controllers\Whiteboard\Board\ShapeController;
 use App\Http\Controllers\Whiteboard\Board\ImageController;
 
 Route::middleware('common')->group(function () {
-    // ホワイトボード一覧
+    // ホワイトボード
     Route::controller(WhiteboardController::class)->prefix('whiteboard')->name('whiteboard.')->group(function () {
         Route::get('', 'index')->name('index');
         Route::post('', 'store')->name('store');
-        Route::patch('{whiteboard}', 'update')->name('update');
+        Route::patch('{whiteboard}/title', 'updateTitle')->name('updateTitle');
         Route::patch('{whiteboard}/users','updateUsers')->name('update_users');
         Route::delete('{whiteboard}', 'destroy')->name('destroy');
     });

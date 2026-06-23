@@ -59,7 +59,7 @@ class WhiteboardController extends Controller
     public function destroy(Whiteboard $whiteboard)
     {
         $userNo = auth()->user()->user_no;
-        if (!$whiteboard->users()->where('user_no', $userNo)->exists()) {
+        if (!$whiteboard->users()->where('user_whiteboard.user_no', $userNo)->exists()) {
             abort(403);
         }
 
@@ -67,7 +67,8 @@ class WhiteboardController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
-    public function update(Request $request, Whiteboard $whiteboard)
+    // タイトル更新
+    public function updateTitle(Request $request, Whiteboard $whiteboard)
     {
         $userNo = auth()->user()->user_no;
         if (!$whiteboard->users()->where('user_whiteboard.user_no', $userNo)->exists()) {
@@ -82,6 +83,7 @@ class WhiteboardController extends Controller
         return response()->json(['status' => 'ok']);
     }
 
+    // 参加者更新
     public function updateUsers(Request $request, Whiteboard $whiteboard)
     {
         $userNo = auth()->user()->user_no;
