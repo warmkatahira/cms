@@ -14,6 +14,7 @@ class ItemController extends Controller
     // ドラッグ完了時・座標保存
     public function updateItem(Request $request)
     {
+        // バリデーションを実施
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
             'item_type'     => 'nullable|string|in:staff,zone,text,shape,image',
@@ -22,7 +23,7 @@ class ItemController extends Controller
             'pos_y'         => 'required|numeric',
             'meta'          => 'nullable|array',
         ]);
-
+        // 追加または更新
         WhiteboardItem::updateOrCreate(
             [
                 'whiteboard_id' => $validated['whiteboard_id'],
@@ -35,7 +36,7 @@ class ItemController extends Controller
                 'meta'     => $validated['meta'] ?? null,
             ]
         );
-
+        // 他の参加者にリアルタイム通知
         broadcast(new WhiteboardUpdated(
             whiteboardId: $validated['whiteboard_id'],
             action:       'item.updated',
@@ -47,7 +48,6 @@ class ItemController extends Controller
                 'meta'     => $validated['meta'] ?? null,
             ],
         ));
-
         return response()->json(['status' => 'ok']);
     }
 }

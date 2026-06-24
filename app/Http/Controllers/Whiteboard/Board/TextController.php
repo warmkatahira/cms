@@ -13,11 +13,12 @@ class TextController extends Controller
 {
     public function store(Request $request)
     {
+        // バリデーションを実施
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
             'text'          => 'required|string|max:500',
         ]);
-
+        // アイテムを追加
         $item = WhiteboardItem::create([
             'whiteboard_id' => $validated['whiteboard_id'],
             'item_type'     => 'text',
@@ -32,30 +33,30 @@ class TextController extends Controller
                 'height'    => 100,
             ],
         ]);
-
+        // item_idを採番（whiteboard_item_idと同値にする）
         $item->update(['item_id' => $item->whiteboard_item_id]);
-
+        // 他の参加者にリアルタイム通知
         broadcast(new WhiteboardUpdated(
             whiteboardId: $validated['whiteboard_id'],
             action:       'text.added',
             payload:      $item->toArray(),
         ))->toOthers();
-
         return response()->json(['status' => 'ok', 'item' => $item]);
     }
 
     public function destroy(Request $request, WhiteboardItem $item)
     {
+        // 削除対象の情報を取得
         $whiteboardId = $item->whiteboard_id;
         $itemId       = $item->whiteboard_item_id;
+        // 削除
         $item->delete();
-
+        // 他の参加者にリアルタイム通知
         broadcast(new WhiteboardUpdated(
             whiteboardId: $whiteboardId,
             action:       'text.deleted',
             payload:      ['itemId' => $itemId],
         ));
-
         return response()->json(['status' => 'ok']);
     }
 }

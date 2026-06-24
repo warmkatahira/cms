@@ -13,11 +13,12 @@ class ShapeController extends Controller
 {
     public function store(Request $request)
     {
+        // バリデーションを実施
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
             'shape_type'    => 'required|string|in:rect,circle,triangle,line,arrow,star,double-arrow',
         ]);
-
+        // アイテムを追加
         $item = WhiteboardItem::create([
             'whiteboard_id' => $validated['whiteboard_id'],
             'item_type'     => 'shape',
@@ -33,30 +34,30 @@ class ShapeController extends Controller
                 'rotation'     => 0,
             ],
         ]);
-
+        // item_idを採番（whiteboard_item_idと同値にする）
         $item->update(['item_id' => $item->whiteboard_item_id]);
-
+        // 他の参加者にリアルタイム通知
         broadcast(new WhiteboardUpdated(
             whiteboardId: $validated['whiteboard_id'],
             action:       'shape.added',
             payload:      $item->toArray(),
         ))->toOthers();
-
         return response()->json(['status' => 'ok', 'item' => $item]);
     }
 
     public function destroy(WhiteboardItem $item)
     {
+        // 削除対象の情報を取得
         $whiteboardId = $item->whiteboard_id;
         $itemId       = $item->whiteboard_item_id;
+        // 削除
         $item->delete();
-
+        // 他の参加者にリアルタイム通知
         broadcast(new WhiteboardUpdated(
             whiteboardId: $whiteboardId,
             action:       'shape.deleted',
             payload:      ['itemId' => $itemId],
         ));
-
         return response()->json(['status' => 'ok']);
     }
 }
