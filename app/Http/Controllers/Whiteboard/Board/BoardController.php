@@ -17,46 +17,40 @@ class BoardController extends Controller
     public function index(Request $request)
     {
         session(['page_header' => 'ホワイトボード編集']);
-
+        // 自分のユーザーNoを取得
         $userNo = auth()->user()->user_no;
-
-        // whiteboard_idが指定されている場合はそのボードを開く
+        // whiteboard_idを取得
         $whiteboardId = $request->get('whiteboard_id');
-
+        // whiteboard_idが取得できない場合
         if (!$whiteboardId) {
+            // 一覧へリダイレクト
             return redirect()->route('whiteboard.index');
         }
-
-        // 参加者のみアクセス可能
+        // 自分が参加者として登録されているホワイトボードのみ取得
         $whiteboard = Whiteboard::whereHas('users', function ($q) use ($userNo) {
                             $q->where('user_whiteboard.user_no', $userNo);
                         })
                         ->findOrFail($whiteboardId);
-
-        // スタッフの座標
-        $staffItems = $whiteboard->items()->where('item_type', 'staff')->get();
-
-        // zone の座標
+        // スタッフを取得
+        $staffItems = $whiteboard->items()
+                            ->where('item_type', 'staff')
+                            ->get();
+        // ゾーンを取得
         $zoneItems = $whiteboard->items()
                             ->where('item_type', 'zone')
-                            ->get()
-                            ->keyBy('item_id');
-
-        // text の座標
+                            ->get();
+        // テキストボックスを取得
         $textItems = $whiteboard->items()
                         ->where('item_type', 'text')
                         ->get();
-
-        // hape の座標
+        // 図形を取得
         $shapeItems = $whiteboard->items()
-                ->where('item_type', 'shape')
-                ->get();
-
-        // image の座標
+                        ->where('item_type', 'shape')
+                        ->get();
+        // 画像を取得
         $imageItems = $whiteboard->items()
-                ->where('item_type', 'image')
-                ->get();
-
+                        ->where('item_type', 'image')
+                        ->get();
         return view('whiteboard.board.index', compact(
             'whiteboard', 'staffItems', 'zoneItems', 'textItems', 'shapeItems', 'imageItems'
         ));
@@ -64,24 +58,27 @@ class BoardController extends Controller
 
     public function clear(Request $request)
     {
+        // バリデーションを実施
         $validated = $request->validate([
             'whiteboard_id' => 'required|exists:whiteboards,whiteboard_id',
         ]);
-
+        // whiteboard_idを取得
         $whiteboardId = $validated['whiteboard_id'];
-
-        // 画像ファイル削除
-        $imageItems = \App\Models\WhiteboardItem::where('whiteboard_id', $whiteboardId)
-            ->where('item_type', 'image')
-            ->get();
+        // 画像ファイルを取得
+        $imageItems = WhiteboardItem::where('whiteboard_id', $whiteboardId)
+                        ->where('item_type', 'image')
+                        ->get();
+        // 画像ファイルの分だけループ処理
         foreach ($imageItems as $img) {
+            // 画像パスを取得
             $src = $img->meta['src'] ?? '';
+            // パスから文字列を削除
             $disk = str_replace('/storage/', '', $src);
+            // 画像ファイルを削除
             Storage::disk('public')->delete($disk);
         }
-
+        // ホワイトボードを削除
         WhiteboardItem::where('whiteboard_id', $whiteboardId)->delete();
-
         return response()->json(['status' => 'ok']);
     }
 }
