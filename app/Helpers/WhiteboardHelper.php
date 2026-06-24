@@ -48,6 +48,13 @@ function staffChip(string $name, ?string $role, int $color, string $shape = 'rec
                 align-items:center;justify-content:center;
                 cursor:pointer;z-index:10;
             ">📋</div>
+            <div class="chip-delete-btn" data-tippy-content="削除" style="
+                display:none;position:absolute;top:-7px;left:-7px;
+                width:18px;height:18px;border-radius:50%;
+                background:#ef4444;color:white;font-size:12px;
+                line-height:18px;text-align:center;
+                cursor:pointer;z-index:10;
+            ">×</div>
             <div class="chip-resize-handle" data-tippy-content="サイズ変更" style="
                 display:none;position:absolute;bottom:-4px;right:-4px;
                 width:14px;height:14px;border-radius:2px;

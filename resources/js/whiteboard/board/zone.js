@@ -19,6 +19,8 @@ export function initZone(el) {
         if (btn) btn.style.display = 'flex';
         const copyBtn = el.querySelector('.zone-copy-btn');
         if (copyBtn) copyBtn.style.display = 'flex';
+        const deleteBtn = el.querySelector('.zone-delete-btn');
+        if (deleteBtn) deleteBtn.style.display = 'block';
         const handle = el.querySelector('.zone-resize-handle');
         if (handle) handle.style.display = 'block';
     });
@@ -27,6 +29,8 @@ export function initZone(el) {
         if (btn) btn.style.display = 'none';
         const copyBtn = el.querySelector('.zone-copy-btn');
         if (copyBtn) copyBtn.style.display = 'none';
+        const deleteBtn = el.querySelector('.zone-delete-btn');
+        if (deleteBtn) deleteBtn.style.display = 'none';
         const handle = el.querySelector('.zone-resize-handle');
         if (handle) handle.style.display = 'none';
     });
@@ -49,6 +53,21 @@ export function initZone(el) {
         });
     }
 
+    const deleteBtn = el.querySelector('.zone-delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('mousedown', e => e.stopPropagation());
+        deleteBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (!confirm('このグループを削除しますか？')) return;
+            fetch('/board/zone/' + el.dataset.zoneId, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': CSRF },
+            })
+            .then(r => r.json())
+            .then(() => el.remove());
+        });
+    }
+
     const resizeHandle = el.querySelector('.zone-resize-handle');
     if (resizeHandle) {
         resizeHandle.addEventListener('mousedown', e => startZoneResize(e, el));
@@ -60,6 +79,7 @@ export function initZone(el) {
 function startZoneDrag(e, el) {
     if (e.target.classList.contains('zone-edit-btn')) return;
     if (e.target.classList.contains('zone-copy-btn')) return;
+    if (e.target.classList.contains('zone-delete-btn')) return;
     if (draggingZone) { draggingZone.style.opacity = '1'; draggingZone = null; }
     if (zoneGhost)    { zoneGhost.remove(); zoneGhost = null; }
     const cx = e.touches ? e.touches[0].clientX : e.clientX;
@@ -396,6 +416,9 @@ function zoneInnerHTML(label, c) {
         <div class="zone-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:14px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
             align-items:center;justify-content:center;cursor:pointer;z-index:10;">📋</div>
+        <div class="zone-delete-btn" data-tippy-content="削除" style="display:none;position:absolute;top:-7px;left:-7px;
+            width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
+            line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
         <div class="zone-resize-handle" data-tippy-content="サイズ変更" style="display:none;position:absolute;bottom:-4px;right:-4px;
             width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
             text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>

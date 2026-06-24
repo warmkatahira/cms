@@ -21,6 +21,8 @@ export function initMagnet(el) {
         if (btn) btn.style.display = 'flex';
         const copyBtn = el.querySelector('.chip-copy-btn');
         if (copyBtn) copyBtn.style.display = 'flex';
+        const deleteBtn = el.querySelector('.chip-delete-btn');
+        if (deleteBtn) deleteBtn.style.display = 'block';
         const handle = el.querySelector('.chip-resize-handle');
         if (handle) handle.style.display = 'block';
     });
@@ -29,6 +31,8 @@ export function initMagnet(el) {
         if (btn) btn.style.display = 'none';
         const copyBtn = el.querySelector('.chip-copy-btn');
         if (copyBtn) copyBtn.style.display = 'none';
+        const deleteBtn = el.querySelector('.chip-delete-btn');
+        if (deleteBtn) deleteBtn.style.display = 'none';
         const handle = el.querySelector('.chip-resize-handle');
         if (handle) handle.style.display = 'none';
     });
@@ -48,6 +52,21 @@ export function initMagnet(el) {
         copyBtn.addEventListener('click', e => {
             e.stopPropagation();
             copyStaff(el);
+        });
+    }
+
+    const deleteBtn = el.querySelector('.chip-delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('mousedown', e => e.stopPropagation());
+        deleteBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            if (!confirm('このスタッフを削除しますか？')) return;
+            fetch('/board/staff/' + el.dataset.id, {
+                method: 'DELETE',
+                headers: { 'X-CSRF-TOKEN': CSRF },
+            })
+            .then(r => r.json())
+            .then(() => el.remove());
         });
     }
 
@@ -545,6 +564,9 @@ function staffChipHTML(name, role, c) {
             <div class="chip-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:14px;
                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                 align-items:center;justify-content:center;cursor:pointer;z-index:10;">📋</div>
+            <div class="chip-delete-btn" data-tippy-content="削除" style="display:none;position:absolute;top:-7px;left:-7px;
+                width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
+                line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
             <div class="chip-resize-handle" data-tippy-content="サイズ変更" style="
                 display:none;position:absolute;bottom:-4px;right:-4px;
                 width:14px;height:14px;border-radius:2px;
