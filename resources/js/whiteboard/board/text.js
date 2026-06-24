@@ -2,6 +2,7 @@ import {
     board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H,
     PALETTE, copyOffset, lastCopyEl, setCopyOffset, setLastCopyEl, rgbToHex,
 } from './constants.js';
+import { initTippy } from './constants.js';
 
 export function createTextEl(item) {
     const meta = item.meta ?? {};
@@ -25,23 +26,23 @@ export function createTextEl(item) {
             background-color:${meta.bg_color ?? 'transparent'};word-break:break-all;
             box-sizing:border-box;
         ">${(meta.text ?? '').replace(/\n/g, '<br>')}</div>
-        <div class="text-edit-btn" style="
+        <div class="text-edit-btn" data-tippy-content="編集" style="
             display:none;position:absolute;top:-7px;right:-7px;
             width:18px;height:18px;border-radius:50%;
             background:#374151;color:white;font-size:10px;
             align-items:center;justify-content:center;
             cursor:pointer;z-index:10;">✏</div>
-        <div class="text-copy-btn" style="
+        <div class="text-copy-btn" data-tippy-content="複製" style="
             display:none;position:absolute;top:-7px;right:14px;
             width:18px;height:18px;border-radius:50%;
             background:#374151;color:white;font-size:10px;line-height:18px;
             text-align:center;cursor:pointer;z-index:10;">📋</div>
-        <div class="text-delete-btn" style="
+        <div class="text-delete-btn" data-tippy-content="削除" style="
             display:none;position:absolute;top:-7px;left:-7px;
             width:18px;height:18px;border-radius:50%;
             background:#ef4444;color:white;font-size:12px;line-height:18px;
             text-align:center;cursor:pointer;z-index:10;">×</div>
-        <div class="text-resize-handle" style="
+        <div class="text-resize-handle" data-tippy-content="サイズ変更" style="
             display:none;position:absolute;bottom:-4px;right:-4px;
             width:14px;height:14px;border-radius:2px;
             color:#374151;font-size:18px;line-height:14px;text-align:center;
@@ -100,6 +101,7 @@ export function initText(el) {
     const resizeHandle = el.querySelector('.text-resize-handle');
     resizeHandle.addEventListener('mousedown', e => startTextResize(e, el));
     resizeHandle.addEventListener('touchstart', e => startTextResize(e, el), { passive: false });
+    initTippy(el);
 }
 
 function startTextEdit(el) {

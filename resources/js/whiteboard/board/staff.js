@@ -2,6 +2,7 @@ import {
     board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H,
     COLORS, copyOffset, lastCopyEl, setCopyOffset, setLastCopyEl,
 } from './constants.js';
+import { initTippy } from './constants.js';
 
 // ドラッグ
 let dragging    = null;
@@ -55,6 +56,7 @@ export function initMagnet(el) {
         resizeHandle.addEventListener('mousedown', e => startChipResize(e, el));
         resizeHandle.addEventListener('touchstart', e => startChipResize(e, el), { passive: false });
     }
+    initTippy(el);
 }
 
 function startDrag(e, el) {
@@ -278,10 +280,10 @@ modal.innerHTML = `
         <div id="tab-appearance" style="display:none;">
             <div style="margin-bottom:16px;">
                 <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:8px;">色</label>
-                <div style="display:flex;gap:8px;">
+                <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:180px;">
                     ${COLORS.map((c, i) => `
                         <div class="edit-color-chip" data-color="${i}"
-                             style="width:24px;height:24px;border-radius:50%;cursor:pointer;
+                            style="height:32px;border-radius:6px;cursor:pointer;
                                     background:${c.bg};border:2px solid ${c.border};">
                         </div>
                     `).join('')}
@@ -537,14 +539,18 @@ function staffChipHTML(name, role, c) {
                 <div data-field="name" style="font-size:12px;font-weight:500;color:${c.text};">${name}</div>
                 <div data-field="role" style="font-size:10px;color:${c.text};opacity:.7;">${role}</div>
             </div>
-            <div class="chip-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+            <div class="chip-edit-btn" data-tippy-content="編集" style="display:none;position:absolute;top:-7px;right:-7px;
                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                 align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
-            <div class="chip-copy-btn" style="display:none;position:absolute;top:-7px;right:14px;
+            <div class="chip-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:14px;
                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                 align-items:center;justify-content:center;cursor:pointer;z-index:10;">📋</div>
-            <div class="chip-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
-                width:10px;height:10px;border-radius:2px;background:#374151;cursor:se-resize;z-index:10;"></div>
+            <div class="chip-resize-handle" data-tippy-content="サイズ変更" style="
+                display:none;position:absolute;bottom:-4px;right:-4px;
+                width:14px;height:14px;border-radius:2px;
+                color:#374151;font-size:18px;line-height:14px;text-align:center;
+                cursor:se-resize;z-index:10;user-select:none;
+            ">⤡</div>
         </div>`;
 }
 

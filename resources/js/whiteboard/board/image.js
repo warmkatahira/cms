@@ -2,6 +2,7 @@ import {
     board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H,
     copyOffset, lastCopyEl, setCopyOffset, setLastCopyEl,
 } from './constants.js';
+import { initTippy } from './constants.js';
 
 export function createImageEl(item) {
     const meta = item.meta ?? {};
@@ -18,13 +19,13 @@ export function createImageEl(item) {
             width:100%;height:100%;object-fit:contain;
             border-radius:4px;pointer-events:none;
         ">
-        <div class="image-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+        <div class="image-delete-btn" data-tippy-content="削除" style="display:none;position:absolute;top:-7px;left:-7px;
             width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
             line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
-        <div class="image-copy-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+        <div class="image-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:-7px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
             line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
-        <div class="image-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+        <div class="image-resize-handle" data-tippy-content="サイズ変更" style="display:none;position:absolute;bottom:-4px;right:-4px;
             width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
             text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
     `;
@@ -69,6 +70,7 @@ export function initImage(el) {
     const resizeHandle = el.querySelector('.image-resize-handle');
     resizeHandle.addEventListener('mousedown', e => startImageResize(e, el));
     resizeHandle.addEventListener('touchstart', e => startImageResize(e, el), { passive: false });
+    initTippy(el);
 }
 
 // ドラッグ

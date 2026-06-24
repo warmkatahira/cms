@@ -2,6 +2,7 @@ import {
     board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H,
     PALETTE, copyOffset, lastCopyEl, setCopyOffset, setLastCopyEl,
 } from './constants.js';
+import { initTippy } from './constants.js';
 
 // SVG生成
 export function createShapeSVG(shapeType, fillColor, strokeColor, itemId) {
@@ -65,19 +66,19 @@ export function createShapeEl(item) {
         <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style="overflow:visible;">
             ${createShapeSVG(shapeType, fillColor, strokeColor, item.whiteboard_item_id)}
         </svg>
-        <div class="shape-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+        <div class="shape-delete-btn" data-tippy-content="削除" style="display:none;position:absolute;top:-7px;left:-7px;
             width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
             line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
-        <div class="shape-copy-btn" style="display:none;position:absolute;top:-7px;right:14px;
+        <div class="shape-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:14px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
             line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
-        <div class="shape-color-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+        <div class="shape-color-btn" data-tippy-content="色変更" style="display:none;position:absolute;top:-7px;right:-7px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
             line-height:18px;text-align:center;cursor:pointer;z-index:10;">🎨</div>
-        <div class="shape-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+        <div class="shape-resize-handle" data-tippy-content="サイズ変更" style="display:none;position:absolute;bottom:-4px;right:-4px;
             width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
             text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
-        <div class="shape-rotate-handle" style="display:none;position:absolute;top:-7px;right:35px;
+        <div class="shape-rotate-handle" data-tippy-content="回転" style="display:none;position:absolute;top:-7px;right:35px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;
             font-size:12px;line-height:18px;text-align:center;
             cursor:crosshair;z-index:10;user-select:none;">↻</div>
@@ -149,6 +150,7 @@ export function initShape(el) {
         rotateHandle.style.display = 'none';
     });
     rotateHandle.addEventListener('mousedown', e => startShapeRotate(e, el));
+    initTippy(el);
 }
 
 // ドラッグ

@@ -53,3 +53,16 @@ export function rgbToHex(color) {
     if (!m || m.length < 3) return '#ffffff';
     return '#' + m.slice(0, 3).map(v => parseInt(v).toString(16).padStart(2, '0')).join('');
 }
+
+export function initTippy(el) {
+    el.querySelectorAll('[data-tippy-content]').forEach(btn => {
+        if (btn._tippy) return;
+        tippy(btn, {
+            duration: 500,
+            maxWidth: 'none',
+            allowHTML: true,
+            placement: 'top',
+            theme: 'tippy_main_theme',
+        });
+    });
+}

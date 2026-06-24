@@ -2,6 +2,7 @@ import {
     board, WHITEBOARD_ID, CSRF, CANVAS_W, CANVAS_H,
     ZONE_COLORS, copyOffset, lastCopyEl, setCopyOffset, setLastCopyEl,
 } from './constants.js';
+import { initTippy } from './constants.js';
 
 let draggingZone  = null;
 let zoneGhost     = null;
@@ -53,6 +54,7 @@ export function initZone(el) {
         resizeHandle.addEventListener('mousedown', e => startZoneResize(e, el));
         resizeHandle.addEventListener('touchstart', e => startZoneResize(e, el), { passive: false });
     }
+    initTippy(el);
 }
 
 function startZoneDrag(e, el) {
@@ -238,11 +240,11 @@ zoneModal.innerHTML = `
         </div>
         <div style="margin-bottom:20px;">
             <label style="font-size:12px;color:#6b7280;display:block;margin-bottom:8px;">色</label>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;width:180px;">
                 ${ZONE_COLORS.map((c, i) => `
                     <div class="zone-color-chip" data-color-index="${i}"
-                         style="width:28px;height:28px;min-width:28px;min-height:28px;border-radius:50%;cursor:pointer;
-                                background:${c.border};border:2px solid ${c.border};">
+                        style="height:32px;border-radius:6px;cursor:pointer;
+                                background:${c.bg};border:2px solid ${c.border};">
                     </div>
                 `).join('')}
             </div>
@@ -388,13 +390,13 @@ function zoneInnerHTML(label, c) {
     return `
         <span class="zone-label-text absolute -top-3 left-2 text-xs font-medium px-1 rounded pointer-events-none select-none"
               style="color:${c.text};background:#f7f6f0;">${label}</span>
-        <div class="zone-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+        <div class="zone-edit-btn" data-tippy-content="編集" style="display:none;position:absolute;top:-7px;right:-7px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
             align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
-        <div class="zone-copy-btn" style="display:none;position:absolute;top:-7px;right:14px;
+        <div class="zone-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:14px;
             width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
             align-items:center;justify-content:center;cursor:pointer;z-index:10;">📋</div>
-        <div class="zone-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+        <div class="zone-resize-handle" data-tippy-content="サイズ変更" style="display:none;position:absolute;bottom:-4px;right:-4px;
             width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
             text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
     `;

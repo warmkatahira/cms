@@ -183,21 +183,21 @@
                                 style="color:{{ zoneColor($colorIndex, 'text') }};background:#f7f6f0;">
                                 {{ $label }}
                             </span>
-                            <div class="zone-edit-btn" style="
+                            <div class="zone-edit-btn" data-tippy-content="編集" style="
                                 display:none;position:absolute;top:-7px;right:-7px;
                                 width:18px;height:18px;border-radius:50%;
                                 background:#374151;color:white;font-size:10px;
                                 align-items:center;justify-content:center;
                                 cursor:pointer;z-index:10;
                             ">✏</div>
-                            <div class="zone-copy-btn" style="
+                            <div class="zone-copy-btn" data-tippy-content="複製" style="
                                 display:none;position:absolute;top:-7px;right:14px;
                                 width:18px;height:18px;border-radius:50%;
                                 background:#374151;color:white;font-size:10px;
                                 align-items:center;justify-content:center;
                                 cursor:pointer;z-index:10;
                             ">📋</div>
-                            <div class="zone-resize-handle" style="
+                            <div class="zone-resize-handle" data-tippy-content="サイズ変更" style="
                                 display:none;position:absolute;bottom:-4px;right:-4px;
                                 width:14px;height:14px;border-radius:2px;
                                 color:#374151;font-size:18px;line-height:14px;text-align:center;
@@ -229,16 +229,16 @@
                                 background-color:{{ $meta['bg_color'] ?? 'transparent' }};word-break:break-all;
                                 box-sizing:border-box;
                             ">{!! nl2br(e($meta['text'] ?? '')) !!}</div>
-                            <div class="text-edit-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+                            <div class="text-edit-btn" data-tippy-content="編集" style="display:none;position:absolute;top:-7px;right:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                                 align-items:center;justify-content:center;cursor:pointer;z-index:10;">✏</div>
-                            <div class="text-copy-btn" style="display:none;position:absolute;top:-7px;right:14px;
+                            <div class="text-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:14px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
-                            <div class="text-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+                            <div class="text-delete-btn" data-tippy-content="削除" style="display:none;position:absolute;top:-7px;left:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
-                            <div class="text-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+                            <div class="text-resize-handle" data-tippy-content="サイズ変更" style="display:none;position:absolute;bottom:-4px;right:-4px;
                                 width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
                                 text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
                         </div>
@@ -306,19 +306,19 @@
                                         @break
                                 @endswitch
                             </svg>
-                            <div class="shape-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+                            <div class="shape-delete-btn" data-tippy-content="削除" style="display:none;position:absolute;top:-7px;left:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
-                            <div class="shape-copy-btn" style="display:none;position:absolute;top:-7px;right:14px;
+                            <div class="shape-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:14px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
-                            <div class="shape-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+                            <div class="shape-resize-handle" data-tippy-content="サイズ変更" style="display:none;position:absolute;bottom:-4px;right:-4px;
                                 width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
                                 text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
-                            <div class="shape-color-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+                            <div class="shape-color-btn" data-tippy-content="色変更" style="display:none;position:absolute;top:-7px;right:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">🎨</div>
-                            <div class="shape-rotate-handle" style="display:none;position:absolute;top:-7px;right:35px;
+                            <div class="shape-rotate-handle" data-tippy-content="回転" style="display:none;position:absolute;top:-7px;right:35px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;
                                 font-size:12px;line-height:18px;text-align:center;
                                 cursor:crosshair;z-index:10;user-select:none;">↻</div>
@@ -341,13 +341,13 @@
                                 width:100%;height:100%;object-fit:contain;
                                 border-radius:4px;pointer-events:none;
                             ">
-                            <div class="image-delete-btn" style="display:none;position:absolute;top:-7px;left:-7px;
+                            <div class="image-delete-btn" data-tippy-content="削除" style="display:none;position:absolute;top:-7px;left:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#ef4444;color:white;font-size:12px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">×</div>
-                            <div class="image-copy-btn" style="display:none;position:absolute;top:-7px;right:-7px;
+                            <div class="image-copy-btn" data-tippy-content="複製" style="display:none;position:absolute;top:-7px;right:-7px;
                                 width:18px;height:18px;border-radius:50%;background:#374151;color:white;font-size:10px;
                                 line-height:18px;text-align:center;cursor:pointer;z-index:10;">📋</div>
-                            <div class="image-resize-handle" style="display:none;position:absolute;bottom:-4px;right:-4px;
+                            <div class="image-resize-handle" data-tippy-content="サイズ変更" style="display:none;position:absolute;bottom:-4px;right:-4px;
                                 width:14px;height:14px;border-radius:2px;color:#374151;font-size:18px;line-height:14px;
                                 text-align:center;cursor:se-resize;z-index:10;user-select:none;">⤡</div>
                         </div>
