@@ -31,26 +31,14 @@ class BoardController extends Controller
                             $q->where('user_whiteboard.user_no', $userNo);
                         })
                         ->findOrFail($whiteboardId);
-        // スタッフを取得
-        $staffItems = $whiteboard->items()
-                            ->where('item_type', 'staff')
-                            ->get();
-        // ゾーンを取得
-        $zoneItems = $whiteboard->items()
-                            ->where('item_type', 'zone')
-                            ->get();
-        // テキストボックスを取得
-        $textItems = $whiteboard->items()
-                        ->where('item_type', 'text')
-                        ->get();
-        // 図形を取得
-        $shapeItems = $whiteboard->items()
-                        ->where('item_type', 'shape')
-                        ->get();
-        // 画像を取得
-        $imageItems = $whiteboard->items()
-                        ->where('item_type', 'image')
-                        ->get();
+        // ホワイトボードに存在するアイテム区分を取得
+        $itemsByType = $whiteboard->items()->get()->groupBy('item_type');
+        // アイテム区分毎のデータを各変数に格納（存在しない場合は空を格納）
+        $staffItems = $itemsByType->get('staff', collect());
+        $zoneItems  = $itemsByType->get('zone',  collect());
+        $textItems  = $itemsByType->get('text',  collect());
+        $shapeItems = $itemsByType->get('shape', collect());
+        $imageItems = $itemsByType->get('image', collect());
         return view('whiteboard.board.index', compact(
             'whiteboard', 'staffItems', 'zoneItems', 'textItems', 'shapeItems', 'imageItems'
         ));
