@@ -269,12 +269,7 @@ zoneModal.innerHTML = `
                 `).join('')}
             </div>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-            <button id="zone-edit-delete"
-                    style="font-size:13px;padding:6px 16px;border:1px solid #fca5a5;
-                           border-radius:6px;cursor:pointer;background:white;color:#dc2626;">
-                削除
-            </button>
+        <div style="display:flex;justify-content:flex-end;align-items:center;">
             <div style="display:flex;gap:8px;">
                 <button id="zone-edit-cancel"
                         style="font-size:13px;padding:6px 16px;border:1px solid #d1d5db;
@@ -341,19 +336,6 @@ document.getElementById('zone-edit-save').addEventListener('click', () => {
     if (labelEl) { labelEl.textContent = label; labelEl.style.color = c.text; }
 
     zoneModal.style.display = 'none';
-});
-
-document.getElementById('zone-edit-delete').addEventListener('click', () => {
-    if (!confirm('このグループを削除しますか？')) return;
-    fetch('/board/zone/' + activeZoneEl.dataset.zoneId, {
-        method: 'DELETE',
-        headers: { 'X-CSRF-TOKEN': CSRF },
-    })
-    .then(r => r.json())
-    .then(() => {
-        activeZoneEl.remove();
-        zoneModal.style.display = 'none';
-    });
 });
 
 function openZoneModal(el) {

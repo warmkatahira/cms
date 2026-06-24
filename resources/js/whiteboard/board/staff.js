@@ -341,11 +341,6 @@ modal.innerHTML = `
             </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
-            <button id="edit-delete"
-                    style="font-size:13px;padding:6px 16px;border:1px solid #fca5a5;
-                           border-radius:6px;cursor:pointer;background:white;color:#dc2626;">
-                削除
-            </button>
             <div style="display:flex;gap:8px;">
                 <button id="edit-cancel"
                         style="font-size:13px;padding:6px 16px;border:1px solid #d1d5db;
@@ -500,19 +495,6 @@ document.getElementById('edit-save').addEventListener('click', () => {
         const roleEl = wrap.querySelector('[data-field="role"]');
         if (nameEl) { nameEl.textContent = name; nameEl.style.color = c.text; }
         if (roleEl) { roleEl.textContent = role; roleEl.style.color = c.text; }
-        modal.style.display = 'none';
-    });
-});
-
-document.getElementById('edit-delete').addEventListener('click', () => {
-    if (!confirm('このスタッフを削除しますか？')) return;
-    fetch('/board/staff/' + activeStaffId, {
-        method: 'DELETE',
-        headers: { 'X-CSRF-TOKEN': CSRF },
-    })
-    .then(r => r.json())
-    .then(() => {
-        activeMagnetEl.remove();
         modal.style.display = 'none';
     });
 });
