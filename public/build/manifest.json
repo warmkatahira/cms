@@ -211,5 +211,10 @@
     "file": "assets/welcome-CZdJUp3a.css",
     "src": "resources/sass/welcome.scss",
     "isEntry": true
+  },
+  "resources/sass/whiteboard/whiteboard/whiteboard.scss": {
+    "file": "assets/whiteboard-a9i-UDJm.css",
+    "src": "resources/sass/whiteboard/whiteboard/whiteboard.scss",
+    "isEntry": true
   }
 }

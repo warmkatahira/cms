@@ -198,15 +198,8 @@
             </div>
         </div>
     </div>
-
-    {{-- フェードインアニメーション --}}
-    <style>
-        @keyframes modalIn {
-            from { opacity: 0; transform: translateY(6px) scale(0.98); }
-            to   { opacity: 1; transform: translateY(0) scale(1); }
-        }
-    </style>
 </x-app-layout>
 @vite([
     'resources/js/whiteboard/whiteboard/whiteboard.js',
+    'resources/sass/whiteboard/whiteboard/whiteboard.scss',
 ])

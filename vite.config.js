@@ -39,6 +39,7 @@ export default defineConfig({
                 // ホワイトボード
                 'resources/js/whiteboard/whiteboard/whiteboard.js',
                 'resources/js/whiteboard/board/board.js',
+                'resources/sass/whiteboard/whiteboard/whiteboard.scss',
                 // 管理
                 'resources/js/admin/employee/employee.js',
                 // システム管理
